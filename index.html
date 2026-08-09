@@ -2,348 +2,822 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Live Chat App</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Aurora — Live Chat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  :root{
+    --bg-base:#100d1a;
+    --blob-a:#6d4aff;
+    --blob-b:#ff6f9c;
+    --surface:rgba(255,255,255,0.045);
+    --surface-strong:rgba(255,255,255,0.085);
+    --border:rgba(255,255,255,0.09);
+    --border-strong:rgba(255,255,255,0.18);
+    --text-1:#f4f2fb;
+    --text-2:#aca3cf;
+    --text-3:#6d648f;
+    --accent-a:#8b6bff;
+    --accent-b:#ff6f9c;
+    --accent-grad:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+    --admin:#f2b705;
+    --admin-bg:rgba(242,183,5,0.14);
+    --danger:#ff5470;
+    --success:#2ee6a6;
+    --r-lg:24px;
+    --r-md:16px;
+    --r-sm:11px;
   }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #0d1117;
-    color: #c9d1d9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg-base);
+    color:var(--text-1);
+    overflow:hidden;
+    position:relative;
   }
-  .app-container {
-    width: 100%;
-    max-width: 450px;
-    background-color: #161b22;
-    border: 1px solid #30363d;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  .bg-blob{
+    position:fixed;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
   }
-  #username-screen h1 {
-    font-size: 1.5rem;
-    margin-bottom: 8px;
-    color: #58a6ff;
+  .bg-blob.a{
+    width:520px;height:520px;
+    background:var(--blob-a);
+    top:-160px;left:-140px;
+    animation:driftA 22s ease-in-out infinite;
   }
-  #username-screen p {
-    font-size: 0.9rem;
-    color: #8b949e;
-    margin-bottom: 20px;
+  .bg-blob.b{
+    width:460px;height:460px;
+    background:var(--blob-b);
+    bottom:-160px;right:-120px;
+    animation:driftB 26s ease-in-out infinite;
   }
-  input[type="text"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #0d1117;
-    border: 1px solid #30363d;
-    border-radius: 6px;
-    color: #c9d1d9;
-    font-size: 1rem;
-    margin-bottom: 12px;
-    outline: none;
+  @keyframes driftA{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(60px,40px) scale(1.12);}
   }
-  input[type="text"]:focus {
-    border-color: #58a6ff;
+  @keyframes driftB{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-50px,-30px) scale(1.1);}
   }
-  button {
-    padding: 12px;
-    background-color: #238636;
-    border: none;
-    border-radius: 6px;
-    color: #ffffff;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
+
+  #app{
+    position:relative;
+    z-index:1;
+    height:100dvh;
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
   }
-  button:hover {
-    background-color: #2ea043;
+
+  /* ---------- shared custom control styles ---------- */
+  .field{
+    width:100%;
+    background:rgba(0,0,0,0.28);
+    border:1.5px solid var(--border);
+    border-radius:var(--r-md);
+    color:var(--text-1);
+    font-family:inherit;
+    font-size:0.98rem;
+    font-weight:500;
+    padding:14px 16px;
+    outline:none;
+    appearance:none;
+    -webkit-appearance:none;
+    transition:border-color .18s ease, box-shadow .18s ease;
   }
-  #join-btn {
-    width: 100%;
+  .field::placeholder{color:var(--text-3);}
+  .field:focus{
+    border-color:var(--accent-a);
+    box-shadow:0 0 0 4px rgba(139,107,255,0.18);
   }
-  .chat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    border-bottom: 1px solid #30363d;
-    padding-bottom: 12px;
-    gap: 8px;
+  .btn{
+    appearance:none;-webkit-appearance:none;
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:700;
+    color:#fff;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+    -webkit-tap-highlight-color:transparent;
   }
-  .badges {
-    display: flex;
-    gap: 6px;
-    align-items: center;
+  .btn:active{transform:scale(0.96);}
+  .btn:disabled{opacity:0.45;cursor:not-allowed;}
+  .btn-primary{
+    background:var(--accent-grad);
+    border-radius:var(--r-md);
+    padding:14px 20px;
+    font-size:0.98rem;
+    box-shadow:0 8px 24px -8px rgba(139,107,255,0.55);
   }
-  #user-badge {
-    font-size: 0.85rem;
-    background-color: #21262d;
-    padding: 4px 10px;
-    border-radius: 12px;
-    color: #58a6ff;
-    white-space: nowrap;
+  .btn-primary:not(:disabled):hover{box-shadow:0 10px 30px -6px rgba(139,107,255,0.7);}
+  .icon-btn{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:50%;
+    width:38px;height:38px;
+    color:var(--text-2);
   }
-  #admin-badge {
-    font-size: 0.75rem;
-    background-color: #3d2d00;
-    border: 1px solid #d29922;
-    padding: 4px 10px;
-    border-radius: 12px;
-    color: #d29922;
-    font-weight: bold;
-    letter-spacing: 0.03em;
-    display: none;
-    white-space: nowrap;
+  .icon-btn:hover{background:var(--surface-strong);color:var(--text-1);}
+  .icon-btn.danger:hover{color:var(--danger);border-color:rgba(255,84,112,0.4);}
+  svg{display:block;}
+
+  /* ---------- username screen ---------- */
+  #screen-username{
+    width:100%;
+    max-width:400px;
+    background:linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));
+    border:1px solid var(--border);
+    border-radius:var(--r-lg);
+    padding:36px 30px;
+    backdrop-filter:blur(30px);
+    -webkit-backdrop-filter:blur(30px);
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
   }
-  #chat-box {
-    height: 350px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding-right: 5px;
-    margin-bottom: 16px;
+  .mark{
+    width:52px;height:52px;
+    border-radius:16px;
+    background:var(--accent-grad);
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:18px;
+    box-shadow:0 10px 24px -6px rgba(139,107,255,0.6);
   }
-  .msg {
-    background-color: #21262d;
-    padding: 10px 14px;
-    border-radius: 8px;
-    word-wrap: break-word;
-    position: relative;
+  #screen-username h1{
+    font-size:1.5rem;
+    font-weight:800;
+    letter-spacing:-0.02em;
+    margin-bottom:6px;
   }
-  .msg.admin-msg {
-    border: 1px solid #d29922;
+  #screen-username p{
+    font-size:0.92rem;
+    color:var(--text-2);
+    margin-bottom:24px;
+    line-height:1.5;
   }
-  .msg-top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
+  .field-wrap{position:relative;margin-bottom:6px;}
+  .field-status{
+    position:absolute;
+    right:14px;top:50%;
+    transform:translateY(-50%);
+    width:20px;height:20px;
+    display:flex;align-items:center;justify-content:center;
   }
-  .msg-author {
-    font-weight: bold;
-    font-size: 0.85rem;
-    color: #58a6ff;
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  .field-status .spinner{
+    width:16px;height:16px;
+    border:2px solid rgba(255,255,255,0.15);
+    border-top-color:var(--text-2);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
   }
-  .msg-author .tag {
-    font-size: 0.65rem;
-    background-color: #3d2d00;
-    border: 1px solid #d29922;
-    color: #d29922;
-    padding: 1px 6px;
-    border-radius: 8px;
-    font-weight: bold;
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .hint{
+    min-height:18px;
+    font-size:0.78rem;
+    font-weight:600;
+    margin:8px 2px 18px;
+    display:flex;align-items:center;gap:6px;
   }
-  .msg-text {
-    font-size: 0.95rem;
-    color: #e6edf3;
+  .hint.ok{color:var(--success);}
+  .hint.bad{color:var(--danger);}
+  .hint.muted{color:var(--text-3);}
+  .shake{animation:shake .35s;}
+  @keyframes shake{
+    20%{transform:translateX(-6px);}
+    40%{transform:translateX(6px);}
+    60%{transform:translateX(-4px);}
+    80%{transform:translateX(4px);}
   }
-  .delete-btn {
-    background: none;
-    border: none;
-    color: #8b949e;
-    font-size: 0.8rem;
-    cursor: pointer;
-    padding: 2px 6px;
-    width: auto;
-    flex-shrink: 0;
+
+  /* ---------- chat screen ---------- */
+  #screen-chat{
+    width:100%;
+    max-width:640px;
+    height:100%;
+    max-height:880px;
+    background:linear-gradient(180deg,rgba(255,255,255,0.045),rgba(255,255,255,0.015));
+    border:1px solid var(--border);
+    border-radius:var(--r-lg);
+    backdrop-filter:blur(30px);
+    -webkit-backdrop-filter:blur(30px);
+    box-shadow:0 30px 70px -24px rgba(0,0,0,0.65);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
   }
-  .delete-btn:hover {
-    color: #f85149;
-    background: none;
+  .chat-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:16px 18px;
+    border-bottom:1px solid var(--border);
+    flex-shrink:0;
   }
-  #chat-form {
-    display: flex;
-    gap: 8px;
+  .chat-header .mark{width:38px;height:38px;border-radius:11px;margin:0;}
+  .chat-header .title-wrap{flex:1;min-width:0;}
+  .chat-header h2{font-size:1.02rem;font-weight:800;letter-spacing:-0.01em;}
+  .online-row{
+    display:flex;align-items:center;gap:6px;
+    font-size:0.76rem;color:var(--text-2);font-weight:600;
   }
-  #chat-form input {
-    margin-bottom: 0;
+  .online-dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--success);
+    box-shadow:0 0 0 3px rgba(46,230,166,0.18);
   }
-  #chat-form button {
-    width: 80px;
+  .self-pill{
+    display:flex;align-items:center;gap:7px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:5px 12px 5px 5px;
+    font-size:0.8rem;font-weight:700;
   }
-  #admin-toolbar {
-    display: none;
-    margin-bottom: 12px;
+  .mini-avatar{
+    width:24px;height:24px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.62rem;font-weight:800;color:#fff;
+    flex-shrink:0;
   }
-  #admin-toolbar button {
-    width: 100%;
-    background-color: #6e1a1a;
+  .tag{
+    font-size:0.62rem;font-weight:800;letter-spacing:0.04em;
+    color:var(--admin);
+    background:var(--admin-bg);
+    border:1px solid rgba(242,183,5,0.4);
+    padding:2px 7px;border-radius:999px;
   }
-  #admin-toolbar button:hover {
-    background-color: #8a2222;
+
+  #chat-box{
+    flex:1;
+    overflow-y:auto;
+    padding:20px 18px 6px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  #chat-box::-webkit-scrollbar{width:6px;}
+  #chat-box::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.14);border-radius:6px;}
+  #chat-box::-webkit-scrollbar-track{background:transparent;}
+
+  .empty-state{
+    margin:auto;
+    text-align:center;
+    color:var(--text-3);
+    font-size:0.88rem;
+    font-weight:600;
+    padding:40px 20px;
+  }
+
+  .msg-group{
+    display:flex;
+    gap:10px;
+    max-width:88%;
+    animation:riseIn .28s ease both;
+  }
+  @keyframes riseIn{
+    from{opacity:0;transform:translateY(8px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  .msg-group.own{align-self:flex-end;flex-direction:row-reverse;}
+  .msg-group .avatar{
+    width:32px;height:32px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:0.68rem;font-weight:800;color:#fff;
+    flex-shrink:0;
+    margin-top:2px;
+  }
+  .group-body{display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .msg-group.own .group-body{align-items:flex-end;}
+  .group-meta{
+    display:flex;align-items:center;gap:6px;
+    font-size:0.74rem;font-weight:700;color:var(--text-2);
+    padding:0 2px;
+  }
+  .group-time{font-weight:600;color:var(--text-3);}
+  .bubble-stack{display:flex;flex-direction:column;gap:3px;}
+  .msg-group.own .bubble-stack{align-items:flex-end;}
+
+  .bubble{
+    position:relative;
+    padding:10px 14px;
+    font-size:0.92rem;
+    font-weight:500;
+    line-height:1.42;
+    word-wrap:break-word;
+    max-width:100%;
+    border-radius:16px;
+    background:var(--surface-strong);
+    border:1px solid var(--border);
+    color:var(--text-1);
+  }
+  .msg-group.own .bubble{
+    background:var(--accent-grad);
+    border:none;
+    color:#fff;
+  }
+  .msg-group.admin-sender .bubble{border-color:rgba(242,183,5,0.45);}
+  .bubble-delete{
+    position:absolute;
+    top:-9px;
+    background:#1c1830;
+    border:1px solid var(--border-strong);
+    border-radius:50%;
+    width:22px;height:22px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text-2);
+    cursor:pointer;
+    opacity:0;
+    transition:opacity .15s ease,color .15s ease;
+  }
+  .msg-group.own .bubble-delete{left:-9px;}
+  .msg-group:not(.own) .bubble-delete{right:-9px;}
+  .bubble:hover .bubble-delete{opacity:1;}
+  .bubble-delete:hover{color:var(--danger);}
+
+  #typing-row{
+    height:22px;
+    padding:0 22px 4px;
+    display:flex;align-items:center;gap:8px;
+    font-size:0.76rem;font-weight:600;color:var(--text-3);
+    flex-shrink:0;
+  }
+  .typing-dots{display:flex;gap:3px;}
+  .typing-dots span{
+    width:5px;height:5px;border-radius:50%;
+    background:var(--text-3);
+    animation:bounce 1.2s infinite ease-in-out;
+  }
+  .typing-dots span:nth-child(2){animation-delay:.15s;}
+  .typing-dots span:nth-child(3){animation-delay:.3s;}
+  @keyframes bounce{
+    0%,60%,100%{transform:translateY(0);opacity:.5;}
+    30%{transform:translateY(-4px);opacity:1;}
+  }
+
+  #composer{
+    display:flex;
+    align-items:flex-end;
+    gap:10px;
+    padding:14px 16px;
+    border-top:1px solid var(--border);
+    flex-shrink:0;
+  }
+  #message-input{
+    flex:1;
+    resize:none;
+    max-height:110px;
+    min-height:44px;
+    line-height:1.4;
+    font-size:0.95rem;
+    padding:11px 16px;
+    border-radius:22px;
+  }
+  #send-btn{
+    width:44px;height:44px;
+    border-radius:50%;
+    flex-shrink:0;
+    padding:0;
+  }
+
+  @media (max-width:640px){
+    #app{padding:0;}
+    #screen-chat{max-width:none;max-height:none;border-radius:0;height:100dvh;}
+    #screen-username{border-radius:0;max-width:none;height:100dvh;display:flex;flex-direction:column;justify-content:center;}
   }
 </style>
 </head>
 <body>
-  <div class="app-container">
-    <div id="username-screen">
-      <h1>Welcome to Live Chat</h1>
-      <p>Enter a display name to start chatting</p>
-      <input type="text" id="username-input" placeholder="e.g. Gamer123" maxlength="20">
-      <button id="join-btn">Join Chat</button>
+
+<div class="bg-blob a"></div>
+<div class="bg-blob b"></div>
+
+<div id="app">
+
+  <!-- ================= USERNAME SCREEN ================= -->
+  <div id="screen-username">
+    <div class="mark">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4.5 4V6a1 1 0 0 1 1-1Z"/>
+      </svg>
     </div>
-    <div id="chat-screen" style="display: none;">
-      <div class="chat-header">
-        <h2>Global Chat</h2>
-        <div class="badges">
-          <span id="admin-badge">ADMIN</span>
-          <span id="user-badge"></span>
-        </div>
-      </div>
-      <div id="admin-toolbar">
-        <button id="clear-all-btn" type="button">Clear all messages</button>
-      </div>
-      <div id="chat-box"></div>
-      <form id="chat-form">
-        <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
-        <button type="submit" id="send-btn">Send</button>
-      </form>
+    <h1>Join Aurora</h1>
+    <p>Pick a display name. Once it's yours, no one else can use it while you're online.</p>
+
+    <div class="field-wrap">
+      <input type="text" id="username-input" class="field" placeholder="yourname" maxlength="20" autocomplete="off">
+      <div class="field-status" id="field-status"></div>
     </div>
+    <div class="hint muted" id="username-hint">3–20 characters: letters, numbers, underscore.</div>
+
+    <button id="join-btn" class="btn btn-primary" style="width:100%;" disabled>
+      <span id="join-btn-label">Enter chat</span>
+    </button>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script>
-    // Your exact Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyANBev0K1e06T5aHBC5EKXaswbMwELSkkQ",
-      authDomain: "test-912a8.firebaseapp.com",
-      databaseURL: "https://test-912a8-default-rtdb.firebaseio.com",
-      projectId: "test-912a8",
-      storageBucket: "test-912a8.firebasestorage.app",
-      messagingSenderId: "990322948527",
-      appId: "1:990322948527:web:025a19c36a1e8ce7cad75a",
-      measurementId: "G-70LTDPV6HZ"
-    };
+  <!-- ================= CHAT SCREEN ================= -->
+  <div id="screen-chat" style="display:none;">
+    <div class="chat-header">
+      <div class="mark">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4.5 4V6a1 1 0 0 1 1-1Z"/>
+        </svg>
+      </div>
+      <div class="title-wrap">
+        <h2>Aurora Chat</h2>
+        <div class="online-row"><span class="online-dot"></span><span id="online-count">1 online</span></div>
+      </div>
+      <button id="clear-all-btn" class="icon-btn danger" type="button" title="Delete all messages" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/>
+        </svg>
+      </button>
+      <div class="self-pill">
+        <div class="mini-avatar" id="self-avatar"></div>
+        <span id="self-name"></span>
+        <span class="tag" id="self-admin-tag" style="display:none;">ADMIN</span>
+      </div>
+      <button id="leave-btn" class="icon-btn" type="button" title="Leave chat">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3M16 16l4-4-4-4M20 12H9"/>
+        </svg>
+      </button>
+    </div>
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    <div id="chat-box"></div>
 
-    let currentUsername = "";
-    let isAdmin = false;
+    <div id="typing-row"></div>
 
-    // The one username that gets admin status
-    const ADMIN_USERNAME = "brodanistheman";
+    <form id="chat-form">
+      <div id="composer">
+        <textarea id="message-input" class="field" placeholder="Message..." rows="1"></textarea>
+        <button id="send-btn" class="btn btn-primary" type="submit" disabled>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/>
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
 
-    // DOM Elements
-    const usernameScreen = document.getElementById('username-screen');
-    const chatScreen = document.getElementById('chat-screen');
-    const usernameInput = document.getElementById('username-input');
-    const joinBtn = document.getElementById('join-btn');
-    const userBadge = document.getElementById('user-badge');
-    const adminBadge = document.getElementById('admin-badge');
-    const adminToolbar = document.getElementById('admin-toolbar');
-    const clearAllBtn = document.getElementById('clear-all-btn');
-    const chatBox = document.getElementById('chat-box');
-    const chatForm = document.getElementById('chat-form');
-    const messageInput = document.getElementById('message-input');
+</div>
 
-    // User joins chat
-    joinBtn.addEventListener('click', () => {
-      const username = usernameInput.value.trim();
-      if (username !== "") {
-        currentUsername = username;
-        isAdmin = username.toLowerCase() === ADMIN_USERNAME.toLowerCase();
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyANBev0K1e06T5aHBC5EKXaswbMwELSkkQ",
+    authDomain: "test-912a8.firebaseapp.com",
+    databaseURL: "https://test-912a8-default-rtdb.firebaseio.com",
+    projectId: "test-912a8",
+    storageBucket: "test-912a8.firebasestorage.app",
+    messagingSenderId: "990322948527",
+    appId: "1:990322948527:web:025a19c36a1e8ce7cad75a",
+    measurementId: "G-70LTDPV6HZ"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-        userBadge.textContent = `@${currentUsername}`;
-        adminBadge.style.display = isAdmin ? 'inline-block' : 'none';
-        adminToolbar.style.display = isAdmin ? 'block' : 'none';
+  const ADMIN_USERNAME = "brodanistheman";
+  const NAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
 
-        usernameScreen.style.display = 'none';
-        chatScreen.style.display = 'block';
+  let currentUsername = "";
+  let currentKey = "";
+  let isAdminUser = false;
+  let typingTimeout = null;
+  let isTyping = false;
 
-        listenForMessages();
+  // ---------- DOM refs ----------
+  const screenUsername = document.getElementById('screen-username');
+  const screenChat = document.getElementById('screen-chat');
+  const usernameInput = document.getElementById('username-input');
+  const fieldStatus = document.getElementById('field-status');
+  const usernameHint = document.getElementById('username-hint');
+  const joinBtn = document.getElementById('join-btn');
+  const joinBtnLabel = document.getElementById('join-btn-label');
+
+  const selfAvatar = document.getElementById('self-avatar');
+  const selfName = document.getElementById('self-name');
+  const selfAdminTag = document.getElementById('self-admin-tag');
+  const onlineCount = document.getElementById('online-count');
+  const clearAllBtn = document.getElementById('clear-all-btn');
+  const leaveBtn = document.getElementById('leave-btn');
+
+  const chatBox = document.getElementById('chat-box');
+  const typingRow = document.getElementById('typing-row');
+  const chatForm = document.getElementById('chat-form');
+  const messageInput = document.getElementById('message-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  // ---------- helpers ----------
+  function escapeHTML(str){
+    return String(str).replace(/[&<>'"]/g,
+      t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t));
+  }
+  function hueFromString(str){
+    let h = 0;
+    for (let i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) % 360;
+    return h;
+  }
+  function avatarStyle(name){
+    const h = hueFromString(name.toLowerCase());
+    return `background:linear-gradient(135deg,hsl(${h},80%,58%),hsl(${(h+50)%360},80%,58%));`;
+  }
+  function initials(name){
+    return name.slice(0,2).toUpperCase();
+  }
+  function formatTime(ts){
+    return new Date(ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  }
+  function setHint(text, cls){
+    usernameHint.textContent = text;
+    usernameHint.className = 'hint ' + cls;
+  }
+
+  // ---------- username availability (debounced live check) ----------
+  let checkTimer = null;
+  usernameInput.addEventListener('input', () => {
+    const val = usernameInput.value.trim();
+    joinBtn.disabled = true;
+    fieldStatus.innerHTML = '';
+    clearTimeout(checkTimer);
+
+    if (val === '') { setHint('3–20 characters: letters, numbers, underscore.', 'muted'); return; }
+    if (!NAME_PATTERN.test(val)) { setHint('Only letters, numbers, underscore — 3 to 20 characters.', 'bad'); return; }
+
+    fieldStatus.innerHTML = '<div class="spinner"></div>';
+    setHint('Checking availability…', 'muted');
+
+    checkTimer = setTimeout(() => {
+      db.ref('activeUsers/' + val.toLowerCase()).once('value').then(snap => {
+        if (usernameInput.value.trim() !== val) return; // stale
+        if (snap.exists()) {
+          fieldStatus.innerHTML = xIcon();
+          setHint('That name is already taken.', 'bad');
+          joinBtn.disabled = true;
+        } else {
+          fieldStatus.innerHTML = checkIcon();
+          setHint('Available.', 'ok');
+          joinBtn.disabled = false;
+        }
+      });
+    }, 350);
+  });
+
+  function checkIcon(){
+    return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2ee6a6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  }
+  function xIcon(){
+    return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff5470" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  }
+
+  usernameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !joinBtn.disabled) joinBtn.click();
+  });
+
+  // ---------- claim username & join ----------
+  joinBtn.addEventListener('click', async () => {
+    const val = usernameInput.value.trim();
+    if (!NAME_PATTERN.test(val)) return;
+
+    joinBtn.disabled = true;
+    joinBtnLabel.textContent = 'Joining…';
+
+    const key = val.toLowerCase();
+    const ref = db.ref('activeUsers/' + key);
+
+    try {
+      const result = await ref.transaction(current => {
+        if (current === null) {
+          return { display: val, joinedAt: Date.now() };
+        }
+        return; // abort — already taken
+      });
+
+      if (!result.committed) {
+        joinBtnLabel.textContent = 'Enter chat';
+        fieldStatus.innerHTML = xIcon();
+        setHint('Someone just took that name — try another.', 'bad');
+        screenUsername.classList.add('shake');
+        setTimeout(() => screenUsername.classList.remove('shake'), 350);
+        return;
       }
-    });
 
-    // Allow pressing "Enter" on the username field
-    usernameInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') joinBtn.click();
-    });
+      ref.onDisconnect().remove();
 
-    // Send message to Firebase
-    chatForm.addEventListener('submit', (e) => {
+      currentUsername = val;
+      currentKey = key;
+      isAdminUser = key === ADMIN_USERNAME;
+
+      enterChat();
+    } catch (err) {
+      joinBtnLabel.textContent = 'Enter chat';
+      setHint('Connection error — please try again.', 'bad');
+      joinBtn.disabled = false;
+    }
+  });
+
+  function enterChat(){
+    selfName.textContent = '@' + currentUsername;
+    selfAvatar.textContent = initials(currentUsername);
+    selfAvatar.setAttribute('style', avatarStyle(currentUsername));
+    selfAdminTag.style.display = isAdminUser ? 'inline-block' : 'none';
+    clearAllBtn.style.display = isAdminUser ? 'flex' : 'none';
+
+    screenUsername.style.display = 'none';
+    screenChat.style.display = 'flex';
+
+    listenForMessages();
+    listenForPresence();
+    listenForTyping();
+    messageInput.focus();
+  }
+
+  // ---------- leave ----------
+  leaveBtn.addEventListener('click', () => {
+    if (!currentKey) return;
+    db.ref('activeUsers/' + currentKey).remove();
+    db.ref('typing/' + currentKey).remove();
+    location.reload();
+  });
+
+  // ---------- presence / online count ----------
+  function listenForPresence(){
+    db.ref('activeUsers').on('value', snap => {
+      const n = snap.numChildren();
+      onlineCount.textContent = n === 1 ? '1 online' : n + ' online';
+    });
+  }
+
+  // ---------- typing indicator ----------
+  messageInput.addEventListener('input', () => {
+    autoGrow();
+    sendBtn.disabled = messageInput.value.trim() === '';
+
+    if (!isTyping) {
+      isTyping = true;
+      db.ref('typing/' + currentKey).set({ display: currentUsername, ts: Date.now() });
+      db.ref('typing/' + currentKey).onDisconnect().remove();
+    }
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(stopTyping, 1800);
+  });
+  function stopTyping(){
+    isTyping = false;
+    db.ref('typing/' + currentKey).remove();
+  }
+  function autoGrow(){
+    messageInput.style.height = 'auto';
+    messageInput.style.height = Math.min(messageInput.scrollHeight, 110) + 'px';
+  }
+  messageInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      const text = messageInput.value.trim();
+      chatForm.requestSubmit();
+    }
+  });
 
-      if (text !== "") {
-        db.ref('messages').push({
-          username: currentUsername,
-          text: text,
-          isAdmin: isAdmin,
-          timestamp: Date.now()
-        });
-        messageInput.value = "";
+  function listenForTyping(){
+    db.ref('typing').on('value', snap => {
+      const now = Date.now();
+      const others = [];
+      snap.forEach(child => {
+        const v = child.val();
+        if (child.key !== currentKey && v && (now - v.ts) < 5000) others.push(v.display);
+      });
+      if (others.length === 0) {
+        typingRow.innerHTML = '';
+      } else {
+        const label = others.length === 1
+          ? `${escapeHTML(others[0])} is typing`
+          : `${others.length} people are typing`;
+        typingRow.innerHTML = `<span>${label}</span><span class="typing-dots"><span></span><span></span><span></span></span>`;
       }
     });
+  }
 
-    // Admin: clear every message in the chat
-    clearAllBtn.addEventListener('click', () => {
-      if (!isAdmin) return;
-      if (confirm('Delete every message in this chat for everyone?')) {
-        db.ref('messages').remove();
-      }
+  // ---------- sending ----------
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = messageInput.value.trim();
+    if (text === '') return;
+
+    db.ref('messages').push({
+      username: currentUsername,
+      text: text,
+      isAdmin: isAdminUser,
+      timestamp: Date.now()
     });
 
-    // Listen for live updates and load saved message history
-    function listenForMessages() {
-      db.ref('messages').on('child_added', (snapshot) => {
-        displayMessage(snapshot.key, snapshot.val());
-      });
-      db.ref('messages').on('child_removed', (snapshot) => {
-        const el = chatBox.querySelector(`[data-key="${snapshot.key}"]`);
-        if (el) el.remove();
-      });
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+    sendBtn.disabled = true;
+    clearTimeout(typingTimeout);
+    stopTyping();
+  });
+
+  // ---------- admin: clear all ----------
+  clearAllBtn.addEventListener('click', () => {
+    if (!isAdminUser) return;
+    if (confirm('Delete every message in this chat for everyone?')) {
+      db.ref('messages').remove();
     }
+  });
 
-    function displayMessage(key, msg) {
-      const msgElement = document.createElement('div');
-      msgElement.classList.add('msg');
-      if (msg.isAdmin) msgElement.classList.add('admin-msg');
-      msgElement.dataset.key = key;
+  // ---------- messages ----------
+  function listenForMessages(){
+    db.ref('messages').on('child_added', snap => appendMessage(snap.key, snap.val()));
+    db.ref('messages').on('child_removed', snap => removeMessage(snap.key));
+  }
 
-      msgElement.innerHTML = `
-        <div class="msg-top-row">
-          <div class="msg-author">
-            ${escapeHTML(msg.username)}
-            ${msg.isAdmin ? '<span class="tag">ADMIN</span>' : ''}
-          </div>
-          ${isAdmin ? '<button class="delete-btn" type="button" title="Delete message">✕</button>' : ''}
-        </div>
-        <div class="msg-text">${escapeHTML(msg.text)}</div>
-      `;
+  function appendMessage(key, msg){
+    const emptyState = chatBox.querySelector('.empty-state');
+    if (emptyState) emptyState.remove();
 
-      if (isAdmin) {
-        msgElement.querySelector('.delete-btn').addEventListener('click', () => {
-          db.ref('messages/' + key).remove();
-        });
+    const isOwn = msg.username.toLowerCase() === currentUsername.toLowerCase();
+    const lastGroup = chatBox.lastElementChild;
+    const canGroup = lastGroup &&
+      lastGroup.dataset.userkey === msg.username.toLowerCase() &&
+      lastGroup.dataset.own === String(isOwn) &&
+      (msg.timestamp - Number(lastGroup.dataset.lastts)) < 5 * 60 * 1000;
+
+    if (canGroup) {
+      lastGroup.dataset.lastts = msg.timestamp;
+      lastGroup.querySelector('.bubble-stack').appendChild(createBubble(key, msg));
+    } else {
+      const group = document.createElement('div');
+      group.className = 'msg-group ' + (isOwn ? 'own' : 'other') + (msg.isAdmin ? ' admin-sender' : '');
+      group.dataset.userkey = msg.username.toLowerCase();
+      group.dataset.own = String(isOwn);
+      group.dataset.lastts = msg.timestamp;
+
+      let inner = '';
+      if (!isOwn) {
+        inner += `<div class="avatar" style="${avatarStyle(msg.username)}">${initials(msg.username)}</div>`;
       }
+      inner += '<div class="group-body">';
+      if (!isOwn) {
+        inner += `<div class="group-meta"><span>${escapeHTML(msg.username)}</span>${msg.isAdmin ? '<span class="tag">ADMIN</span>' : ''}<span class="group-time">${formatTime(msg.timestamp)}</span></div>`;
+      }
+      inner += '<div class="bubble-stack"></div></div>';
+      group.innerHTML = inner;
 
-      chatBox.appendChild(msgElement);
-      chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to newest message
+      chatBox.appendChild(group);
+      group.querySelector('.bubble-stack').appendChild(createBubble(key, msg));
     }
 
-    // Helper function to prevent HTML/script injection
-    function escapeHTML(str) {
-      return String(str).replace(/[&<>'"]/g,
-        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-      );
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function createBubble(key, msg){
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.dataset.key = key;
+    bubble.title = new Date(msg.timestamp).toLocaleString();
+
+    const textSpan = document.createElement('span');
+    textSpan.className = 'bubble-text';
+    textSpan.textContent = msg.text;
+    bubble.appendChild(textSpan);
+
+    if (isAdminUser) {
+      const del = document.createElement('button');
+      del.className = 'bubble-delete';
+      del.type = 'button';
+      del.title = 'Delete message';
+      del.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+      del.addEventListener('click', () => db.ref('messages/' + key).remove());
+      bubble.appendChild(del);
     }
-  </script>
+    return bubble;
+  }
+
+  function removeMessage(key){
+    const bubble = chatBox.querySelector(`.bubble[data-key="${key}"]`);
+    if (!bubble) return;
+    const stack = bubble.parentElement;
+    bubble.remove();
+    if (stack && stack.children.length === 0) {
+      const group = stack.closest('.msg-group');
+      if (group) group.remove();
+    }
+    if (chatBox.children.length === 0) {
+      chatBox.innerHTML = '<div class="empty-state">No messages yet — say something.</div>';
+    }
+  }
+
+  chatBox.innerHTML = '<div class="empty-state">No messages yet — say something.</div>';
+</script>
 </body>
 </html>
