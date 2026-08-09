@@ -1,13 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Chat App</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Chat App</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .app-container {
+    width: 100%;
+    max-width: 450px;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  #username-screen h1 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    color: #58a6ff;
+  }
+  #username-screen p {
+    font-size: 0.9rem;
+    color: #8b949e;
+    margin-bottom: 20px;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    color: #c9d1d9;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    outline: none;
+  }
+  input[type="text"]:focus {
+    border-color: #58a6ff;
+  }
+  button {
+    padding: 12px;
+    background-color: #238636;
+    border: none;
+    border-radius: 6px;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  button:hover {
+    background-color: #2ea043;
+  }
+  #join-btn {
+    width: 100%;
+  }
+  .chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 12px;
+    gap: 8px;
+  }
+  .badges {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  #user-badge {
+    font-size: 0.85rem;
+    background-color: #21262d;
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: #58a6ff;
+    white-space: nowrap;
+  }
+  #admin-badge {
+    font-size: 0.75rem;
+    background-color: #3d2d00;
+    border: 1px solid #d29922;
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: #d29922;
+    font-weight: bold;
+    letter-spacing: 0.03em;
+    display: none;
+    white-space: nowrap;
+  }
+  #chat-box {
+    height: 350px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 5px;
+    margin-bottom: 16px;
+  }
+  .msg {
+    background-color: #21262d;
+    padding: 10px 14px;
+    border-radius: 8px;
+    word-wrap: break-word;
+    position: relative;
+  }
+  .msg.admin-msg {
+    border: 1px solid #d29922;
+  }
+  .msg-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .msg-author {
+    font-weight: bold;
+    font-size: 0.85rem;
+    color: #58a6ff;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .msg-author .tag {
+    font-size: 0.65rem;
+    background-color: #3d2d00;
+    border: 1px solid #d29922;
+    color: #d29922;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+  .msg-text {
+    font-size: 0.95rem;
+    color: #e6edf3;
+  }
+  .delete-btn {
+    background: none;
+    border: none;
+    color: #8b949e;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    width: auto;
+    flex-shrink: 0;
+  }
+  .delete-btn:hover {
+    color: #f85149;
+    background: none;
+  }
+  #chat-form {
+    display: flex;
+    gap: 8px;
+  }
+  #chat-form input {
+    margin-bottom: 0;
+  }
+  #chat-form button {
+    width: 80px;
+  }
+  #admin-toolbar {
+    display: none;
+    margin-bottom: 12px;
+  }
+  #admin-toolbar button {
+    width: 100%;
+    background-color: #6e1a1a;
+  }
+  #admin-toolbar button:hover {
+    background-color: #8a2222;
+  }
+</style>
 </head>
 <body>
-
   <div class="app-container">
     <div id="username-screen">
       <h1>Welcome to Live Chat</h1>
@@ -15,11 +196,16 @@
       <input type="text" id="username-input" placeholder="e.g. Gamer123" maxlength="20">
       <button id="join-btn">Join Chat</button>
     </div>
-
     <div id="chat-screen" style="display: none;">
       <div class="chat-header">
         <h2>Global Chat</h2>
-        <span id="user-badge"></span>
+        <div class="badges">
+          <span id="admin-badge">ADMIN</span>
+          <span id="user-badge"></span>
+        </div>
+      </div>
+      <div id="admin-toolbar">
+        <button id="clear-all-btn" type="button">Clear all messages</button>
       </div>
       <div id="chat-box"></div>
       <form id="chat-form">
@@ -31,6 +217,133 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script src="app.js"></script>
+  <script>
+    // Your exact Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyANBev0K1e06T5aHBC5EKXaswbMwELSkkQ",
+      authDomain: "test-912a8.firebaseapp.com",
+      databaseURL: "https://test-912a8-default-rtdb.firebaseio.com",
+      projectId: "test-912a8",
+      storageBucket: "test-912a8.firebasestorage.app",
+      messagingSenderId: "990322948527",
+      appId: "1:990322948527:web:025a19c36a1e8ce7cad75a",
+      measurementId: "G-70LTDPV6HZ"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let currentUsername = "";
+    let isAdmin = false;
+
+    // The one username that gets admin status
+    const ADMIN_USERNAME = "brodanistheman";
+
+    // DOM Elements
+    const usernameScreen = document.getElementById('username-screen');
+    const chatScreen = document.getElementById('chat-screen');
+    const usernameInput = document.getElementById('username-input');
+    const joinBtn = document.getElementById('join-btn');
+    const userBadge = document.getElementById('user-badge');
+    const adminBadge = document.getElementById('admin-badge');
+    const adminToolbar = document.getElementById('admin-toolbar');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    const chatBox = document.getElementById('chat-box');
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+
+    // User joins chat
+    joinBtn.addEventListener('click', () => {
+      const username = usernameInput.value.trim();
+      if (username !== "") {
+        currentUsername = username;
+        isAdmin = username.toLowerCase() === ADMIN_USERNAME.toLowerCase();
+
+        userBadge.textContent = `@${currentUsername}`;
+        adminBadge.style.display = isAdmin ? 'inline-block' : 'none';
+        adminToolbar.style.display = isAdmin ? 'block' : 'none';
+
+        usernameScreen.style.display = 'none';
+        chatScreen.style.display = 'block';
+
+        listenForMessages();
+      }
+    });
+
+    // Allow pressing "Enter" on the username field
+    usernameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') joinBtn.click();
+    });
+
+    // Send message to Firebase
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = messageInput.value.trim();
+
+      if (text !== "") {
+        db.ref('messages').push({
+          username: currentUsername,
+          text: text,
+          isAdmin: isAdmin,
+          timestamp: Date.now()
+        });
+        messageInput.value = "";
+      }
+    });
+
+    // Admin: clear every message in the chat
+    clearAllBtn.addEventListener('click', () => {
+      if (!isAdmin) return;
+      if (confirm('Delete every message in this chat for everyone?')) {
+        db.ref('messages').remove();
+      }
+    });
+
+    // Listen for live updates and load saved message history
+    function listenForMessages() {
+      db.ref('messages').on('child_added', (snapshot) => {
+        displayMessage(snapshot.key, snapshot.val());
+      });
+      db.ref('messages').on('child_removed', (snapshot) => {
+        const el = chatBox.querySelector(`[data-key="${snapshot.key}"]`);
+        if (el) el.remove();
+      });
+    }
+
+    function displayMessage(key, msg) {
+      const msgElement = document.createElement('div');
+      msgElement.classList.add('msg');
+      if (msg.isAdmin) msgElement.classList.add('admin-msg');
+      msgElement.dataset.key = key;
+
+      msgElement.innerHTML = `
+        <div class="msg-top-row">
+          <div class="msg-author">
+            ${escapeHTML(msg.username)}
+            ${msg.isAdmin ? '<span class="tag">ADMIN</span>' : ''}
+          </div>
+          ${isAdmin ? '<button class="delete-btn" type="button" title="Delete message">✕</button>' : ''}
+        </div>
+        <div class="msg-text">${escapeHTML(msg.text)}</div>
+      `;
+
+      if (isAdmin) {
+        msgElement.querySelector('.delete-btn').addEventListener('click', () => {
+          db.ref('messages/' + key).remove();
+        });
+      }
+
+      chatBox.appendChild(msgElement);
+      chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to newest message
+    }
+
+    // Helper function to prevent HTML/script injection
+    function escapeHTML(str) {
+      return String(str).replace(/[&<>'"]/g,
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+  </script>
 </body>
 </html>
