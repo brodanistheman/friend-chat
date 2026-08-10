@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
-    /* Default (Light Mode) Variables */
     :root {
       --bg-color: #ffffff;
       --text-main: #000000ff;
@@ -18,18 +17,6 @@
       --paragraph-color: rgba(0, 0, 0, 0.59);
       --icon-bg: #f0f0f0ff;
       --icon-stroke: rgba(0, 0, 0, 0.8);
-    }
-
-    /* System Dark Mode Override */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #000000ff;
-        --text-main: #f8fafc;
-        --heading-color: rgba(255, 255, 255, 0.9);
-        --paragraph-color: rgba(255, 255, 255, 0.65);
-        --icon-bg: #ffffffff;
-        --icon-stroke: rgba(255, 255, 255, 0.85);
-      }
     }
 
     * {
@@ -61,7 +48,6 @@
       align-items: center; 
     }
 
-    /* Icon Container */
     .icon-wrapper {
       width: 44px;
       height: 44px;
@@ -84,7 +70,6 @@
       stroke-linejoin: round;
     }
 
-    /* Typography */
     h1 {
       font-size: 20px;
       font-weight: 600;
@@ -99,7 +84,6 @@
       color: var(--paragraph-color);
     }
 
-    /* Responsive adjustments for very small screens */
     @media (max-width: 480px) {
       body {
         padding: 16px;
