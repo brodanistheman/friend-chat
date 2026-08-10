@@ -10,6 +10,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
+    /* Default (Light Mode) Variables */
+    :root {
+      --bg-color: #ffffff;
+      --text-main: #000000ff;
+      --heading-color: rgba(0, 0, 0, 0.78);
+      --paragraph-color: rgba(0, 0, 0, 0.59);
+      --icon-bg: #f0f0f0ff;
+      --icon-stroke: rgba(0, 0, 0, 0.8);
+    }
+
+    /* System Dark Mode Override */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #000000ff;
+        --text-main: #f8fafc;
+        --heading-color: rgba(255, 255, 255, 0.9);
+        --paragraph-color: rgba(255, 255, 255, 0.65);
+        --icon-bg: #ffffffff;
+        --icon-stroke: rgba(255, 255, 255, 0.85);
+      }
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -17,9 +39,9 @@
     }
 
     body {
-      background-color: #ffffff;
+      background-color: var(--bg-color);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      color: #0f172a;
+      color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -27,6 +49,7 @@
       margin: 0;
       padding: 24px;
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .container {
@@ -42,19 +65,20 @@
     .icon-wrapper {
       width: 44px;
       height: 44px;
-      background-color: #f1f5f9;
+      background-color: var(--icon-bg);
       border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 16px;
       user-select: none;
+      transition: background-color 0.3s ease;
     }
 
     .icon-wrapper svg {
       width: 18px;
       height: 18px;
-      stroke: #000000cc;
+      stroke: var(--icon-stroke);
       stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -66,13 +90,13 @@
       font-weight: 600;
       letter-spacing: -0.02em;
       margin-bottom: 8px;
-      color: #000000c7;
+      color: var(--heading-color);
     }
 
     p {
       font-size: 14px;
       line-height: 1.5;
-      color: #00000096;
+      color: var(--paragraph-color);
     }
 
     /* Responsive adjustments for very small screens */
