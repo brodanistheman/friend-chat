@@ -395,6 +395,16 @@
   .lightbox-caption{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:var(--text-2);font-size:.85rem;}
   @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
+  /* HTML file preview: a sandboxed iframe rendering an uploaded .html file's
+     actual markup/CSS/JS, opened from the file card's preview button. */
+  .html-preview-overlay{position:fixed;inset:0;background:rgba(6,7,10,0.92);z-index:120;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .15s ease;}
+  .html-preview-panel{width:100%;max-width:1100px;height:100%;max-height:820px;background:#fff;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 80px -20px rgba(0,0,0,.8);}
+  .html-preview-bar{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 16px;background:var(--bg-elevated);border-bottom:1px solid var(--border);flex-shrink:0;}
+  .html-preview-bar-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+  .html-preview-bar-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.83rem;font-weight:700;color:var(--text-1);}
+  .html-preview-bar-note{font-size:0.71rem;color:var(--text-3);font-weight:500;}
+  .html-preview-panel iframe{flex:1;border:none;width:100%;background:#fff;}
+
   /* ---------- settings and admin/console pages ---------- */
   .panel-scroll{flex:1;overflow-y:auto;padding:32px 24px 60px;}
   .panel-scroll::-webkit-scrollbar{width:6px;}
@@ -1049,6 +1059,7 @@
   function replyIconSVG(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 17 4 12 9 7"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/></svg>'; }
   function editIconSVG(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'; }
   function trashIconSVG(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg>'; }
+  function eyeIconSVG(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>'; }
 
   // short, quiet notification beep -- generated in-browser so no external
   // audio asset is needed. Respects the Notification sound preference.
@@ -2144,6 +2155,67 @@
   }
 
   // =================================================================
+  // ===================== HTML FILE PREVIEW =============================
+  // A file attachment that is itself an .html page can be previewed live,
+  // the same way an image gets a lightbox. The markup runs inside a
+  // sandboxed iframe with scripts allowed but "allow-same-origin" withheld,
+  // so the previewed page executes in an isolated, cookie-less origin and
+  // can't touch Aurora's own session, storage, or Firebase connection.
+  // =================================================================
+  function isHtmlFile(msg){
+    if (!msg || !msg.fileName) return false;
+    if (msg.fileType === 'text/html') return true;
+    return /\.html?$/i.test(msg.fileName);
+  }
+  function dataUrlToText(dataUrl){
+    const commaIdx = dataUrl.indexOf(',');
+    const b64 = commaIdx >= 0 ? dataUrl.slice(commaIdx + 1) : dataUrl;
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  }
+  function openHtmlPreview(dataUrl, fileName){
+    let html;
+    try { html = dataUrlToText(dataUrl); }
+    catch (err) { toast('That file could not be previewed.', 'error'); return; }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'html-preview-overlay';
+    const panel = document.createElement('div');
+    panel.className = 'html-preview-panel';
+    const bar = document.createElement('div');
+    bar.className = 'html-preview-bar';
+    const barInfo = document.createElement('div');
+    barInfo.className = 'html-preview-bar-info';
+    const barName = document.createElement('div');
+    barName.className = 'html-preview-bar-name';
+    barName.textContent = fileName || 'preview.html';
+    const barNote = document.createElement('div');
+    barNote.className = 'html-preview-bar-note';
+    barNote.textContent = 'Sandboxed preview — scripts run isolated from your Aurora session';
+    barInfo.appendChild(barName); barInfo.appendChild(barNote);
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button'; closeBtn.className = 'icon-btn'; closeBtn.title = 'Close preview';
+    closeBtn.innerHTML = closeIconSVG();
+    bar.appendChild(barInfo); bar.appendChild(closeBtn);
+
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('sandbox', 'allow-scripts allow-modals allow-popups');
+    iframe.srcdoc = html;
+
+    panel.appendChild(bar); panel.appendChild(iframe);
+    overlay.appendChild(panel);
+
+    function close(){ overlay.remove(); document.removeEventListener('keydown', onKey); }
+    function onKey(e){ if (e.key === 'Escape') close(); }
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
+    closeBtn.addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
+    document.body.appendChild(overlay);
+  }
+
+  // =================================================================
   // ========================= MESSAGES =================================
   // =================================================================
   function updateAdminStats(){
@@ -2370,8 +2442,16 @@
     const ext = (msg.fileName || '').split('.').pop().toUpperCase().slice(0, 5) || 'FILE';
     metaEl.innerHTML = `<span class="file-badge">${escapeHTML(ext)}</span><span>${formatBytes(msg.fileSize)}</span>`;
     info.appendChild(nameEl); info.appendChild(metaEl);
+    wrap.appendChild(icon); wrap.appendChild(info);
+    if (isHtmlFile(msg)) {
+      const previewBtn = document.createElement('button');
+      previewBtn.type = 'button'; previewBtn.className = 'file-download'; previewBtn.title = 'Preview';
+      previewBtn.innerHTML = eyeIconSVG();
+      previewBtn.addEventListener('click', () => openHtmlPreview(msg.fileData, msg.fileName));
+      wrap.appendChild(previewBtn);
+    }
     const dl = document.createElement('a'); dl.className = 'file-download'; dl.href = msg.fileData; dl.download = msg.fileName || 'file'; dl.title = 'Download'; dl.innerHTML = downloadIconSVG();
-    wrap.appendChild(icon); wrap.appendChild(info); wrap.appendChild(dl);
+    wrap.appendChild(dl);
     return wrap;
   }
 
