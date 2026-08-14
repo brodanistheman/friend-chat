@@ -2035,6 +2035,24 @@
     } catch (err) { toast('That file could not be sent.', 'error'); }
   }
 
+  // Paste an image straight from the clipboard (screenshots, copied images,
+  // etc.) while the composer is focused -- sent the same way as an attached
+  // file. Plain text pastes are left completely untouched.
+  messageInput.addEventListener('paste', (e) => {
+    const items = (e.clipboardData && e.clipboardData.items) || [];
+    const imageFiles = [];
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.kind === 'file' && item.type && item.type.startsWith('image/')) {
+        const file = item.getAsFile();
+        if (file) imageFiles.push(file);
+      }
+    }
+    if (imageFiles.length === 0) return; // no image data on the clipboard -- let normal text paste happen
+    e.preventDefault();
+    imageFiles.forEach(file => { handleFileSelected(file); });
+  });
+
   // =================================================================
   // ===================== LINK EMBED DETECTION =========================
   // =================================================================
