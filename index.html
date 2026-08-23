@@ -3,18 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Aurora</title>
+<title>Aurora 2.0.0</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  /* ==========================================================================
-     DESIGN TOKENS
-     A single quiet neutral scale plus one accent color. No gradients anywhere.
-     Containers, buttons, and cards are fully rounded. Message bubbles carry
-     the one signature shape in the system: rounded on every outward edge,
-     drawn tight at the top left where they meet the sender's photo.
-     ========================================================================== */
   :root{
     --bg:#0B0C10;
     --bg-elevated:#111318;
@@ -77,12 +70,7 @@
     transition:border-color .15s ease;
   }
   .field::placeholder{color:var(--text-3);}
-  /* Focus states intentionally stay neutral -- no accent-colored ring on any
-     text input anywhere in the app. */
   .field:focus{border-color:var(--border-strong);box-shadow:none;outline:none;}
-  /* Password fields fall back to the system font so the masked dot glyph
-     renders at the correct size on mobile browsers instead of an oversized
-     fallback glyph. */
   input[type="password"].field{
     font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
@@ -126,7 +114,6 @@
   #app{height:100dvh;width:100%;}
   .view{height:100%;width:100%;}
 
-  /* ---------- standalone screens (auth, public profile) ---------- */
   .standalone-screen{display:none;align-items:center;justify-content:center;padding:20px;height:100%;overflow-y:auto;}
   .standalone-screen.active{display:flex;}
   .auth-card{
@@ -178,7 +165,6 @@
   .profile-back:hover{background:var(--surface-active);}
   .profile-notfound{font-size:0.9rem;color:var(--text-2);margin-bottom:22px;}
 
-  /* ---------- app shell (chat, settings, admin) ---------- */
   #view-shell{display:none;height:100%;width:100%;}
   #view-shell.active{display:flex;}
   #drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:39;}
@@ -235,7 +221,6 @@
   .panel{display:none;flex-direction:column;height:100%;width:100%;}
   .panel.active{display:flex;}
 
-  /* ---------- chat panel ---------- */
   .panel-header{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
   #menu-btn{display:none;}
   .header-title{flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
@@ -290,8 +275,6 @@
   .edited-tag{font-size:0.72rem;color:var(--text-3);font-weight:500;margin-left:5px;}
   .msg-group.own .edited-tag{color:rgba(245,247,255,0.55);}
 
-  /* Reply quote and preview: quiet, neutral surfaces with no colored corner
-     accents -- consistent with the rest of the app's flat, rounded language. */
   .reply-quote{display:flex;flex-direction:column;gap:1px;padding:7px 10px;margin-bottom:7px;background:var(--surface-active);border-radius:var(--radius-sm);cursor:pointer;transition:background .15s ease;}
   .reply-quote:hover{background:var(--surface-hover);}
   .msg-group.own .reply-quote{background:rgba(0,0,0,0.16);}
@@ -395,8 +378,6 @@
   .lightbox-caption{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:var(--text-2);font-size:.85rem;}
   @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 
-  /* HTML file preview: a sandboxed iframe rendering an uploaded .html file's
-     actual markup/CSS/JS, opened from the file card's preview button. */
   .html-preview-overlay{position:fixed;inset:0;background:rgba(6,7,10,0.92);z-index:120;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .15s ease;}
   .html-preview-panel{width:100%;max-width:1100px;height:100%;max-height:820px;background:#fff;border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 80px -20px rgba(0,0,0,.8);}
   .html-preview-bar{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 16px;background:var(--bg-elevated);border-bottom:1px solid var(--border);flex-shrink:0;}
@@ -405,7 +386,6 @@
   .html-preview-bar-note{font-size:0.71rem;color:var(--text-3);font-weight:500;}
   .html-preview-panel iframe{flex:1;border:none;width:100%;background:#fff;}
 
-  /* ---------- settings and admin/console pages ---------- */
   .panel-scroll{flex:1;overflow-y:auto;padding:32px 24px 60px;}
   .panel-scroll::-webkit-scrollbar{width:6px;}
   .panel-scroll::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
@@ -428,7 +408,6 @@
   .info-row span:first-child{color:var(--text-2);font-weight:500;}
   .info-row span:last-child{font-weight:600;}
 
-  /* preference toggle switches */
   .pref-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-top:1px solid var(--border);}
   .pref-row:first-of-type{border-top:none;padding-top:0;}
   .pref-row-text{flex:1;min-width:0;}
@@ -460,11 +439,22 @@
   }
   @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}}
 
-  /* compact message mode, toggled from Settings */
   body.compact-mode #chat-box{gap:6px;padding-top:14px;}
   body.compact-mode .bubble-stack{gap:2px;}
   body.compact-mode .bubble{padding:7px 12px;font-size:0.87rem;}
   body.compact-mode .group-body{gap:2px;}
+
+  .version-label{display:inline-flex;align-items:center;margin-left:8px;padding:3px 7px;border:1px solid var(--border);border-radius:6px;background:var(--inset);color:var(--text-3);font-size:.62rem;font-weight:700;letter-spacing:.04em;line-height:1;}
+  .management-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;}
+  .management-card{background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;}
+  .management-card h3{font-size:.9rem;margin-bottom:6px;}
+  .management-card p{color:var(--text-2);font-size:.78rem;line-height:1.5;}
+  .management-status{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--text-2);font-size:.76rem;}
+  .management-status-dot{width:7px;height:7px;border-radius:50%;background:var(--online);flex:0 0 auto;}
+  .security-notice{border:1px solid rgba(76,111,255,.28);background:var(--accent-soft);border-radius:var(--radius-sm);padding:14px 16px;margin-top:14px;}
+  .security-notice strong{display:block;font-size:.82rem;margin-bottom:4px;}
+  .security-notice span{display:block;color:var(--text-2);font-size:.76rem;line-height:1.5;}
+  @media(max-width:720px){.management-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -477,7 +467,6 @@
 
 <div id="app">
 
-  <!-- ================= AUTH (standalone) ================= -->
   <div id="view-auth" class="standalone-screen">
     <div class="auth-card">
       <div class="brand-mark">
@@ -530,12 +519,10 @@
     </div>
   </div>
 
-  <!-- ================= PUBLIC PROFILE (standalone, full page) ================= -->
   <div id="view-profile" class="standalone-screen">
     <div class="profile-card" id="profile-card-content"></div>
   </div>
 
-  <!-- ================= APP SHELL ================= -->
   <div id="view-shell">
     <div id="drawer-overlay"></div>
 
@@ -547,7 +534,7 @@
             <path d="M3 12c2-4 4-5.5 6-5.5s4 4 6 4 3-2.5 6-2.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" opacity="0.45"/>
           </svg>
         </div>
-        <span class="wordmark">Aurora</span>
+        <span class="wordmark">Aurora</span><span class="version-label">v2.0.0</span>
       </div>
 
       <nav class="side-nav">
@@ -580,7 +567,6 @@
 
     <main id="main">
 
-      <!-- ---------- chat panel ---------- -->
       <section id="panel-chat" class="panel">
         <header class="panel-header">
           <button id="menu-btn" class="icon-btn" type="button" title="Menu">
@@ -668,7 +654,6 @@
         </form>
       </section>
 
-      <!-- ---------- settings panel ---------- -->
       <section id="panel-settings" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -783,7 +768,6 @@
         </div>
       </section>
 
-      <!-- ---------- console (admin) panel ---------- -->
       <section id="panel-admin" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -817,6 +801,26 @@
                 <input type="text" id="admin-user-search" class="field" placeholder="Search people signed in">
               </div>
               <div id="admin-online-list" class="admin-user-list"></div>
+            </section>
+
+            
+            <section class="settings-card">
+              <h2>Site management</h2>
+              <p class="settings-help">Centralized controls and operational status for the Aurora workspace.</p>
+              <div class="management-grid">
+                <div class="management-card"><h3>Users</h3><p>Review active accounts and workspace presence.</p><div class="management-status"><span class="management-status-dot"></span><span>Live presence connected</span></div></div>
+                <div class="management-card"><h3>Messages</h3><p>Monitor message activity and workspace volume.</p><div class="management-status"><span class="management-status-dot"></span><span>Message listener active</span></div></div>
+                <div class="management-card"><h3>Files and media</h3><p>Monitor shared media and attachment activity.</p><div class="management-status"><span class="management-status-dot"></span><span>Media counters active</span></div></div>
+                <div class="management-card"><h3>Calls</h3><p>Monitor active voice and video sessions.</p><div class="management-status"><span class="management-status-dot"></span><span>Call presence active</span></div></div>
+              </div>
+            </section>
+            <section class="settings-card">
+              <h2>Security status</h2>
+              <div class="security-notice"><strong>Frontend security boundary</strong><span>The interface is structured for authenticated access, but Firebase database rules and a trusted backend must enforce authorization. Client side checks are not treated as sufficient security.</span></div>
+              <div class="info-row"><span>Application version</span><span>2.0.0</span></div>
+              <div class="info-row"><span>Authentication</span><span>Configured</span></div>
+              <div class="info-row"><span>Realtime database</span><span>Connected</span></div>
+              <div class="info-row"><span>Administrative authorization</span><span>Requires server rules</span></div>
             </section>
 
             <section class="settings-card danger-card">
@@ -881,28 +885,16 @@
 
   let typingTimeout = null;
   let isTyping = false;
-
-  // voice recording state
   let mediaRecorder = null, recordedChunks = [], recordingStream = null, recordingMime = "";
   let isRecording = false, pendingSend = false, recordingStartTime = 0, recordingTimerInterval = null;
-
-  // emoji autocomplete state (shortcode typing assist only)
   let autocompleteMatches = [], autocompleteIndex = -1, autocompleteRange = null;
-
-  // spam and flood safeguards
   let recentSentLog = [];
   let recentIncoming = [];
-
-  // admin console analytics (running counters, kept in sync with the messages listener)
   let totalMessageCount = 0;
   let totalMediaCount = 0;
   let adminSearchQuery = '';
-
-  // per-user preferences, mirrored to profiles/{key}.preferences and cached locally
   let prefs = { sound: true, sendEnter: true, embeds: true, compact: false };
   let messageCache = {}; // key -> raw message object, needed to redraw on edits
-
-  // ---------- DOM refs ----------
   const viewAuth = document.getElementById('view-auth');
   const viewProfile = document.getElementById('view-profile');
   const viewShell = document.getElementById('view-shell');
@@ -1000,10 +992,6 @@
   const adminOnlineList = document.getElementById('admin-online-list');
   const adminUserSearch = document.getElementById('admin-user-search');
   const adminClearBtn = document.getElementById('admin-clear-btn');
-
-  // =================================================================
-  // ========================= HELPERS ==================================
-  // =================================================================
   function escapeHTML(str){
     return String(str).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t));
   }
@@ -1060,9 +1048,6 @@
   function editIconSVG(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'; }
   function trashIconSVG(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg>'; }
   function eyeIconSVG(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>'; }
-
-  // short, quiet notification beep -- generated in-browser so no external
-  // audio asset is needed. Respects the Notification sound preference.
   let audioCtx = null;
   function playNotificationSound(){
     if (!prefs.sound) return;
@@ -1081,10 +1066,6 @@
       osc.start(now); osc.stop(now + 0.24);
     } catch (err) { /* audio not available, ignore */ }
   }
-
-  // =================================================================
-  // ===================== CRYPTO / PASSWORD HELPERS ===================
-  // =================================================================
   async function sha256Hex(str){
     const enc = new TextEncoder().encode(str);
     const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -1107,10 +1088,6 @@
     const computed = await hashPassword(password, user.salt);
     return computed === user.hash;
   }
-
-  // =================================================================
-  // ===================== GOOGLE SIGN IN ================================
-  // =================================================================
   function base64UrlDecode(str){
     str = str.replace(/-/g, '+').replace(/_/g, '/');
     while (str.length % 4) str += '=';
@@ -1172,10 +1149,6 @@
     }
   }
   window.handleCredentialResponse = handleCredentialResponse;
-
-  // Render both Google buttons at a width that always matches the primary
-  // buttons below them (which are width:100% of the card). GIS only accepts
-  // a fixed pixel width, so we measure the container and re-render on resize.
   let googleButtonsReady = false;
   function renderOneGoogleButton(slotId, text){
     const el = document.getElementById(slotId);
@@ -1205,10 +1178,6 @@
   }
   window.addEventListener('resize', () => { if (googleButtonsReady) renderGoogleButtons(); });
   initGoogleButtons();
-
-  // =================================================================
-  // ============================ ROUTING ===============================
-  // =================================================================
   function profilePathFor(id){ return '/users/' + id + '/profile'; }
   function profileUrlFor(id){ return location.origin + profilePathFor(id); }
 
@@ -1276,9 +1245,6 @@
     e.preventDefault();
     navigate(href);
   });
-
-  // Public profiles always render as a dedicated full page at /users/:id --
-  // there is no modal/popup variant anywhere in the app.
   async function renderPublicProfile(id){
     const holder = document.getElementById('profile-card-content');
     holder.innerHTML = '<div class="hint muted" style="justify-content:center;">Loading profile…</div>';
@@ -1308,10 +1274,6 @@
       holder.innerHTML = '<div class="profile-notfound">This profile could not be loaded right now.</div><a class="profile-back" href="/" data-route="/">Back to Aurora</a>';
     }
   }
-
-  // =================================================================
-  // ========================= AVATARS ================================
-  // =================================================================
   function applyAvatarVisual(el){
     const key = el.dataset.avatarKey;
     const name = el.dataset.avatarName || key || '';
@@ -1326,10 +1288,6 @@
     }
   }
   function refreshAllAvatars(){ document.querySelectorAll('[data-avatar-key]').forEach(applyAvatarVisual); }
-
-  // =================================================================
-  // ================== IMAGE COMPRESSION =================
-  // =================================================================
   function blobToDataURL(blob){
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -1339,8 +1297,6 @@
     });
   }
   function compressImage(file, maxDim, quality, forceJpeg){
-    // Animated GIFs always pass through untouched so they keep playing,
-    // in message attachments and in profile photos alike.
     if (file.type === 'image/gif') return blobToDataURL(file);
     return new Promise((resolve, reject) => {
       const img = new Image();
@@ -1365,10 +1321,6 @@
       img.src = objectUrl;
     });
   }
-
-  // =================================================================
-  // ===================== EMOJI SHORTCODE DATA =========================
-  // =================================================================
   const EMOJI_GROUPS = [
     { label: 'Smileys', items: [
       ['smile','😄'],['laughing','😆'],['joy','😂'],['rofl','🤣'],['grin','😁'],['wink','😉'],['blush','😊'],
@@ -1473,10 +1425,6 @@
     }
     hideEmojiAutocomplete();
   }
-
-  // =================================================================
-  // ========================= AUTH TABS ================================
-  // =================================================================
   authTabs.forEach(tab => tab.addEventListener('click', () => {
     authTabs.forEach(t => t.classList.toggle('active', t === tab));
     authSections.forEach(s => s.classList.toggle('active', s.dataset.section === tab.dataset.tab));
@@ -1612,10 +1560,6 @@
       setButtonLoading(loginBtnLabel, false, 'Log in'); loginBtn.disabled = false;
     }
   });
-
-  // =================================================================
-  // ===================== PRESENCE (reconnect safe) ====================
-  // =================================================================
   let presenceStatus = 'online';
   function setupPresence(){
     const presenceRef = db.ref('presence/' + currentKey);
@@ -1692,10 +1636,6 @@
 
   menuBtn.addEventListener('click', () => { sidebar.classList.add('open'); drawerOverlay.classList.add('open'); });
   drawerOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); drawerOverlay.classList.remove('open'); });
-
-  // =================================================================
-  // ===================== PREFERENCES ==================================
-  // =================================================================
   function applyPrefsToUI(){
     document.body.classList.toggle('compact-mode', !!prefs.compact);
     if (prefSoundToggle) prefSoundToggle.checked = prefs.sound !== false;
@@ -1727,10 +1667,6 @@
     prefEmbedsToggle.addEventListener('change', () => savePref('embeds', prefEmbedsToggle.checked));
     prefCompactToggle.addEventListener('change', () => savePref('compact', prefCompactToggle.checked));
   }
-
-  // =================================================================
-  // ===================== PRESENCE / PROFILES ==========================
-  // =================================================================
   function renderOnlineRows(){
     const rows = [];
     const adminRows = [];
@@ -1751,8 +1687,6 @@
           '<span class="user-row-name">' + escapeHTML(name) + '</span>' +
         '</a>'
       );
-      // Console's "People signed in" list is intentionally not clickable and
-      // supports a live text search -- see renderAdminOnlineRows below.
       if (!adminSearchQuery || name.toLowerCase().includes(adminSearchQuery) || key.includes(adminSearchQuery)) {
         adminRows.push(
           '<div class="admin-user-row">' +
@@ -1795,10 +1729,6 @@
       if (currentKey) loadPrefsFromProfile(profilesCache[currentKey]);
     });
   }
-
-  // =================================================================
-  // ========================= TYPING ==================================
-  // =================================================================
   function onComposerChanged(){
     autoGrow();
     const len = messageInput.value.length;
@@ -1851,10 +1781,6 @@
       }
     });
   }
-
-  // =================================================================
-  // ============================ REPLIES ================================
-  // =================================================================
   function summarizeMessageForReply(msg){
     if (msg.type === 'text') { const t = (msg.text || '').trim(); return t.length > 90 ? t.slice(0, 90) + '…' : t; }
     if (msg.type === 'image') return 'Photo';
@@ -1887,10 +1813,6 @@
     target.classList.add('bubble-flash');
     setTimeout(() => target.classList.remove('bubble-flash'), 900);
   }
-
-  // =================================================================
-  // ================== SPAM AND CHARACTER SAFEGUARDS ===================
-  // =================================================================
   function isRepetitiveText(text){
     const trimmed = text.trim();
     if (trimmed.length < 8) return false;
@@ -1925,10 +1847,6 @@
       recentIncoming = recentIncoming.filter(m => !(m.username === msg.username && m.text === msg.text));
     }
   }
-
-  // =================================================================
-  // ===================== SENDING & EDITING TEXT MESSAGES =============
-  // =================================================================
   chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
     let text = messageInput.value.trim();
@@ -2005,10 +1923,6 @@
       toast('The chat has been cleared for everyone.');
     }
   });
-
-  // =================================================================
-  // ========================= FILE UPLOADS =============================
-  // =================================================================
   attachBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
@@ -2034,10 +1948,6 @@
       cancelReply();
     } catch (err) { toast('That file could not be sent.', 'error'); }
   }
-
-  // Paste an image straight from the clipboard (screenshots, copied images,
-  // etc.) while the composer is focused -- sent the same way as an attached
-  // file. Plain text pastes are left completely untouched.
   messageInput.addEventListener('paste', (e) => {
     const items = (e.clipboardData && e.clipboardData.items) || [];
     const imageFiles = [];
@@ -2052,10 +1962,6 @@
     e.preventDefault();
     imageFiles.forEach(file => { handleFileSelected(file); });
   });
-
-  // =================================================================
-  // ===================== LINK EMBED DETECTION =========================
-  // =================================================================
   function classifyUrl(rawUrl){
     let u;
     try { u = new URL(rawUrl); } catch (err) { return null; }
@@ -2146,10 +2052,6 @@
     });
     if (lastIndex < text.length) container.appendChild(document.createTextNode(text.slice(lastIndex)));
   }
-
-  // =================================================================
-  // ========================= LIGHTBOX =================================
-  // =================================================================
   function openLightbox(src, label){
     const overlay = document.createElement('div');
     overlay.className = 'lightbox-overlay';
@@ -2171,15 +2073,6 @@
     document.addEventListener('keydown', onKey);
     document.body.appendChild(overlay);
   }
-
-  // =================================================================
-  // ===================== HTML FILE PREVIEW =============================
-  // A file attachment that is itself an .html page can be previewed live,
-  // the same way an image gets a lightbox. The markup runs inside a
-  // sandboxed iframe with scripts allowed but "allow-same-origin" withheld,
-  // so the previewed page executes in an isolated, cookie-less origin and
-  // can't touch Aurora's own session, storage, or Firebase connection.
-  // =================================================================
   function isHtmlFile(msg){
     if (!msg || !msg.fileName) return false;
     if (msg.fileType === 'text/html') return true;
@@ -2232,10 +2125,6 @@
     document.addEventListener('keydown', onKey);
     document.body.appendChild(overlay);
   }
-
-  // =================================================================
-  // ========================= MESSAGES =================================
-  // =================================================================
   function updateAdminStats(){
     if (adminStatMessages) adminStatMessages.textContent = totalMessageCount;
     if (adminStatMedia) adminStatMedia.textContent = totalMediaCount;
@@ -2481,10 +2370,6 @@
     if (stack && stack.children.length === 0) { const group = stack.closest('.msg-group'); if (group) group.remove(); }
     if (chatBox.children.length === 0) chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
   }
-
-  // =================================================================
-  // ======================= VOICE MESSAGES =========================
-  // =================================================================
   function pickAudioMime(){
     const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
     if (!window.MediaRecorder || !MediaRecorder.isTypeSupported) return '';
@@ -2542,15 +2427,6 @@
       cancelReply();
     } catch (err) { toast('That voice message could not be sent. Please try again.', 'error'); }
   }
-
-  // =================================================================
-  // =============== GROUP VOICE / VIDEO CALL (full mesh) =============
-  // Every active participant watches every OTHER active participant's
-  // broadcast: when the set of live callers changes (someone joins or
-  // leaves), each active participant's watch list is re-synced against
-  // that set. That two-way wiring -- previously missing -- is what makes
-  // this true multi-way calling instead of one-way audio/video.
-  // =================================================================
   function createCallChannel(config){
     const state = { active: false, localStream: null, peers: {}, peerListenerRefs: {}, watching: {}, watchListenerRefs: {}, lastLiveItems: {} };
 
@@ -2572,9 +2448,6 @@
       db.ref(`${config.watchNode}/${currentKey}`).on('child_added', snap => createOfferFor(snap.key));
       db.ref(`${config.watchNode}/${currentKey}`).on('child_removed', snap => teardownPeer(snap.key));
       config.onStateChange && config.onStateChange();
-
-      // Watch everyone who was already live before we joined, and keep
-      // watching in sync with the roster from here on via onLiveChange.
       syncWatchedPeers(state.lastLiveItems);
     }
 
@@ -2658,10 +2531,6 @@
       db.ref(`${config.rtcNode}/${broadcasterKey}/${currentKey}`).remove();
       config.onWatchStop && config.onWatchStop(broadcasterKey);
     }
-
-    // Reconciles state.watching against the current live roster. Only runs
-    // while we're an active participant -- you must join the call to see or
-    // be seen by others, matching the explicit "Join the call" affordance.
     function syncWatchedPeers(items){
       if (!state.active) return;
       Object.keys(items).forEach(peerKey => {
@@ -2731,10 +2600,6 @@
       video.play().catch(() => { video.muted = true; video.play().catch(() => {}); });
     };
   }
-
-  // Clear, non-generic call status: a header pill anyone can see (even
-  // before joining) showing how many people are in the call, plus a text
-  // line of participant names above the tile grid once you're watching.
   function updateCallStatusUI(items){
     const names = Object.keys(items).map(k => (k === currentKey ? 'You' : getDisplayName(k, items[k].display)));
     const count = names.length;
@@ -2792,10 +2657,6 @@
     onLiveChange: (items) => { liveCalls = items; updateCallStatusUI(items); }
   });
   callToggleBtn.addEventListener('click', () => { if (callChannel.state.active) callChannel.stop(); else callChannel.start(); });
-
-  // =================================================================
-  // ========================= SETTINGS PANEL ============================
-  // =================================================================
   let settingsHandlersReady = false;
   function initSettingsHandlers(){
     if (settingsHandlersReady) return;
@@ -2900,10 +2761,6 @@
     settingsCurrentPassword.value = ''; settingsNewPassword.value = ''; settingsConfirmPassword.value = ''; settingsDeletePassword.value = '';
     loadPrefsFromProfile(profile);
   }
-
-  // =================================================================
-  // ========================= CONSOLE (ADMIN) ==============================
-  // =================================================================
   let adminHandlersReady = false;
   function initAdminHandlers(){
     if (adminHandlersReady) return;
@@ -2919,10 +2776,6 @@
     renderOnlineRows();
     updateAdminStats();
   }
-
-  // =================================================================
-  // ============================= BOOT =================================
-  // =================================================================
   renderRoute();
 </script>
 </body>
