@@ -516,11 +516,10 @@
   .security-notice span{display:block;color:var(--text-2);font-size:.76rem;line-height:1.5;}
   @media(max-width:720px){.management-grid{grid-template-columns:1fr;}}
 
-  .tenor-gif-wrap{display:flex;flex-direction:column;gap:6px;width:min(420px,100%);max-width:100%;overflow:hidden;border-radius:14px;background:var(--surface);border:1px solid var(--border);padding:6px;}
-  .tenor-gif-wrap .tenor-gif-embed{width:100%;margin:0!important;}
-  .tenor-source{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 6px 2px;font-size:.72rem;color:var(--text-3);}
-  .tenor-source a{color:var(--accent-hover);text-decoration:none;}
-  .tenor-source a:hover{text-decoration:underline;}
+  .tenor-gif-wrap{display:block;width:min(620px,100%);max-width:100%;margin:4px 0 2px;overflow:hidden;border-radius:14px;background:var(--surface);border:1px solid var(--border);}
+  .tenor-gif-wrap .tenor-gif-embed{display:block!important;width:100%!important;max-width:none!important;margin:0!important;min-height:320px;}
+  .tenor-gif-wrap .tenor-gif-embed iframe{display:block!important;width:100%!important;max-width:none!important;border:0!important;}
+  .tenor-gif-wrap .tenor-gif-embed > a{display:block;min-height:320px;}
 </style>
 </head>
 <body>
@@ -589,7 +588,7 @@
     <div class="profile-page-shell">
       <main class="profile-page-content">
         <div class="profile-top">
-          <div class="profile-top-brand">Aurora <span class="version-label">v2.0.2</span></div>
+          <div class="profile-top-brand">Aurora <span class="version-label">v2.0.3</span></div>
           <div class="profile-top-actions">
             <a class="profile-top-link" href="/" data-route="/">Back to Aurora</a>
           </div>
@@ -610,7 +609,7 @@
             <path d="M3 12c2-4 4-5.5 6-5.5s4 4 6 4 3-2.5 6-2.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" opacity="0.45"/>
           </svg>
         </div>
-        <span class="wordmark">Aurora</span><span class="version-label">v2.0.2</span>
+        <span class="wordmark">Aurora</span><span class="version-label">v2.0.3</span>
       </div>
 
       <nav class="side-nav">
@@ -2188,27 +2187,30 @@
     embed.className = 'tenor-gif-embed';
     embed.dataset.postid = msg.gifPostId;
     embed.dataset.shareMethod = 'host';
+    embed.dataset.aspectRatio = msg.gifAspectRatio || '1.39888';
     embed.dataset.width = '100%';
-    embed.innerHTML = '<a href="' + escapeHTML(msg.gifUrl) + '" target="_blank" rel="noopener noreferrer">View GIF on Tenor</a>';
-    wrap.appendChild(embed);
-    const source = document.createElement('div');
-    source.className = 'tenor-source';
-    const label = document.createElement('span');
-    label.textContent = 'GIF';
     const link = document.createElement('a');
-    link.href = msg.gifUrl; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = 'Tenor';
-    source.appendChild(label); source.appendChild(link);
-    wrap.appendChild(source);
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.src = 'https://tenor.com/embed.js';
-    wrap.appendChild(script);
+    link.href = msg.gifUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'View GIF on Tenor';
+    embed.appendChild(link);
+    wrap.appendChild(embed);
     return wrap;
   }
   function renderTenorEmbed(container, msg){
     const node = buildTenorGif(msg);
     container.appendChild(node);
+    if (window.Tenor && typeof window.Tenor.process === 'function') {
+      try { window.Tenor.process(); } catch (err) {}
+    } else if (!document.querySelector('script[data-aurora-tenor]')) {
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src = 'https://tenor.com/embed.js';
+      script.dataset.auroraTenor = 'true';
+      document.head.appendChild(script);
+    }
   }
   function renderMessageText(container, text){
     const matches = [...text.matchAll(/(https?:\/\/[^\s<]+)/gi)];
