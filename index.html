@@ -154,15 +154,47 @@
   .auth-divider{display:flex;align-items:center;gap:10px;margin-bottom:16px;color:var(--text-3);font-size:0.76rem;font-weight:600;}
   .auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--border);}
 
-  .profile-card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:34px;text-align:center;box-shadow:0 40px 90px -30px rgba(0,0,0,0.6);margin:auto;}
-  .profile-avatar{width:88px;height:88px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;font-weight:700;color:var(--on-accent);border:1px solid var(--border-strong);overflow:hidden;background-size:cover;background-position:center;}
-  .profile-card h1{font-size:1.25rem;font-weight:800;margin-bottom:4px;}
-  .profile-handle{font-size:0.85rem;color:var(--text-2);font-weight:600;margin-bottom:14px;}
-  .profile-id{font-size:0.76rem;color:var(--text-3);font-weight:600;margin-bottom:16px;font-variant-numeric:tabular-nums;letter-spacing:0.03em;}
-  .profile-bio{font-size:0.87rem;color:var(--text-1);line-height:1.6;margin-bottom:20px;text-align:left;}
-  .profile-meta{font-size:0.85rem;color:var(--text-2);margin-bottom:24px;}
-  .profile-back{display:inline-flex;color:var(--text-1);background:var(--surface-hover);border:1px solid var(--border-strong);border-radius:var(--radius-full);padding:11px 22px;font-size:0.85rem;font-weight:700;text-decoration:none;}
-  .profile-back:hover{background:var(--surface-active);}
+  .profile-page-view{display:none;min-height:100vh;background:var(--bg);overflow-y:auto;}
+  .profile-page-view.active{display:block;}
+  .profile-page-shell{min-height:100vh;width:100%;}
+  .profile-page-topbar{height:68px;border-bottom:1px solid var(--border);background:rgba(11,12,16,0.94);display:flex;align-items:center;justify-content:space-between;padding:0 34px;position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);}
+  .profile-brand{display:flex;align-items:center;gap:10px;color:var(--text-1);font-weight:800;text-decoration:none;font-size:.98rem;}
+  .profile-brand .brand-mark{width:30px;height:30px;display:grid;place-items:center;}
+  .profile-brand .brand-mark svg{width:24px;height:24px;}
+  .profile-page-back{color:var(--text-2);text-decoration:none;font-size:.82rem;font-weight:700;border:1px solid var(--border-strong);padding:9px 14px;border-radius:var(--radius-md);background:var(--surface);}
+  .profile-page-back:hover{color:var(--text-1);background:var(--surface-hover);}
+  .profile-page-content{width:min(1080px,calc(100% - 40px));margin:34px auto 70px;}
+  .profile-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+  .profile-cover{height:210px;background:linear-gradient(135deg,rgba(76,111,255,.2),rgba(76,111,255,.03) 55%,var(--surface));border-bottom:1px solid var(--border);position:relative;}
+  .profile-cover-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:32px 32px;opacity:.7;}
+  .profile-identity{display:grid;grid-template-columns:132px 1fr;gap:24px;padding:0 34px 30px;position:relative;}
+  .profile-avatar-large{width:132px;height:132px;border-radius:50%;margin-top:-66px;border:5px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:2.3rem;font-weight:800;color:var(--on-accent);overflow:hidden;background-size:cover;background-position:center;position:relative;z-index:2;}
+  .profile-avatar-large img{width:100%;height:100%;object-fit:cover;}
+  .profile-identity-copy{padding-top:22px;min-width:0;}
+  .profile-name-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .profile-name-row h1{font-size:1.8rem;line-height:1.2;font-weight:850;letter-spacing:-.025em;margin:0;}
+  .profile-handle{font-size:.9rem;color:var(--text-2);font-weight:600;margin-top:5px;}
+  .profile-id{font-size:.73rem;color:var(--text-3);font-weight:700;margin-top:10px;font-variant-numeric:tabular-nums;letter-spacing:.05em;}
+  .profile-layout{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:18px;margin-top:18px;}
+  .profile-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px;}
+  .profile-section h2{font-size:.92rem;font-weight:800;margin:0 0 18px;color:var(--text-1);}
+  .profile-bio{font-size:.94rem;color:var(--text-1);line-height:1.75;margin:0;white-space:pre-wrap;word-break:break-word;}
+  .profile-empty{font-size:.88rem;color:var(--text-3);line-height:1.6;}
+  .profile-detail-list{display:flex;flex-direction:column;}
+  .profile-detail{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding:14px 0;border-bottom:1px solid var(--border);}
+  .profile-detail:first-child{padding-top:0;}
+  .profile-detail:last-child{border-bottom:0;padding-bottom:0;}
+  .profile-detail-label{font-size:.75rem;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+  .profile-detail-value{font-size:.84rem;color:var(--text-1);font-weight:650;text-align:right;word-break:break-word;}
+  .profile-page-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+  .profile-page-action{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;color:var(--text-1);background:var(--surface);border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:10px 15px;font-size:.82rem;font-weight:750;}
+  .profile-page-action:hover{background:var(--surface-hover);}
+  .profile-notfound{max-width:720px;margin:100px auto;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:48px;}
+  .profile-notfound-title{font-size:1.35rem;font-weight:800;margin-bottom:8px;}
+  .profile-notfound-text{font-size:.88rem;color:var(--text-2);margin-bottom:24px;}
+  .profile-back{display:inline-flex;color:var(--text-1);background:var(--surface-hover);border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:11px 18px;font-size:.84rem;font-weight:750;text-decoration:none;}
+  .profile-page-loading{min-height:420px;display:grid;place-items:center;color:var(--text-3);font-size:.9rem;}
+  @media(max-width:760px){.profile-page-topbar{padding:0 18px}.profile-page-content{width:calc(100% - 24px);margin-top:18px}.profile-cover{height:150px}.profile-identity{grid-template-columns:92px 1fr;gap:16px;padding:0 18px 22px}.profile-avatar-large{width:92px;height:92px;margin-top:-46px;border-width:4px;font-size:1.6rem}.profile-identity-copy{padding-top:16px}.profile-name-row h1{font-size:1.35rem}.profile-layout{grid-template-columns:1fr}.profile-section{padding:20px}.profile-page-back{padding:8px 10px}.profile-brand .version-label{display:none}}
   .profile-notfound{font-size:0.9rem;color:var(--text-2);margin-bottom:22px;}
 
   #view-shell{display:none;height:100%;width:100%;}
@@ -519,8 +551,19 @@
     </div>
   </div>
 
-  <div id="view-profile" class="standalone-screen">
-    <div class="profile-card" id="profile-card-content"></div>
+  <div id="view-profile" class="standalone-screen profile-page-view">
+    <div class="profile-page-shell">
+      <header class="profile-page-topbar">
+        <a class="profile-brand" href="/" data-route="/">
+          <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none"><path d="M3 17c2-3 4-4 6-4s4 3 6 3 3-2 6-2" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/><path d="M3 12c2-4 4-5.5 6-5.5s4 4 6 4 3-2.5 6-2.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" opacity="0.45"/></svg></span>
+          <span>Aurora</span><span class="version-label">v2.0.0</span>
+        </a>
+        <a class="profile-page-back" href="/" data-route="/">Return to Aurora</a>
+      </header>
+      <main class="profile-page-content">
+        <div class="profile-page-loading" id="profile-card-content">Loading profile…</div>
+      </main>
+    </div>
   </div>
 
   <div id="view-shell">
@@ -1247,31 +1290,25 @@
   });
   async function renderPublicProfile(id){
     const holder = document.getElementById('profile-card-content');
-    holder.innerHTML = '<div class="hint muted" style="justify-content:center;">Loading profile…</div>';
+    holder.innerHTML = '<div class="profile-page-loading">Loading profile…</div>';
     try {
       const snap = await db.ref('users/' + id).once('value');
       const user = snap.val();
       if (!user) {
-        holder.innerHTML = '<div class="profile-notfound">No account matches account number ' + escapeHTML(id) + '.</div><a class="profile-back" href="/" data-route="/">Back to Aurora</a>';
+        holder.innerHTML = '<div class="profile-notfound"><div class="profile-notfound-title">Profile not found</div><div class="profile-notfound-text">No account matches account number ' + escapeHTML(id) + '.</div><a class="profile-back" href="/" data-route="/">Return to Aurora</a></div>';
         return;
       }
       const lower = user.usernameLower;
       const profSnap = await db.ref('profiles/' + lower).once('value');
       const prof = profSnap.val() || {};
-      const avatarInner = prof.avatarData
-        ? `<img src="${prof.avatarData}" alt="" style="width:100%;height:100%;object-fit:cover;">`
-        : '';
       const displayName = prof.displayName || user.username;
-      holder.innerHTML =
-        `<div class="profile-avatar" style="${prof.avatarData ? '' : avatarStyle(user.username)}">${prof.avatarData ? avatarInner : initials(user.username)}</div>` +
-        `<h1>${escapeHTML(displayName)}</h1>` +
-        `<div class="profile-handle">@${escapeHTML(user.username)}</div>` +
-        `<div class="profile-id">ACCOUNT NO. ${escapeHTML(String(id))}</div>` +
-        (prof.bio ? `<p class="profile-bio">${escapeHTML(prof.bio)}</p>` : '') +
-        `<div class="profile-meta">Member since ${new Date(user.createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'})}</div>` +
-        `<a class="profile-back" href="/" data-route="/">Back to Aurora</a>`;
+      const memberDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
+      const avatar = prof.avatarData ? '<img src="' + escapeHTML(prof.avatarData) + '" alt="' + escapeHTML(displayName) + ' profile photo">' : initials(user.username);
+      const avatarStyleValue = prof.avatarData ? '' : avatarStyle(user.username);
+      const bio = prof.bio ? '<p class="profile-bio">' + escapeHTML(prof.bio) + '</p>' : '<div class="profile-empty">This user has not added a biography yet.</div>';
+      holder.innerHTML = '<article class="profile-hero"><div class="profile-cover"><div class="profile-cover-grid"></div></div><div class="profile-identity"><div class="profile-avatar-large" style="' + avatarStyleValue + '">' + avatar + '</div><div class="profile-identity-copy"><div class="profile-name-row"><h1>' + escapeHTML(displayName) + '</h1></div><div class="profile-handle">@' + escapeHTML(user.username) + '</div><div class="profile-id">ACCOUNT NO. ' + escapeHTML(String(id)) + '</div></div></div></article><div class="profile-layout"><section class="profile-section"><h2>About</h2>' + bio + '</section><aside class="profile-section"><h2>Account information</h2><div class="profile-detail-list"><div class="profile-detail"><span class="profile-detail-label">Username</span><span class="profile-detail-value">@' + escapeHTML(user.username) + '</span></div><div class="profile-detail"><span class="profile-detail-label">Account number</span><span class="profile-detail-value">' + escapeHTML(String(id)) + '</span></div><div class="profile-detail"><span class="profile-detail-label">Member since</span><span class="profile-detail-value">' + escapeHTML(memberDate) + '</span></div></div></aside></div><div class="profile-page-actions"><a class="profile-page-action" href="/" data-route="/">Return to Aurora</a></div>';
     } catch (err) {
-      holder.innerHTML = '<div class="profile-notfound">This profile could not be loaded right now.</div><a class="profile-back" href="/" data-route="/">Back to Aurora</a>';
+      holder.innerHTML = '<div class="profile-notfound"><div class="profile-notfound-title">Profile unavailable</div><div class="profile-notfound-text">This profile could not be loaded right now.</div><a class="profile-back" href="/" data-route="/">Return to Aurora</a></div>';
     }
   }
   function applyAvatarVisual(el){
