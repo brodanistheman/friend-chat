@@ -177,7 +177,7 @@
   .profile-meta-line{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:16px;color:var(--text-3);font-size:.78rem;font-weight:650;}
   .profile-meta-item{display:inline-flex;align-items:center;gap:7px;}
   .profile-hero-actions{margin-left:auto;align-self:center;}
-  .profile-edit-btn{display:none;align-items:center;justify-content:center;text-decoration:none;background:var(--accent);color:var(--on-accent);border:0;border-radius:9px;padding:11px 16px;font-size:.82rem;font-weight:800;white-space:nowrap;}
+  .profile-edit-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:var(--accent);color:var(--on-accent);border:0;border-radius:9px;padding:11px 16px;font-size:.82rem;font-weight:800;white-space:nowrap;}
   .profile-edit-btn:hover{background:var(--accent-hover);}
   .profile-layout{width:min(1240px,calc(100% - 80px));margin:0 auto;padding-top:30px;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start;}
   .profile-column{display:flex;flex-direction:column;gap:20px;min-width:0;}
@@ -200,7 +200,7 @@
   .profile-side-label{font-size:.78rem;color:var(--text-3);font-weight:650;}
   .profile-side-value{font-size:.78rem;color:var(--text-1);font-weight:700;text-align:right;word-break:break-word;}
   .profile-side-note{font-size:.82rem;color:var(--text-2);line-height:1.65;margin:0;}
-  .profile-editor{display:none;margin-top:20px;background:#0f1218;border:1px solid #2a3040;border-radius:16px;padding:26px;}
+  .profile-upload-row{display:flex;align-items:center;gap:16px;padding:14px;background:#090b10;border:1px solid #2b303b;border-radius:12px;} .profile-editor-avatar-preview{width:72px;height:72px;border-radius:50%;overflow:hidden;display:grid;place-items:center;flex:none;font-size:1.1rem;font-weight:800;color:white;} .profile-editor-avatar-preview img{width:100%;height:100%;object-fit:cover;} .profile-editor-cover-preview{width:180px;height:72px;border-radius:9px;background:#171b24 center/cover no-repeat;flex:none;} .profile-editor-cover-preview.empty{background:#171b24;} .profile-editor-upload,.profile-editor-remove{margin-right:8px;border:1px solid #303746;background:#171b24;color:var(--text-1);border-radius:8px;padding:9px 12px;font-size:.75rem;font-weight:750;cursor:pointer;} .profile-editor-remove{color:#f08a8a;border-color:rgba(229,72,77,.3);} .profile-editor-help{font-size:.7rem;color:var(--text-3);margin-top:8px;} .profile-editor{display:none;margin-top:20px;background:#0f1218;border:1px solid #2a3040;border-radius:16px;padding:26px;}
   .profile-editor.open{display:block;}
   .profile-editor-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px;}
   .profile-editor-title{font-size:1rem;font-weight:850;margin:0 0 5px;}
@@ -586,7 +586,7 @@
     <div class="profile-page-shell">
       <main class="profile-page-content">
         <div class="profile-page-bar">
-          <div class="profile-page-brand">Aurora <span>v2.0.4</span></div>
+          <div class="profile-page-brand">Aurora <span>v2.0.6</span></div>
           <a class="profile-page-back" href="/" data-route="/">Back to Aurora</a>
         </div>
         <div id="profile-card-content" class="profile-page-loading">Loading profile…</div>
@@ -605,7 +605,7 @@
             <path d="M3 12c2-4 4-5.5 6-5.5s4 4 6 4 3-2.5 6-2.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" opacity="0.45"/>
           </svg>
         </div>
-        <span class="wordmark">Aurora</span><span class="version-label">v2.0.4</span>
+        <span class="wordmark">Aurora</span><span class="version-label">v2.0.6</span>
       </div>
 
       <nav class="side-nav">
@@ -933,7 +933,7 @@
   const NAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
   const PASSWORD_MIN_LEN = 6;
   const MAX_RECORDING_MS = 120000;
-  const MAX_FILE_BYTES = 5 * 1024 * 1024;
+  const MAX_FILE_BYTES = 100 * 1024 * 1024;
   const MAX_MESSAGE_LENGTH = 2000;
   const ICE_SERVERS = [{ urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }];
 
@@ -1358,7 +1358,7 @@
             '<div class="profile-info-item"><div class="profile-info-label">Username</div><div class="profile-info-value">@' + escapeHTML(user.username) + '</div></div>' +
           '</div></section>' +
           '<section class="profile-section"><h2 class="profile-section-title">Profile</h2><p class="profile-side-note">This is the public profile for <strong>' + escapeHTML(displayName) + '</strong>. Information shown here is controlled by the account owner.</p></section>' +
-          (own ? '<section class="profile-editor" id="profile-editor"><div class="profile-editor-head"><div><h2 class="profile-editor-title">Customize your profile</h2><p class="profile-editor-subtitle">Control the information and imagery people see when they visit your profile.</p></div></div><div class="profile-editor-grid"><div class="profile-editor-field"><label for="profile-edit-displayname">Display name</label><input id="profile-edit-displayname" maxlength="40" value="' + escapeHTML(prof.displayName || '') + '"></div><div class="profile-editor-field"><label for="profile-edit-location">Location</label><input id="profile-edit-location" maxlength="80" value="' + escapeHTML(prof.location || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-website">Website</label><input id="profile-edit-website" maxlength="200" value="' + escapeHTML(prof.website || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-bio">Biography</label><textarea id="profile-edit-bio" maxlength="240">' + escapeHTML(prof.bio || '') + '</textarea></div></div><div class="profile-editor-actions"><button type="button" class="profile-editor-cancel" id="profile-editor-cancel">Cancel</button><button type="button" class="profile-editor-save" id="profile-editor-save">Save changes</button></div></section>' : '') +
+          (own ? '<section class="profile-editor" id="profile-editor"><div class="profile-editor-head"><div><h2 class="profile-editor-title">Customize your profile</h2><p class="profile-editor-subtitle">Control the information and imagery people see when they visit your profile.</p></div></div><div class="profile-editor-grid"><div class="profile-editor-field full"><label>Profile picture</label><div class="profile-upload-row"><div id="profile-editor-avatar-preview" class="profile-editor-avatar-preview"></div><div><input id="profile-edit-avatar" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-avatar-btn">Choose profile picture</button><button type="button" class="profile-editor-remove" id="profile-edit-avatar-remove">Remove</button><div class="profile-editor-help">JPG, PNG, GIF, or WebP. Recommended square image.</div></div></div></div><div class="profile-editor-field full"><label>Profile cover</label><div class="profile-upload-row"><div id="profile-editor-cover-preview" class="profile-editor-cover-preview"></div><div><input id="profile-edit-cover" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-cover-btn">Choose cover image</button><button type="button" class="profile-editor-remove" id="profile-edit-cover-remove">Remove</button><div class="profile-editor-help">Recommended wide image. This appears across the top of your profile.</div></div></div></div><div class="profile-editor-field"><label for="profile-edit-displayname">Display name</label><input id="profile-edit-displayname" maxlength="40" value="' + escapeHTML(prof.displayName || '') + '"></div><div class="profile-editor-field"><label for="profile-edit-location">Location</label><input id="profile-edit-location" maxlength="80" value="' + escapeHTML(prof.location || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-website">Website</label><input id="profile-edit-website" maxlength="200" value="' + escapeHTML(prof.website || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-bio">Biography</label><textarea id="profile-edit-bio" maxlength="240">' + escapeHTML(prof.bio || '') + '</textarea></div></div><div class="profile-editor-actions"><button type="button" class="profile-editor-cancel" id="profile-editor-cancel">Cancel</button><button type="button" class="profile-editor-save" id="profile-editor-save">Save changes</button></div></section>' : '') +
         '</div>' +
         '<aside class="profile-column">' +
           '<section class="profile-side-card"><h2 class="profile-side-title">Profile information</h2><div class="profile-side-list">' +
@@ -1375,6 +1375,26 @@
         const editor = document.getElementById('profile-editor');
         const cancel = document.getElementById('profile-editor-cancel');
         const save = document.getElementById('profile-editor-save');
+        const avatarInput = document.getElementById('profile-edit-avatar');
+        const avatarBtn = document.getElementById('profile-edit-avatar-btn');
+        const avatarRemove = document.getElementById('profile-edit-avatar-remove');
+        const avatarPreview = document.getElementById('profile-editor-avatar-preview');
+        const coverInput = document.getElementById('profile-edit-cover');
+        const coverBtn = document.getElementById('profile-edit-cover-btn');
+        const coverRemove = document.getElementById('profile-edit-cover-remove');
+        const coverPreview = document.getElementById('profile-editor-cover-preview');
+        let nextAvatarData = prof.avatarData || null;
+        let nextCoverData = prof.coverData || null;
+        const setAvatarPreview = value => { avatarPreview.innerHTML = value ? '<img src="' + escapeHTML(value) + '" alt="">' : initials(user.username); avatarPreview.setAttribute('style', value ? '' : avatarStyle(user.username)); };
+        const setCoverPreview = value => { coverPreview.style.backgroundImage = value ? 'url("' + escapeHTML(value) + '")' : ''; coverPreview.classList.toggle('empty', !value); };
+        setAvatarPreview(nextAvatarData); setCoverPreview(nextCoverData);
+        avatarBtn.addEventListener('click', () => avatarInput.click());
+        avatarRemove.addEventListener('click', () => { nextAvatarData = null; avatarInput.value = ''; setAvatarPreview(null); });
+        coverBtn.addEventListener('click', () => coverInput.click());
+        coverRemove.addEventListener('click', () => { nextCoverData = null; coverInput.value = ''; setCoverPreview(null); });
+        const readProfileImage = (file, maxSize, callback) => { if (!file || !file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; } const reader = new FileReader(); reader.onload = () => { const img = new Image(); img.onload = () => { const scale = Math.min(1, maxSize / Math.max(img.width, img.height)); const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(img.width * scale)); canvas.height = Math.max(1, Math.round(img.height * scale)); const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,canvas.width,canvas.height); callback(canvas.toDataURL('image/jpeg',0.88)); }; img.src = reader.result; }; reader.readAsDataURL(file); };
+        avatarInput.addEventListener('change', () => readProfileImage(avatarInput.files[0], 512, value => { nextAvatarData = value; setAvatarPreview(value); }));
+        coverInput.addEventListener('change', () => readProfileImage(coverInput.files[0], 1600, value => { nextCoverData = value; setCoverPreview(value); }));
         editBtn.addEventListener('click', e => { e.preventDefault(); editor.classList.add('open'); editor.scrollIntoView({behavior:'smooth',block:'start'}); });
         cancel.addEventListener('click', () => editor.classList.remove('open'));
         save.addEventListener('click', async () => {
@@ -1385,8 +1405,8 @@
           if (websiteValue && !/^https?:\/\//i.test(websiteValue)) { toast('Website links must start with http:// or https://.', 'error'); return; }
           save.disabled = true;
           try {
-            await db.ref('profiles/' + lower).update({displayName:displayNameValue || null, location:locationValue || null, website:websiteValue || null, bio:bioValue || null});
-            profilesCache[lower] = Object.assign({}, profilesCache[lower] || {}, {displayName:displayNameValue || null, location:locationValue || null, website:websiteValue || null, bio:bioValue || null});
+            await db.ref('profiles/' + lower).update({displayName:displayNameValue || null, location:locationValue || null, website:websiteValue || null, bio:bioValue || null, avatarData:nextAvatarData || null, coverData:nextCoverData || null});
+            profilesCache[lower] = Object.assign({}, profilesCache[lower] || {}, {displayName:displayNameValue || null, location:locationValue || null, website:websiteValue || null, bio:bioValue || null, avatarData:nextAvatarData || null, coverData:nextCoverData || null});
             toast('Profile updated.');
             await renderPublicProfile(id);
           } catch (err) { toast('Your profile could not be updated.', 'error'); }
@@ -2064,7 +2084,7 @@
     fileInput.value = '';
   });
   async function handleFileSelected(file){
-    if (file.size > MAX_FILE_BYTES) { toast('Files must be under 5 MB.', 'error'); return; }
+    if (file.size > MAX_FILE_BYTES) { toast('Files must be under 100 MB.', 'error'); return; }
     if (file.type.startsWith('image/')) {
       try {
         const dataUrl = await compressImage(file, 1600, 0.82, false);
@@ -2858,7 +2878,7 @@
       const file = e.target.files[0]; avatarFileInput.value = '';
       if (!file) return;
       if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
-      if (file.size > MAX_FILE_BYTES) { toast('Images must be under 5 MB.', 'error'); return; }
+      if (file.size > MAX_FILE_BYTES) { toast('Images must be under 100 MB.', 'error'); return; }
       try {
         const dataUrl = await compressImage(file, 512, 0.85, false);
         await db.ref('profiles/' + currentKey).update({ avatarData: dataUrl });
