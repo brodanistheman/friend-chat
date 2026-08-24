@@ -330,23 +330,49 @@
     .poll-options{grid-template-columns:1fr;}
   }
 
-  #call-grid{display:none;flex-direction:column;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--inset);}
-  #call-participants-line{display:none;padding:9px 20px 0;font-size:0.78rem;color:var(--text-2);font-weight:500;}
-  #call-participants-line.show{display:block;}
-  #call-tiles-row{display:flex;gap:12px;padding:12px 20px 14px;overflow-x:auto;}
-  #call-tiles-row::-webkit-scrollbar{height:5px;}
-  #call-tiles-row::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
-  .call-tile{position:relative;flex-shrink:0;width:220px;height:150px;background:#000;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--border-strong);}
-  .call-tile video{width:100%;height:100%;object-fit:cover;background:#000;}
-  .call-tile.is-self{border-color:var(--accent);}
-  .call-tile-label{position:absolute;left:8px;top:8px;display:flex;align-items:center;gap:6px;background:rgba(11,12,16,0.78);backdrop-filter:blur(6px);padding:4px 10px;border-radius:var(--radius-full);font-size:0.72rem;font-weight:700;max-width:calc(100% - 16px);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .call-tile-controls{position:absolute;left:8px;bottom:8px;display:flex;gap:6px;}
-  .call-tile-ctrl{width:28px;height:28px;border-radius:50%;background:rgba(11,12,16,0.78);backdrop-filter:blur(6px);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-  .call-tile-ctrl.muted{background:var(--danger);}
-  .call-tile-expand{position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:rgba(11,12,16,0.78);backdrop-filter:blur(6px);border:none;color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-  .call-tile-expand:hover{color:var(--text-1);}
-  .call-tile-leave{position:absolute;top:6px;right:38px;width:26px;height:26px;border-radius:50%;background:rgba(11,12,16,0.78);backdrop-filter:blur(6px);border:none;color:var(--text-2);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-  .call-tile-leave:hover{color:var(--danger);}
+
+  #call-grid{display:none;flex-direction:column;gap:0;flex-shrink:0;margin:10px 18px 0;background:linear-gradient(180deg,#151922 0%,#10131a 100%);border:1px solid #292e3a;border-radius:18px;overflow:hidden;box-shadow:0 18px 50px -34px rgba(0,0,0,.8);}
+  #call-grid.active{display:flex;}
+  .call-topbar{min-height:58px;display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid #292e3a;background:rgba(255,255,255,.018);}
+  .call-live-indicator{width:9px;height:9px;border-radius:50%;background:var(--online);box-shadow:0 0 0 4px rgba(52,199,123,.1);flex:0 0 auto;}
+  .call-topbar-info{min-width:0;display:flex;flex-direction:column;gap:2px;flex:1;}
+  .call-topbar-title{font-size:.82rem;font-weight:800;color:var(--text-1);}
+  .call-topbar-subtitle{font-size:.7rem;color:var(--text-3);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .call-speaker-status{display:inline-flex;align-items:center;gap:7px;min-width:0;max-width:42%;padding:7px 10px;border:1px solid #303746;border-radius:999px;background:#0d1016;color:var(--text-2);font-size:.7rem;font-weight:700;}
+  .call-speaker-bars{display:flex;align-items:flex-end;gap:2px;height:12px;flex:0 0 auto;}
+  .call-speaker-bars span{width:3px;border-radius:4px;background:var(--accent);}
+  .call-speaker-bars span:nth-child(1){height:5px}.call-speaker-bars span:nth-child(2){height:9px}.call-speaker-bars span:nth-child(3){height:6px}
+  .call-speaker-status.is-speaking{border-color:rgba(76,111,255,.45);color:var(--text-1);background:rgba(76,111,255,.09);}
+  .call-speaker-status.is-speaking .call-speaker-bars span{animation:speakingBar .7s ease-in-out infinite alternate;}
+  .call-speaker-status.is-speaking .call-speaker-bars span:nth-child(2){animation-delay:.12s}.call-speaker-status.is-speaking .call-speaker-bars span:nth-child(3){animation-delay:.24s}
+  @keyframes speakingBar{from{transform:scaleY(.45);opacity:.45}to{transform:scaleY(1);opacity:1}}
+  #call-participants-line{display:flex;align-items:center;gap:6px;min-width:0;padding:0 14px 10px;font-size:.7rem;color:var(--text-3);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #call-participants-line.show{display:flex;}
+  #call-tiles-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;padding:12px;max-height:310px;overflow-y:auto;}
+  #call-tiles-row::-webkit-scrollbar{width:5px}#call-tiles-row::-webkit-scrollbar-thumb{background:#303746;border-radius:6px}
+  .call-tile{position:relative;min-width:0;height:154px;background:#080a0f;border:1px solid #2b303b;border-radius:15px;overflow:hidden;transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;}
+  .call-tile:hover{border-color:#3b4250}.call-tile.is-self{border-color:rgba(76,111,255,.55)}
+  .call-tile.is-speaking{border-color:var(--accent);box-shadow:0 0 0 1px rgba(76,111,255,.28),0 12px 32px -22px rgba(76,111,255,.85);}
+  .call-tile.is-speaking::after{content:"";position:absolute;inset:0;border:1px solid rgba(76,111,255,.55);border-radius:15px;pointer-events:none;animation:speakerPulse 1.1s ease-in-out infinite;}
+  @keyframes speakerPulse{0%,100%{opacity:.35}50%{opacity:1}}
+  .call-tile video{width:100%;height:100%;object-fit:cover;background:#080a0f;}
+  .call-tile-label{position:absolute;left:9px;bottom:9px;display:flex;align-items:center;gap:7px;max-width:calc(100% - 18px);padding:7px 10px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:rgba(8,10,15,.84);backdrop-filter:blur(10px);font-size:.72rem;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .call-tile-label .speaker-mark{display:none;width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px rgba(76,111,255,.14);flex:0 0 auto;}
+  .call-tile.is-speaking .call-tile-label .speaker-mark{display:block;}
+  .call-tile-state{display:inline-flex;align-items:center;color:var(--text-3);font-size:.66rem;font-weight:650;margin-left:auto}.call-tile-state.muted{color:var(--danger)}
+  .call-tile-controls{position:absolute;left:9px;top:9px;display:flex;gap:6px;}
+  .call-tile-ctrl,.call-tile-expand,.call-tile-leave{width:30px;height:30px;border-radius:9px;background:rgba(8,10,15,.84);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease;}
+  .call-tile-ctrl:hover,.call-tile-expand:hover,.call-tile-leave:hover{background:#1c212b;border-color:#414856}
+  .call-tile-ctrl.muted{background:rgba(229,72,77,.88);border-color:rgba(229,72,77,.6)}
+  .call-tile-expand,.call-tile-leave{position:absolute;top:9px;color:var(--text-2)}.call-tile-expand{right:9px}.call-tile-leave{right:45px}.call-tile-leave:hover{color:var(--danger);background:rgba(229,72,77,.1)}
+  .call-controls-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 12px;border-top:1px solid #292e3a;background:#0d1016;}
+  .call-control{width:38px;height:38px;border-radius:11px;border:1px solid #303746;background:#171b23;color:var(--text-1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s ease,border-color .15s ease,color .15s ease;}
+  .call-control:hover{background:#202530;border-color:#414856}.call-control.muted{background:var(--danger);border-color:var(--danger);color:#fff}
+  .call-control.end{width:auto;padding:0 15px;background:var(--danger);border-color:var(--danger);color:#fff;font-size:.75rem;font-weight:800;gap:7px}
+  .call-control.end:hover{background:#ef5a5f;border-color:#ef5a5f}
+  @media(max-width:860px){#call-grid{margin:8px 12px 0}#call-tiles-row{grid-template-columns:repeat(auto-fit,minmax(175px,1fr));max-height:280px}.call-tile{height:132px}}
+  @media(max-width:560px){.call-topbar{padding:9px 11px}.call-speaker-status{max-width:48%}#call-participants-line{padding-left:11px;padding-right:11px}#call-tiles-row{grid-template-columns:1fr 1fr;padding:9px;gap:8px}.call-tile{height:116px;border-radius:12px}.call-tile-label{left:6px;bottom:6px;padding:5px 7px;font-size:.66rem}.call-tile-controls{left:6px;top:6px}.call-tile-expand,.call-tile-leave{top:6px;width:28px;height:28px}.call-tile-expand{right:6px}.call-tile-leave{right:40px}}
+
 
   #chat-box{flex:1;overflow-y:auto;padding:20px 20px 4px;display:flex;flex-direction:column;gap:14px;background:var(--bg);}
   #chat-box::-webkit-scrollbar{width:6px;}
@@ -703,8 +729,20 @@
         </header>
 
         <div id="call-grid">
+          <div class="call-topbar">
+            <span class="call-live-indicator"></span>
+            <div class="call-topbar-info">
+              <span class="call-topbar-title">Voice and video call</span>
+              <span class="call-topbar-subtitle" id="call-topbar-subtitle">Live now</span>
+            </div>
+            <div id="call-speaker-status" class="call-speaker-status">
+              <span class="call-speaker-bars"><span></span><span></span><span></span></span>
+              <span id="call-speaker-status-text">No one is speaking</span>
+            </div>
+          </div>
           <div id="call-participants-line"></div>
           <div id="call-tiles-row"></div>
+          <div class="call-controls-bar" id="call-controls-bar"></div>
         </div>
 
         <div id="poll-banner" class="poll-banner">
@@ -2842,71 +2880,252 @@
     return { start, stop, watchPeer, stopWatchingPeer, listenLive, cleanupAll, state };
   }
 
-  function createCallTile(key, label, isSelf){
+  const callSpeakerStatus = document.getElementById('call-speaker-status');
+  const callSpeakerStatusText = document.getElementById('call-speaker-status-text');
+  const callTopbarSubtitle = document.getElementById('call-topbar-subtitle');
+  const callControlsBar = document.getElementById('call-controls-bar');
+  const speakerMonitors = {};
+  const activeSpeakers = new Set();
+
+  function getCallTileLabel(key){
+    return key === currentKey ? 'You' : getDisplayName(key, liveCalls[key]?.display || key);
+  }
+
+  function setTileSpeaking(key, speaking){
+    const tile = callTilesRow.querySelector(`.call-tile[data-key="${key}"]`);
+    if (tile) tile.classList.toggle('is-speaking', speaking);
+    if (speaking) activeSpeakers.add(key); else activeSpeakers.delete(key);
+    updateSpeakingUI();
+  }
+
+  function updateSpeakingUI(){
+    const names = Array.from(activeSpeakers).map(getCallTileLabel).filter(Boolean);
+    callSpeakerStatus.classList.toggle('is-speaking', names.length > 0);
+    callSpeakerStatusText.textContent = names.length === 0
+      ? 'No one is speaking'
+      : names.length === 1 ? `${names[0]} is speaking` : `${names.slice(0,2).join(', ')} are speaking`;
+  }
+
+  function stopSpeakerMonitor(key){
+    const monitor = speakerMonitors[key];
+    if (!monitor) return;
+    cancelAnimationFrame(monitor.raf);
+    try { monitor.source.disconnect(); } catch (err) {}
+    try { monitor.analyser.disconnect(); } catch (err) {}
+    try { monitor.context.close(); } catch (err) {}
+    delete speakerMonitors[key];
+    activeSpeakers.delete(key);
+    const tile = callTilesRow.querySelector(`.call-tile[data-key="${key}"]`);
+    if (tile) tile.classList.remove('is-speaking');
+    updateSpeakingUI();
+  }
+
+  function startSpeakerMonitor(key, stream){
+    if (!stream || speakerMonitors[key] || !stream.getAudioTracks().length) return;
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    try {
+      const context = new AudioContextClass();
+      const source = context.createMediaStreamSource(stream);
+      const analyser = context.createAnalyser();
+      analyser.fftSize = 512;
+      analyser.smoothingTimeConstant = .72;
+      source.connect(analyser);
+
+      const data = new Uint8Array(analyser.fftSize);
+      let loudFrames = 0;
+      let quietFrames = 0;
+      const monitor = {context,source,analyser,raf:0};
+      speakerMonitors[key] = monitor;
+
+      const sample = () => {
+        if (!speakerMonitors[key]) return;
+        analyser.getByteTimeDomainData(data);
+        let sum = 0;
+        for (let i = 0; i < data.length; i++) {
+          const value = (data[i] - 128) / 128;
+          sum += value * value;
+        }
+        const rms = Math.sqrt(sum / data.length);
+        if (rms > .035) {
+          loudFrames = Math.min(8,loudFrames + 1);
+          quietFrames = 0;
+        } else {
+          quietFrames = Math.min(14,quietFrames + 1);
+          loudFrames = 0;
+        }
+        if (loudFrames >= 2) setTileSpeaking(key,true);
+        if (quietFrames >= 5) setTileSpeaking(key,false);
+        monitor.raf = requestAnimationFrame(sample);
+      };
+
+      monitor.raf = requestAnimationFrame(sample);
+      if (context.state === 'suspended') context.resume().catch(() => {});
+    } catch (err) {}
+  }
+
+  function updateCallTileState(key){
+    const tile = callTilesRow.querySelector(`.call-tile[data-key="${key}"]`);
+    if (!tile) return;
+    const stateEl = tile.querySelector('.call-tile-state');
+    if (!stateEl) return;
+
+    if (key === currentKey && callChannel.state.localStream) {
+      const mic = callChannel.state.localStream.getAudioTracks()[0];
+      const cam = callChannel.state.localStream.getVideoTracks()[0];
+      if (mic && !mic.enabled) {
+        stateEl.className = 'call-tile-state muted';
+        stateEl.textContent = 'Muted';
+      } else if (cam && !cam.enabled) {
+        stateEl.className = 'call-tile-state';
+        stateEl.textContent = 'Camera off';
+      } else {
+        stateEl.className = 'call-tile-state';
+        stateEl.textContent = 'Live';
+      }
+    } else {
+      stateEl.className = 'call-tile-state';
+      stateEl.textContent = 'Live';
+    }
+  }
+
+  function createCallTile(key,label,isSelf){
     let tile = callTilesRow.querySelector(`.call-tile[data-key="${key}"]`);
     if (tile) return tile;
+
     tile = document.createElement('div');
     tile.className = 'call-tile' + (isSelf ? ' is-self' : '');
     tile.dataset.key = key;
-    let controlsHtml = '';
-    if (isSelf) {
-      controlsHtml = '<div class="call-tile-controls">' +
-        '<button type="button" class="call-tile-ctrl mic-ctrl" title="Mute microphone">' + micOnIconSVG() + '</button>' +
-        '<button type="button" class="call-tile-ctrl cam-ctrl" title="Turn off camera">' + camOnIconSVG() + '</button>' +
-      '</div>';
-    }
+
+    const controlsHtml = isSelf
+      ? '<div class="call-tile-controls"><button type="button" class="call-tile-ctrl mic-ctrl" title="Mute microphone">' + micOnIconSVG() + '</button><button type="button" class="call-tile-ctrl cam-ctrl" title="Turn off camera">' + camOnIconSVG() + '</button></div>'
+      : '';
+
     tile.innerHTML =
       '<video autoplay playsinline' + (isSelf ? ' muted' : '') + '></video>' +
-      '<div class="call-tile-label">' + escapeHTML(label) + '</div>' +
+      '<div class="call-tile-label"><span class="speaker-mark"></span><span class="call-name">' + escapeHTML(label) + '</span><span class="call-tile-state">Live</span></div>' +
       '<button type="button" class="call-tile-expand" title="Fullscreen">' + expandIconSVG() + '</button>' +
       (isSelf ? '<button type="button" class="call-tile-leave" title="Leave call">' + closeIconSVG() + '</button>' : '') +
       controlsHtml;
 
     tile.querySelector('.call-tile-expand').addEventListener('click', () => {
       const video = tile.querySelector('video');
-      if (video.requestFullscreen) video.requestFullscreen().catch(() => toast('Fullscreen is not available.', 'error'));
+      if (video.requestFullscreen) video.requestFullscreen().catch(() => toast('Fullscreen is not available.','error'));
       else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
-      else toast('Fullscreen is not supported in this browser.', 'error');
+      else toast('Fullscreen is not supported in this browser.','error');
     });
-    if (isSelf) tile.querySelector('.call-tile-leave').addEventListener('click', () => callChannel.stop());
+
+    if (isSelf) {
+      tile.querySelector('.call-tile-leave').addEventListener('click',() => callChannel.stop());
+      tile.querySelector('.mic-ctrl').addEventListener('click',() => {
+        const track = callChannel.state.localStream?.getAudioTracks()[0];
+        if (!track) return;
+        track.enabled = !track.enabled;
+        const btn = tile.querySelector('.mic-ctrl');
+        btn.classList.toggle('muted',!track.enabled);
+        btn.title = track.enabled ? 'Mute microphone' : 'Unmute microphone';
+        btn.innerHTML = track.enabled ? micOnIconSVG() : micOffIconSVG();
+        updateCallTileState(key);
+      });
+      tile.querySelector('.cam-ctrl').addEventListener('click',() => {
+        const track = callChannel.state.localStream?.getVideoTracks()[0];
+        if (!track) return;
+        track.enabled = !track.enabled;
+        const btn = tile.querySelector('.cam-ctrl');
+        btn.classList.toggle('muted',!track.enabled);
+        btn.title = track.enabled ? 'Turn off camera' : 'Turn on camera';
+        btn.innerHTML = track.enabled ? camOnIconSVG() : camOffIconSVG();
+        updateCallTileState(key);
+      });
+    }
 
     callTilesRow.appendChild(tile);
-    callGrid.style.display = 'flex';
+    callGrid.classList.add('active');
     return tile;
   }
+
   function removeCallTile(key){
+    stopSpeakerMonitor(key);
     const tile = callTilesRow.querySelector(`.call-tile[data-key="${key}"]`);
     if (tile) tile.remove();
-    if (!callTilesRow.children.length) callGrid.style.display = 'none';
+    if (!callTilesRow.children.length) callGrid.classList.remove('active');
   }
-  function attachRemoteTrack(tile, pc){
-    pc.ontrack = (e) => {
+
+  function attachRemoteTrack(tile,pc,key){
+    pc.ontrack = e => {
+      const stream = e.streams[0];
       const video = tile.querySelector('video');
-      if (video.srcObject !== e.streams[0]) video.srcObject = e.streams[0];
-      video.play().catch(() => { video.muted = true; video.play().catch(() => {}); });
+      if (video.srcObject !== stream) video.srcObject = stream;
+      video.muted = false;
+      video.volume = 1;
+      video.play().catch(() => {});
+      startSpeakerMonitor(key,stream);
+      updateCallTileState(key);
     };
   }
+
+  function buildCallControls(){
+    callControlsBar.innerHTML = '';
+
+    const mic = document.createElement('button');
+    mic.type='button'; mic.className='call-control'; mic.title='Mute microphone'; mic.innerHTML=micOnIconSVG();
+    mic.addEventListener('click',() => {
+      const track = callChannel.state.localStream?.getAudioTracks()[0];
+      if (!track) return;
+      track.enabled=!track.enabled;
+      mic.classList.toggle('muted',!track.enabled);
+      mic.title=track.enabled?'Mute microphone':'Unmute microphone';
+      mic.innerHTML=track.enabled?micOnIconSVG():micOffIconSVG();
+      updateCallTileState(currentKey);
+    });
+
+    const cam = document.createElement('button');
+    cam.type='button'; cam.className='call-control'; cam.title='Turn off camera'; cam.innerHTML=camOnIconSVG();
+    cam.addEventListener('click',() => {
+      const track = callChannel.state.localStream?.getVideoTracks()[0];
+      if (!track) return;
+      track.enabled=!track.enabled;
+      cam.classList.toggle('muted',!track.enabled);
+      cam.title=track.enabled?'Turn off camera':'Turn on camera';
+      cam.innerHTML=track.enabled?camOnIconSVG():camOffIconSVG();
+      updateCallTileState(currentKey);
+    });
+
+    const end = document.createElement('button');
+    end.type='button'; end.className='call-control end'; end.title='Leave call';
+    end.innerHTML=closeIconSVG()+'<span>Leave call</span>';
+    end.addEventListener('click',() => callChannel.stop());
+
+    callControlsBar.append(mic,cam,end);
+  }
+
   function updateCallStatusUI(items){
-    const names = Object.keys(items).map(k => (k === currentKey ? 'You' : getDisplayName(k, items[k].display)));
+    const names = Object.keys(items).map(k => k === currentKey ? 'You' : getDisplayName(k,items[k].display));
     const count = names.length;
+
     if (count > 0) {
       callStatusPill.classList.add('show');
       callStatusPillText.textContent = count === 1 ? '1 in call' : count + ' in call';
     } else {
       callStatusPill.classList.remove('show');
     }
+
     if (callChannel.state.active && count > 0) {
-      callParticipantsLine.textContent = 'In call: ' + names.join(', ');
+      callParticipantsLine.textContent = names.join(' · ');
       callParticipantsLine.classList.add('show');
+      callTopbarSubtitle.textContent = count === 1 ? 'You are the only person here' : `${count} people in this call`;
     } else {
       callParticipantsLine.classList.remove('show');
+      callTopbarSubtitle.textContent = 'Live now';
     }
-    callToggleBtn.title = callChannel.state.active
-      ? 'Leave the call'
-      : (count > 0 ? `Join the call (${count} in call)` : 'Join the call');
+
+    callToggleBtn.title = callChannel.state.active ? 'Leave the call' : (count > 0 ? `Join the call (${count} in call)` : 'Join the call');
+    updateSpeakingUI();
     updateAdminStats();
   }
-  callStatusPill.addEventListener('click', () => { if (!callChannel.state.active) callChannel.start(); });
+
+  callStatusPill.addEventListener('click',() => { if (!callChannel.state.active) callChannel.start(); });
 
   const POLL_ID = 'optic-email-password';
   let currentPollVote = null;
@@ -2971,31 +3190,26 @@
     getStream: () => navigator.mediaDevices.getUserMedia({ video: true, audio: true }),
     failMessage: 'Your camera or microphone is not available.',
     onStart: (stream) => {
-      const tile = createCallTile(currentKey, 'You', true);
+      const tile = createCallTile(currentKey,'You',true);
       tile.querySelector('video').srcObject = stream;
-      const micCtrl = tile.querySelector('.mic-ctrl');
-      const camCtrl = tile.querySelector('.cam-ctrl');
-      micCtrl.addEventListener('click', () => {
-        const track = stream.getAudioTracks()[0]; if (!track) return;
-        track.enabled = !track.enabled;
-        micCtrl.classList.toggle('muted', !track.enabled);
-        micCtrl.innerHTML = track.enabled ? micOnIconSVG() : micOffIconSVG();
-      });
-      camCtrl.addEventListener('click', () => {
-        const track = stream.getVideoTracks()[0]; if (!track) return;
-        track.enabled = !track.enabled;
-        camCtrl.classList.toggle('muted', !track.enabled);
-        camCtrl.innerHTML = track.enabled ? camOnIconSVG() : camOffIconSVG();
-      });
+      buildCallControls();
+      updateCallTileState(currentKey);
+      startSpeakerMonitor(currentKey,stream);
     },
-    onStop: () => removeCallTile(currentKey),
+    onStop: () => {
+      removeCallTile(currentKey);
+      callControlsBar.innerHTML = '';
+      activeSpeakers.clear();
+      updateSpeakingUI();
+    },
     onStateChange: () => {
       callToggleBtn.classList.toggle('is-live', callChannel.state.active);
       updateCallStatusUI(liveCalls);
     },
     onWatchStart: (key, name, pc) => {
-      const tile = createCallTile(key, name, false);
-      attachRemoteTrack(tile, pc);
+      const tile = createCallTile(key,name,false);
+      attachRemoteTrack(tile,pc,key);
+      updateCallTileState(key);
     },
     onWatchStop: (key) => removeCallTile(key),
     onLiveChange: (items) => { liveCalls = items; updateCallStatusUI(items); }
