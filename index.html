@@ -289,6 +289,47 @@
   .call-status-pill.show{display:inline-flex;}
   .call-status-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--danger);animation:pulseDot 1.1s ease-in-out infinite;flex-shrink:0;}
 
+  .poll-banner{
+    flex-shrink:0;margin:8px 20px 0;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-sm);overflow:hidden;transition:border-color .15s ease,background .15s ease;
+  }
+  .poll-banner:hover{border-color:var(--border-strong);}
+  .poll-banner-row{
+    min-height:50px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px 8px 14px;
+  }
+  .poll-banner-title{font-size:.8rem;font-weight:700;color:var(--text-1);}
+  .poll-view-btn{
+    appearance:none;border:1px solid var(--border-strong);background:var(--inset);color:var(--text-1);
+    border-radius:var(--radius-full);padding:7px 12px;font:inherit;font-size:.72rem;font-weight:700;cursor:pointer;
+    transition:background .15s ease,border-color .15s ease;
+  }
+  .poll-view-btn:hover{background:var(--surface-hover);border-color:var(--text-3);}
+  .poll-view-btn:active{transform:scale(.97);}
+  .poll-panel{
+    display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease;
+  }
+  .poll-banner.open .poll-panel{grid-template-rows:1fr;}
+  .poll-panel-inner{min-height:0;overflow:hidden;}
+  .poll-content{padding:0 14px 14px;border-top:1px solid var(--border);}
+  .poll-question{font-size:.86rem;font-weight:700;line-height:1.45;padding:14px 0 12px;}
+  .poll-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .poll-option{
+    appearance:none;border:1px solid var(--border-strong);background:var(--inset);color:var(--text-1);
+    border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;font:inherit;font-size:.78rem;font-weight:700;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;transition:background .15s ease,border-color .15s ease;
+  }
+  .poll-option:hover{background:var(--surface-hover);}
+  .poll-option.selected{background:var(--accent-soft);border-color:var(--accent);color:var(--on-accent);}
+  .poll-option:disabled{cursor:default;}
+  .poll-option-label{min-width:0;}
+  .poll-option-count{font-size:.7rem;color:var(--text-3);font-weight:700;font-variant-numeric:tabular-nums;}
+  .poll-option.selected .poll-option-count{color:var(--accent-hover);}
+  .poll-status{min-height:18px;padding-top:9px;color:var(--text-3);font-size:.7rem;font-weight:600;}
+  @media(max-width:560px){
+    .poll-banner{margin-left:12px;margin-right:12px;}
+    .poll-options{grid-template-columns:1fr;}
+  }
+
   #call-grid{display:none;flex-direction:column;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--inset);}
   #call-participants-line{display:none;padding:9px 20px 0;font-size:0.78rem;color:var(--text-2);font-weight:500;}
   #call-participants-line.show{display:block;}
@@ -666,6 +707,31 @@
           <div id="call-tiles-row"></div>
         </div>
 
+        <div id="poll-banner" class="poll-banner">
+          <div class="poll-banner-row">
+            <span class="poll-banner-title">View Poll</span>
+            <button type="button" id="poll-view-btn" class="poll-view-btn">View</button>
+          </div>
+          <div class="poll-panel">
+            <div class="poll-panel-inner">
+              <div class="poll-content">
+                <div class="poll-question">Should we require optic to use email and password only?</div>
+                <div class="poll-options">
+                  <button type="button" class="poll-option" data-poll-option="yes">
+                    <span class="poll-option-label">Yes</span>
+                    <span class="poll-option-count" id="poll-count-yes">0</span>
+                  </button>
+                  <button type="button" class="poll-option" data-poll-option="no">
+                    <span class="poll-option-label">No</span>
+                    <span class="poll-option-count" id="poll-count-no">0</span>
+                  </button>
+                </div>
+                <div id="poll-status" class="poll-status"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div id="chat-box"></div>
 
         <div id="typing-row"></div>
@@ -1007,6 +1073,13 @@
   const callParticipantsLine = document.getElementById('call-participants-line');
   const callStatusPill = document.getElementById('call-status-pill');
   const callStatusPillText = document.getElementById('call-status-pill-text');
+
+  const pollBanner = document.getElementById('poll-banner');
+  const pollViewBtn = document.getElementById('poll-view-btn');
+  const pollStatus = document.getElementById('poll-status');
+  const pollCountYes = document.getElementById('poll-count-yes');
+  const pollCountNo = document.getElementById('poll-count-no');
+  const pollOptionButtons = document.querySelectorAll('.poll-option');
 
   const chatBox = document.getElementById('chat-box');
   const typingRow = document.getElementById('typing-row');
@@ -1756,6 +1829,7 @@
       listenForProfiles();
       listenForMessages();
       listenForTyping();
+      listenForPoll();
       callChannel.listenLive();
       initSettingsHandlers();
       initAdminHandlers();
@@ -2833,6 +2907,64 @@
     updateAdminStats();
   }
   callStatusPill.addEventListener('click', () => { if (!callChannel.state.active) callChannel.start(); });
+
+  const POLL_ID = 'optic-email-password';
+  let currentPollVote = null;
+
+  function renderPollVoteState(data){
+    data = data || {};
+    const votes = data.votes || {};
+    const yesVotes = Object.values(votes).filter(v => v === 'yes').length;
+    const noVotes = Object.values(votes).filter(v => v === 'no').length;
+
+    pollCountYes.textContent = String(yesVotes);
+    pollCountNo.textContent = String(noVotes);
+
+    currentPollVote = currentKey && votes[currentKey] ? votes[currentKey] : null;
+    pollOptionButtons.forEach(btn => {
+      const selected = btn.dataset.pollOption === currentPollVote;
+      btn.classList.toggle('selected', selected);
+    });
+
+    if (currentPollVote) {
+      pollStatus.textContent = 'Your vote is saved. You can change it at any time.';
+    } else {
+      pollStatus.textContent = 'Select an option to vote.';
+    }
+  }
+
+  function listenForPoll(){
+    db.ref('polls/' + POLL_ID).on('value', snap => {
+      renderPollVoteState(snap.val());
+    });
+  }
+
+  async function submitPollVote(option){
+    if (!currentKey || (option !== 'yes' && option !== 'no')) return;
+    pollOptionButtons.forEach(btn => { btn.disabled = true; });
+    pollStatus.textContent = 'Saving your vote...';
+    try {
+      await db.ref('polls/' + POLL_ID + '/votes/' + currentKey).set(option);
+    } catch (err) {
+      pollStatus.textContent = 'Your vote could not be saved. Please try again.';
+    } finally {
+      pollOptionButtons.forEach(btn => { btn.disabled = false; });
+    }
+  }
+
+  pollViewBtn.addEventListener('click', () => {
+    const open = pollBanner.classList.toggle('open');
+    pollViewBtn.textContent = open ? 'Hide' : 'View';
+    if (open) {
+      requestAnimationFrame(() => {
+        chatBox.scrollTop = Math.max(0, chatBox.scrollHeight - 20);
+      });
+    }
+  });
+
+  pollOptionButtons.forEach(btn => {
+    btn.addEventListener('click', () => submitPollVote(btn.dataset.pollOption));
+  });
 
   const callChannel = createCallChannel({
     liveNode: 'calls', watchNode: 'watchCall', rtcNode: 'rtcCall',
