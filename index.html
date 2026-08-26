@@ -569,7 +569,58 @@
   body.compact-mode .bubble{padding:7px 12px;font-size:0.87rem;}
   body.compact-mode .group-body{gap:2px;}
 
-  .version-label{display:inline-flex;align-items:center;margin-left:8px;padding:3px 7px;border:1px solid var(--border);border-radius:6px;background:var(--inset);color:var(--text-3);font-size:.62rem;font-weight:700;letter-spacing:.04em;line-height:1;}
+
+  .notification-btn{position:relative;}
+  .notification-badge{position:absolute;top:2px;right:2px;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);}
+  .notification-panel{position:absolute;top:58px;right:18px;width:min(360px,calc(100vw - 36px));background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 24px 60px -24px rgba(0,0,0,.75);z-index:80;display:none;overflow:hidden;}
+  .notification-panel.open{display:block;}
+  .notification-head{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid var(--border);font-size:.8rem;font-weight:800;}
+  .notification-head button{border:0;background:transparent;color:var(--accent-hover);font:inherit;font-size:.7rem;cursor:pointer;}
+  .notification-list{max-height:360px;overflow:auto;}
+  .notification-empty{padding:34px 18px;text-align:center;color:var(--text-3);font-size:.78rem;}
+  .notification-item{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.045);cursor:pointer;background:transparent;transition:background .15s ease;}
+  .notification-item:hover{background:var(--surface-hover);}
+  .notification-item.unread{background:var(--accent-soft);}
+  .notification-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:6px;flex:0 0 auto;}
+  .notification-copy{min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .notification-title{font-size:.76rem;font-weight:750;color:var(--text-1);}
+  .notification-text{font-size:.72rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .notification-time{font-size:.65rem;color:var(--text-3);}
+  .media-picker,.favorites-panel{position:absolute;bottom:68px;left:18px;width:300px;background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 24px 60px -24px rgba(0,0,0,.8);z-index:70;display:none;overflow:hidden;}
+  .media-picker.open,.favorites-panel.open{display:block;}
+  .media-picker-head,.favorites-head{display:flex;align-items:center;justify-content:space-between;padding:12px 12px 10px;border-bottom:1px solid var(--border);font-size:.78rem;font-weight:800;}
+  .media-picker-head .icon-btn,.favorites-head .icon-btn{width:28px;height:28px;font-size:18px;}
+  .media-picker-actions{display:grid;grid-template-columns:1fr;gap:6px;padding:10px;}
+  .media-picker-option{appearance:none;border:1px solid transparent;background:transparent;color:var(--text-1);border-radius:10px;padding:10px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;font:inherit;}
+  .media-picker-option:hover{background:var(--surface-hover);border-color:var(--border);}
+  .media-picker-option b{display:block;font-size:.78rem;}
+  .media-picker-option small{display:block;color:var(--text-3);font-size:.67rem;margin-top:2px;}
+  .media-picker-icon{width:32px;height:32px;border-radius:9px;background:var(--surface-active);display:grid;place-items:center;color:var(--accent-hover);font-weight:800;}
+  .media-picker-divider{height:1px;background:var(--border);}
+  .favorites-open{width:100%;border:0;background:transparent;color:var(--text-2);padding:11px 14px;display:flex;justify-content:space-between;font:inherit;font-size:.74rem;font-weight:700;cursor:pointer;}
+  .favorites-open:hover{background:var(--surface-hover);color:var(--text-1);}
+  .favorites-tabs{display:flex;gap:4px;}
+  .favorite-tab{border:0;background:transparent;color:var(--text-3);padding:7px 9px;border-radius:8px;font:inherit;font-size:.7rem;font-weight:750;cursor:pointer;}
+  .favorite-tab.active{background:var(--accent-soft);color:var(--text-1);}
+  .favorites-list{max-height:340px;overflow:auto;padding:8px;}
+  .favorites-empty{padding:28px 14px;text-align:center;color:var(--text-3);font-size:.74rem;line-height:1.5;}
+  .favorite-item{display:flex;align-items:center;gap:9px;padding:8px;border-radius:10px;cursor:pointer;}
+  .favorite-item:hover{background:var(--surface-hover);}
+  .favorite-thumb{width:42px;height:42px;border-radius:8px;background:var(--surface-active);object-fit:cover;flex:0 0 auto;display:grid;place-items:center;color:var(--text-2);overflow:hidden;font-size:.75rem;}
+  .favorite-thumb img{width:100%;height:100%;object-fit:cover;}
+  .favorite-info{min-width:0;flex:1;}
+  .favorite-name{font-size:.74rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .favorite-meta{font-size:.65rem;color:var(--text-3);margin-top:2px;}
+  .favorite-send{width:28px;height:28px;border:1px solid var(--border);background:var(--surface);color:var(--accent-hover);border-radius:50%;cursor:pointer;display:grid;place-items:center;}
+  .media-favorite-btn{position:absolute;right:8px;bottom:8px;width:30px;height:30px;border:1px solid rgba(255,255,255,.1);background:rgba(8,10,15,.86);backdrop-filter:blur(8px);border-radius:9px;color:#fff;display:grid;place-items:center;cursor:pointer;opacity:0;transition:opacity .15s ease,background .15s ease;}
+  .bubble:hover .media-favorite-btn,.tenor-gif-wrap:hover .media-favorite-btn{opacity:1;}
+  .media-favorite-btn.active{color:#ffd45a;border-color:rgba(255,212,90,.35);opacity:1;}
+  .media-favorite-wrap{position:relative;display:inline-block;max-width:100%;}
+  .msg-profile-link{cursor:pointer;}
+  .msg-profile-link:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;}
+  .msg-group:hover .group-meta{color:var(--text-1);}
+  @media(max-width:560px){.media-picker,.favorites-panel{left:12px;width:calc(100vw - 24px);}.notification-panel{right:12px;top:54px;}}
+
   .management-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;}
   .management-card{background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;}
   .management-card h3{font-size:.9rem;margin-bottom:6px;}
@@ -654,7 +705,7 @@
     <div class="profile-page-shell">
       <main class="profile-page-content">
         <div class="profile-page-bar">
-          <div class="profile-page-brand">Aurora <span>v2.0.6</span></div>
+          <div class="profile-page-brand">Aurora</div>
           <a class="profile-page-back" href="/" data-route="/">Back to Aurora</a>
         </div>
         <div id="profile-card-content" class="profile-page-loading">Loading profile…</div>
@@ -673,7 +724,7 @@
             <path d="M3 12c2-4 4-5.5 6-5.5s4 4 6 4 3-2.5 6-2.5" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round" opacity="0.45"/>
           </svg>
         </div>
-        <span class="wordmark">Aurora</span><span class="version-label">v2.0.6</span>
+        <span class="wordmark">Aurora</span>
       </div>
 
       <nav class="side-nav">
@@ -720,6 +771,13 @@
             </button>
           </div>
           <div class="header-actions">
+            <button id="notification-btn" class="icon-btn notification-btn" type="button" title="Notifications" aria-label="Notifications">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+              </svg>
+              <span id="notification-badge" class="notification-badge" hidden>0</span>
+            </button>
             <button id="call-toggle-btn" class="icon-btn" type="button" title="Join the call">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -727,6 +785,11 @@
             </button>
           </div>
         </header>
+
+        <div id="notification-panel" class="notification-panel" aria-hidden="true">
+          <div class="notification-head"><span>Notifications</span><button id="notification-clear" type="button">Mark all read</button></div>
+          <div id="notification-list" class="notification-list"></div>
+        </div>
 
         <div id="call-grid">
           <div class="call-topbar">
@@ -792,6 +855,20 @@
                   <path d="M21.44 11.05 12.25 20.24a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
                 </svg>
               </button>
+              <div id="media-picker" class="media-picker" aria-hidden="true">
+                <div class="media-picker-head"><span>Share media</span><button id="media-picker-close" type="button" class="icon-btn" title="Close">×</button></div>
+                <div class="media-picker-actions">
+                  <button type="button" class="media-picker-option" data-media-type="audio"><span class="media-picker-icon">♪</span><span><b>Audio</b><small>Music or sound</small></span></button>
+                  <button type="button" class="media-picker-option" data-media-type="image"><span class="media-picker-icon">□</span><span><b>Image</b><small>Photos and pictures</small></span></button>
+                  <button type="button" class="media-picker-option" data-media-type="video"><span class="media-picker-icon">▶</span><span><b>Video</b><small>Clips and recordings</small></span></button>
+                </div>
+                <div class="media-picker-divider"></div>
+                <button id="favorites-open" type="button" class="favorites-open">Stickers / Favorites <span>›</span></button>
+              </div>
+              <div id="favorites-panel" class="favorites-panel" aria-hidden="true">
+                <div class="favorites-head"><div class="favorites-tabs"><button class="favorite-tab active" data-favorite-tab="favorites">Favorites</button><button class="favorite-tab" data-favorite-tab="stickers">Stickers</button></div><button id="favorites-close" type="button" class="icon-btn" title="Close">×</button></div>
+                <div id="favorites-list" class="favorites-list"></div>
+              </div>
               <button id="mic-btn" class="icon-btn" type="button" title="Record a voice message" aria-label="Record a voice message">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                   <rect x="9" y="3" width="6" height="11" rx="3"/>
@@ -981,19 +1058,8 @@
 
             
             <section class="settings-card">
-              <h2>Site management</h2>
-              <p class="settings-help">Centralized controls and operational status for the Aurora workspace.</p>
-              <div class="management-grid">
-                <div class="management-card"><h3>Users</h3><p>Review active accounts and workspace presence.</p><div class="management-status"><span class="management-status-dot"></span><span>Live presence connected</span></div></div>
-                <div class="management-card"><h3>Messages</h3><p>Monitor message activity and workspace volume.</p><div class="management-status"><span class="management-status-dot"></span><span>Message listener active</span></div></div>
-                <div class="management-card"><h3>Files and media</h3><p>Monitor shared media and attachment activity.</p><div class="management-status"><span class="management-status-dot"></span><span>Media counters active</span></div></div>
-                <div class="management-card"><h3>Calls</h3><p>Monitor active voice and video sessions.</p><div class="management-status"><span class="management-status-dot"></span><span>Call presence active</span></div></div>
-              </div>
-            </section>
-            <section class="settings-card">
               <h2>Security status</h2>
               <div class="security-notice"><strong>Frontend security boundary</strong><span>The interface is structured for authenticated access, but Firebase database rules and a trusted backend must enforce authorization. Client side checks are not treated as sufficient security.</span></div>
-              <div class="info-row"><span>Application version</span><span>2.0.1</span></div>
               <div class="info-row"><span>Authentication</span><span>Configured</span></div>
               <div class="info-row"><span>Realtime database</span><span>Connected</span></div>
               <div class="info-row"><span>Administrative authorization</span><span>Requires server rules</span></div>
@@ -1071,6 +1137,9 @@
   let adminSearchQuery = '';
   let prefs = { sound: true, sendEnter: true, embeds: true, compact: false };
   let messageCache = {}; // key -> raw message object, needed to redraw on edits
+  let notifications = [];
+  let favoriteTab = 'favorites';
+  let mediaInputAccept = '*/*';
   const viewAuth = document.getElementById('view-auth');
   const viewProfile = document.getElementById('view-profile');
   const viewShell = document.getElementById('view-shell');
@@ -1133,6 +1202,19 @@
 
   const attachBtn = document.getElementById('attach-btn');
   const fileInput = document.getElementById('file-input');
+  const mediaPicker = document.getElementById('media-picker');
+  const mediaPickerClose = document.getElementById('media-picker-close');
+  const mediaPickerOptions = document.querySelectorAll('.media-picker-option');
+  const favoritesOpen = document.getElementById('favorites-open');
+  const favoritesPanel = document.getElementById('favorites-panel');
+  const favoritesClose = document.getElementById('favorites-close');
+  const favoritesList = document.getElementById('favorites-list');
+  const favoriteTabs = document.querySelectorAll('.favorite-tab');
+  const notificationBtn = document.getElementById('notification-btn');
+  const notificationBadge = document.getElementById('notification-badge');
+  const notificationPanel = document.getElementById('notification-panel');
+  const notificationList = document.getElementById('notification-list');
+  const notificationClear = document.getElementById('notification-clear');
   const micBtn = document.getElementById('mic-btn');
   const composerEl = document.getElementById('composer');
   const recTimerEl = document.getElementById('rec-timer');
@@ -2189,7 +2271,6 @@
       toast('The chat has been cleared for everyone.');
     }
   });
-  attachBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -2446,7 +2527,86 @@
     if (adminStatCalls) adminStatCalls.textContent = Object.keys(liveCalls).length;
   }
 
+  function notificationStorageKey(){ return 'aurora.notifications.' + currentKey; }
+  function loadNotifications(){
+    try { notifications = JSON.parse(localStorage.getItem(notificationStorageKey()) || '[]'); } catch (err) { notifications = []; }
+    if (!Array.isArray(notifications)) notifications = [];
+    renderNotifications();
+  }
+  function saveNotifications(){ try { localStorage.setItem(notificationStorageKey(), JSON.stringify(notifications.slice(0,50))); } catch (err) {} }
+  function addNotification(type, title, text, messageKey){
+    notifications.unshift({ id: Date.now() + '-' + Math.random().toString(36).slice(2), type, title, text, messageKey: messageKey || null, unread:true, timestamp:Date.now() });
+    notifications = notifications.slice(0,50); saveNotifications(); renderNotifications();
+  }
+  function renderNotifications(){
+    if (!notificationList || !notificationBadge) return;
+    const unread = notifications.filter(n => n.unread).length;
+    notificationBadge.hidden = unread === 0; notificationBadge.textContent = unread > 99 ? '99+' : String(unread);
+    if (!notifications.length) { notificationList.innerHTML = '<div class="notification-empty">You are all caught up.</div>'; return; }
+    notificationList.innerHTML = notifications.map(n => '<div class="notification-item' + (n.unread ? ' unread' : '') + '" data-notification-id="' + escapeHTML(n.id) + '"><span class="notification-dot"></span><div class="notification-copy"><span class="notification-title">' + escapeHTML(n.title) + '</span><span class="notification-text">' + escapeHTML(n.text || '') + '</span><span class="notification-time">' + escapeHTML(formatTime(n.timestamp)) + '</span></div></div>').join('');
+    notificationList.querySelectorAll('.notification-item').forEach(el => el.addEventListener('click', () => {
+      const n = notifications.find(x => x.id === el.dataset.notificationId); if (!n) return;
+      n.unread = false; saveNotifications(); renderNotifications();
+      if (n.messageKey) jumpToMessage(n.messageKey);
+      notificationPanel.classList.remove('open'); notificationPanel.setAttribute('aria-hidden','true');
+    }));
+  }
+  notificationBtn.addEventListener('click', e => { e.stopPropagation(); const open = notificationPanel.classList.toggle('open'); notificationPanel.setAttribute('aria-hidden', String(!open)); mediaPicker.classList.remove('open'); favoritesPanel.classList.remove('open'); });
+  notificationClear.addEventListener('click', () => { notifications.forEach(n => n.unread = false); saveNotifications(); renderNotifications(); });
+
+  function closeMediaPopovers(){ mediaPicker.classList.remove('open'); favoritesPanel.classList.remove('open'); mediaPicker.setAttribute('aria-hidden','true'); favoritesPanel.setAttribute('aria-hidden','true'); }
+  attachBtn.addEventListener('click', e => { e.stopPropagation(); const open = mediaPicker.classList.toggle('open'); mediaPicker.setAttribute('aria-hidden', String(!open)); favoritesPanel.classList.remove('open'); favoritesPanel.setAttribute('aria-hidden','true'); notificationPanel.classList.remove('open'); });
+  mediaPickerClose.addEventListener('click', closeMediaPopovers);
+  favoritesClose.addEventListener('click', closeMediaPopovers);
+  favoritesOpen.addEventListener('click', () => { mediaPicker.classList.remove('open'); favoritesPanel.classList.add('open'); favoritesPanel.setAttribute('aria-hidden','false'); loadFavorites(favoriteTab); });
+  favoriteTabs.forEach(tab => tab.addEventListener('click', () => { favoriteTabs.forEach(t => t.classList.toggle('active', t === tab)); favoriteTab = tab.dataset.favoriteTab; loadFavorites(favoriteTab); }));
+  mediaPickerOptions.forEach(option => option.addEventListener('click', () => {
+    const type = option.dataset.mediaType;
+    mediaInputAccept = type === 'audio' ? 'audio/*' : type === 'image' ? 'image/*' : 'video/*';
+    fileInput.accept = mediaInputAccept; fileInput.click(); closeMediaPopovers();
+  }));
+  document.addEventListener('click', e => { if (!mediaPicker.contains(e.target) && e.target !== attachBtn && !favoritesPanel.contains(e.target) && !notificationPanel.contains(e.target) && e.target !== notificationBtn) closeMediaPopovers(); });
+
+  let favoritesDbPromise = null;
+  function openFavoritesDb(){
+    if (favoritesDbPromise) return favoritesDbPromise;
+    favoritesDbPromise = new Promise((resolve,reject) => {
+      const req = indexedDB.open('aurora-media',1);
+      req.onupgradeneeded = () => { const dbi=req.result; if (!dbi.objectStoreNames.contains('favorites')) dbi.createObjectStore('favorites',{keyPath:'id'}); };
+      req.onsuccess = () => resolve(req.result); req.onerror = () => reject(req.error);
+    });
+    return favoritesDbPromise;
+  }
+  async function getAllFavorites(){ const dbi=await openFavoritesDb(); return new Promise((resolve,reject)=>{ const r=dbi.transaction('favorites','readonly').objectStore('favorites').getAll(); r.onsuccess=()=>resolve((r.result||[]).filter(x=>x.owner===currentKey).sort((a,b)=>b.createdAt-a.createdAt)); r.onerror=()=>reject(r.error); }); }
+  async function saveFavorite(msg,key){
+    const dbi=await openFavoritesDb();
+    return new Promise((resolve,reject)=>{ const tx=dbi.transaction('favorites','readwrite'); tx.objectStore('favorites').put({id:currentKey+':'+key,owner:currentKey,messageKey:key,msg:JSON.parse(JSON.stringify(msg)),createdAt:Date.now()}); tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error); });
+  }
+  async function removeFavorite(key){ const dbi=await openFavoritesDb(); return new Promise((resolve,reject)=>{ const tx=dbi.transaction('favorites','readwrite'); tx.objectStore('favorites').delete(currentKey+':'+key); tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error); }); }
+  async function isFavorite(key){ try { const dbi=await openFavoritesDb(); return await new Promise((resolve,reject)=>{ const r=dbi.transaction('favorites','readonly').objectStore('favorites').get(currentKey+':'+key); r.onsuccess=()=>resolve(!!r.result); r.onerror=()=>reject(r.error); }); } catch(err){ return false; } }
+  async function toggleFavorite(key,msg,button){
+    try { const active=await isFavorite(key); if(active){ await removeFavorite(key); button.classList.remove('active'); button.title='Add to favorites'; toast('Removed from favorites.'); } else { await saveFavorite(msg,key); button.classList.add('active'); button.title='Remove from favorites'; toast('Added to favorites.'); } loadFavorites(favoriteTab); } catch(err){ toast('This media could not be saved as a favorite.', 'error'); }
+  }
+  async function loadFavorites(tab){
+    if(!favoritesList) return;
+    try { const items=await getAllFavorites(); const filtered=items.filter(x=>tab==='stickers' ? x.msg.type==='tenor' : x.msg.type!=='tenor');
+      if(!filtered.length){ favoritesList.innerHTML='<div class="favorites-empty">' + (tab==='stickers' ? 'Favorite GIFs will appear here.' : 'Favorite images, videos, audio, and files will appear here.') + '</div>'; return; }
+      favoritesList.innerHTML=filtered.map(item=>{ const m=item.msg; let thumb='<span>FILE</span>'; if(m.type==='image') thumb='<img src="'+escapeHTML(m.imageData)+'" alt="">'; else if(m.type==='tenor') thumb='<span>GIF</span>'; else if(m.fileType&&m.fileType.startsWith('video/')) thumb='<span>VIDEO</span>'; else if(m.fileType&&m.fileType.startsWith('audio/')) thumb='<span>AUDIO</span>'; return '<div class="favorite-item" data-favorite-id="'+escapeHTML(item.id)+'"><div class="favorite-thumb">'+thumb+'</div><div class="favorite-info"><div class="favorite-name">'+escapeHTML(m.fileName || (m.type==='tenor' ? 'GIF' : m.type==='image' ? 'Image' : 'Saved media'))+'</div><div class="favorite-meta">'+escapeHTML(m.type==='tenor' ? 'Sticker' : (m.fileType || m.type || 'Media'))+'</div></div><button class="favorite-send" type="button" title="Send">↑</button></div>'; }).join('');
+      favoritesList.querySelectorAll('.favorite-item').forEach(el=>el.addEventListener('click', async e=>{ const item=filtered.find(x=>x.id===el.dataset.favoriteId); if(!item) return; if(e.target.closest('.favorite-send')) { const payload=attachReplyIfAny(Object.assign({},item.msg,{username:currentUsername,timestamp:Date.now()})); delete payload.replyTo; await db.ref('messages').push(payload); toast('Favorite sent.'); } }));
+    } catch(err){ favoritesList.innerHTML='<div class="favorites-empty">Favorites are unavailable in this browser.</div>'; }
+  }
+  function addMediaFavoriteControl(container,key,msg){
+    if(!container || !['image','file','tenor'].includes(msg.type)) return;
+    const wrap=document.createElement('div'); wrap.className='media-favorite-wrap';
+    while(container.firstChild) wrap.appendChild(container.firstChild); container.appendChild(wrap);
+    const btn=document.createElement('button'); btn.type='button'; btn.className='media-favorite-btn'; btn.title='Add to favorites'; btn.innerHTML='☆';
+    isFavorite(key).then(active=>{ btn.classList.toggle('active',active); btn.innerHTML=active?'★':'☆'; btn.title=active?'Remove from favorites':'Add to favorites'; });
+    btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleFavorite(key,msg,btn).then(()=>{btn.innerHTML=btn.classList.contains('active')?'★':'☆';});});
+    wrap.appendChild(btn);
+  }
+
   function listenForMessages(){
+    loadNotifications();
     chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
     const messagesRef = db.ref('messages');
     let initialLoadDone = false;
@@ -2461,6 +2621,9 @@
       updateAdminStats();
       if (initialLoadDone && msg.username && msg.username.toLowerCase() !== currentUsername.toLowerCase()) {
         playNotificationSound();
+        const text = msg.type === 'text' ? (msg.text || '') : (msg.type === 'tenor' ? 'Sent a GIF' : msg.type === 'image' ? 'Sent an image' : msg.type === 'voice' ? 'Sent a voice message' : 'Sent a file');
+        const mentionPattern = new RegExp('(^|\\s)@' + currentUsername.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&') + '(?=\\s|$)', 'i');
+        addNotification(mentionPattern.test(msg.text || '') ? 'mention' : 'message', mentionPattern.test(msg.text || '') ? 'You were mentioned' : 'New message', getDisplayName(msg.username.toLowerCase(), msg.username) + ': ' + text, snap.key);
       }
     });
     messagesRef.on('child_changed', snap => {
@@ -2475,6 +2638,18 @@
       if (msg && msg.type && msg.type !== 'text') totalMediaCount = Math.max(0, totalMediaCount - 1);
       updateAdminStats();
     });
+  }
+
+  async function openProfileForUsername(username){
+    const key = String(username || '').toLowerCase();
+    if (presenceCache[key] && presenceCache[key].id) { navigate(profilePathFor(presenceCache[key].id)); return; }
+    try {
+      const snap = await db.ref('users').orderByChild('usernameLower').equalTo(key).limitToFirst(1).once('value');
+      let id = null;
+      snap.forEach(child => { if (id === null) id = child.key; });
+      if (id !== null) navigate(profilePathFor(id));
+      else toast('That profile could not be found.', 'error');
+    } catch (err) { toast('That profile could not be opened.', 'error'); }
   }
 
   function appendMessage(key, msg){
@@ -2497,11 +2672,12 @@
       group.dataset.lastts = msg.timestamp;
 
       const displayName = isOwn ? 'You' : getDisplayName(msg.username.toLowerCase(), msg.username);
-      let inner = `<div class="avatar" data-avatar-key="${msg.username.toLowerCase()}" data-avatar-name="${escapeHTML(msg.username)}"></div>`;
+      let inner = `<div class="avatar msg-profile-link" data-avatar-key="${msg.username.toLowerCase()}" data-avatar-name="${escapeHTML(msg.username)}" title="Open profile"></div>`;
       inner += '<div class="group-body">';
-      inner += `<div class="group-meta"><span>${escapeHTML(displayName)}</span><span class="group-time">${formatTime(msg.timestamp)}</span></div>`;
+      inner += `<div class="group-meta"><span class="msg-profile-link" title="Open profile">${escapeHTML(displayName)}</span><span class="group-time">${formatTime(msg.timestamp)}</span></div>`;
       inner += '<div class="bubble-stack"></div></div>';
       group.innerHTML = inner;
+      group.querySelectorAll('.msg-profile-link').forEach(el => el.addEventListener('click', e => { e.stopPropagation(); openProfileForUsername(msg.username); }));
 
       chatBox.appendChild(group);
       group.querySelector('.bubble-stack').appendChild(createBubble(key, msg));
@@ -2538,21 +2714,26 @@
       wrap.appendChild(img);
       wrap.addEventListener('click', () => openLightbox(msg.imageData, msg.fileName || 'Image'));
       bubble.appendChild(wrap);
+      addMediaFavoriteControl(bubble, key, msg);
     } else if (msg.type === 'file' && msg.fileType && msg.fileType.startsWith('video/')) {
       bubble.className = 'bubble bubble-media';
       const wrap = document.createElement('div'); wrap.className = 'video-msg';
       const video = document.createElement('video');
       video.src = msg.fileData; video.controls = true; video.preload = 'metadata'; video.playsInline = true;
       wrap.appendChild(video); bubble.appendChild(wrap);
+      addMediaFavoriteControl(bubble, key, msg);
     } else if (msg.type === 'file' && msg.fileType && msg.fileType.startsWith('audio/')) {
       bubble.className = 'bubble bubble-voice';
       bubble.appendChild(buildAudioPlayer(msg.fileData, null, msg.fileName));
+      addMediaFavoriteControl(bubble, key, msg);
     } else if (msg.type === 'file') {
       bubble.className = 'bubble';
       bubble.appendChild(buildFileCard(msg));
+      addMediaFavoriteControl(bubble, key, msg);
     } else if (msg.type === 'tenor') {
       bubble.className = 'bubble bubble-media';
       if (msg.gifUrl && msg.gifPostId) renderTenorEmbed(bubble, msg);
+      addMediaFavoriteControl(bubble, key, msg);
       if (msg.text) {
         const caption = document.createElement('div');
         caption.className = 'bubble-text';
@@ -3135,9 +3316,12 @@
     const votes = data.votes || {};
     const yesVotes = Object.values(votes).filter(v => v === 'yes').length;
     const noVotes = Object.values(votes).filter(v => v === 'no').length;
+    const totalVotes = yesVotes + noVotes;
+    const yesPct = totalVotes ? Math.round((yesVotes / totalVotes) * 100) : 0;
+    const noPct = totalVotes ? Math.round((noVotes / totalVotes) * 100) : 0;
 
-    pollCountYes.textContent = String(yesVotes);
-    pollCountNo.textContent = String(noVotes);
+    pollCountYes.textContent = yesPct + '%';
+    pollCountNo.textContent = noPct + '%';
 
     currentPollVote = currentKey && votes[currentKey] ? votes[currentKey] : null;
     pollOptionButtons.forEach(btn => {
@@ -3146,7 +3330,7 @@
     });
 
     if (currentPollVote) {
-      pollStatus.textContent = 'Your vote is saved. You can change it at any time.';
+      pollStatus.textContent = 'Your vote is saved. ' + totalVotes + ' total ' + (totalVotes === 1 ? 'vote' : 'votes') + '.';
     } else {
       pollStatus.textContent = 'Select an option to vote.';
     }
