@@ -2203,7 +2203,18 @@
 
     if (editingKey) {
       const key = editingKey;
-      db.ref('messages/' + key).update({ text: text, edited: true, editedAt: Date.now() })
+      const originalMsg = messageCache[key] || {};
+      const editingOwnMessage = String(originalMsg.username || '').toLowerCase() === currentKey;
+      const update = { text: text };
+
+      // Founder can edit any text message. Only edits made to the founder's
+      // own messages display the "(edited)" marker.
+      if (editingOwnMessage) {
+        update.edited = true;
+        update.editedAt = Date.now();
+      }
+
+      db.ref('messages/' + key).update(update)
         .catch(() => toast('That message could not be updated.', 'error'));
       cancelEdit();
       return;
@@ -2238,6 +2249,13 @@
 
   function startEditMessage(key, msg){
     if (msg.type !== 'text') return;
+
+    const isOwnMessage = String(msg.username || '').toLowerCase() === currentKey;
+    if (!isOwnMessage && !isPrivileged()) {
+      toast('You do not have permission to edit this message.', 'error');
+      return;
+    }
+
     cancelReply();
     editingKey = key;
     messageInput.value = msg.text || '';
@@ -2746,7 +2764,8 @@
       textSpan.className = 'bubble-text';
       renderMessageText(textSpan, msg.text || '');
       bubble.appendChild(textSpan);
-      if (msg.edited) {
+      // Show "(edited)" only when the message owner edited their own message.
+      if (msg.edited && isOwn) {
         const editedTag = document.createElement('span');
         editedTag.className = 'edited-tag';
         editedTag.textContent = '(edited)';
@@ -2765,14 +2784,17 @@
     replyBtn.addEventListener('click', () => startReply(key, msg));
     actions.appendChild(replyBtn);
 
+    // The founder can edit every text message. Regular users can only edit
+    // their own text messages. Delete remains limited to the message owner.
+    if (msg.type === 'text' && (isOwn || isPrivileged())) {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'bubble-action-btn'; editBtn.type = 'button'; editBtn.title = 'Edit message';
+      editBtn.innerHTML = editIconSVG();
+      editBtn.addEventListener('click', () => startEditMessage(key, messageCache[key] || msg));
+      actions.appendChild(editBtn);
+    }
+
     if (isOwn) {
-      if (msg.type === 'text') {
-        const editBtn = document.createElement('button');
-        editBtn.className = 'bubble-action-btn'; editBtn.type = 'button'; editBtn.title = 'Edit message';
-        editBtn.innerHTML = editIconSVG();
-        editBtn.addEventListener('click', () => startEditMessage(key, messageCache[key] || msg));
-        actions.appendChild(editBtn);
-      }
       const deleteBtn = document.createElement('button');
       deleteBtn.className = 'bubble-action-btn delete-action'; deleteBtn.type = 'button'; deleteBtn.title = 'Delete message';
       deleteBtn.innerHTML = trashIconSVG();
@@ -2792,12 +2814,16 @@
     textSpan.innerHTML = '';
     renderMessageText(textSpan, msg.text || '');
     twemojiIn(textSpan);
+    const isOwn = String(msg.username || '').toLowerCase() === currentUsername.toLowerCase();
     let editedTag = bubble.querySelector('.edited-tag');
-    if (msg.edited && !editedTag) {
+
+    if (msg.edited && isOwn && !editedTag) {
       editedTag = document.createElement('span');
       editedTag.className = 'edited-tag';
       editedTag.textContent = '(edited)';
       textSpan.insertAdjacentElement('afterend', editedTag);
+    } else if ((!msg.edited || !isOwn) && editedTag) {
+      editedTag.remove();
     }
     const oldEmbeds = bubble.querySelectorAll('.embed-video-frame, .embed-audio-frame, .embed-image');
     oldEmbeds.forEach(el => el.remove());
