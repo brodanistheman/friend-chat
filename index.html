@@ -149,11 +149,6 @@
   .shake{animation:shake .35s;}
   @keyframes shake{20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
 
-  .google-btn-row{display:flex;justify-content:center;margin-bottom:14px;min-height:44px;width:100%;}
-  .google-btn-row > div{width:100%;display:flex;justify-content:center;}
-  .auth-divider{display:flex;align-items:center;gap:10px;margin-bottom:16px;color:var(--text-3);font-size:0.76rem;font-weight:600;}
-  .auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:var(--border);}
-
   .profile-page-view{display:none;min-height:100vh;background:#0b0d12;color:var(--text-1);overflow-y:auto;overflow-x:hidden;}
   .profile-page-view.active{display:block;}
   .profile-page-shell{min-height:100vh;width:100%;}
@@ -216,6 +211,14 @@
   .profile-editor-cancel,.profile-editor-save{border-radius:9px;padding:10px 15px;font-size:.8rem;font-weight:800;cursor:pointer;}
   .profile-editor-cancel{background:transparent;border:1px solid var(--border-strong);color:var(--text-2);}
   .profile-editor-save{background:var(--accent);border:1px solid var(--accent);color:var(--on-accent);}
+  .profile-position-controls{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px;}
+  .profile-position-control{display:flex;flex-direction:column;gap:7px;}
+  .profile-position-control label{font-size:.74rem;color:var(--text-3);font-weight:750;}
+  .profile-position-control input[type="range"]{width:100%;accent-color:var(--accent);cursor:pointer;}
+  .profile-position-value{font-size:.7rem;color:var(--text-2);font-variant-numeric:tabular-nums;}
+  .profile-editor-avatar-preview img{width:100%;height:100%;object-fit:cover;}
+  .profile-editor-cover-preview{background-size:cover;background-position:center;}
+  @media(max-width:560px){.profile-position-controls{grid-template-columns:1fr;}}
   .profile-notfound{max-width:620px;margin:120px auto;text-align:center;background:#11141b;border:1px solid #252a35;border-radius:16px;padding:48px;}
   .profile-notfound-title{font-size:1.35rem;font-weight:850;margin-bottom:8px;}
   .profile-notfound-text{font-size:.88rem;color:var(--text-2);margin-bottom:24px;}
@@ -259,8 +262,6 @@
     transition:background .15s ease,border-color .15s ease;
   }
   .user-row{position:relative;overflow:hidden;}
-  .user-row-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:none;pointer-events:none;z-index:0;}
-  .user-row-bg.has-image{display:block;}
   .user-row::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;z-index:0;}
   .user-row > *:not(.user-row-bg){position:relative;z-index:1;}
   .user-row:hover{background-color:var(--surface-hover);border-color:var(--border-strong);}
@@ -294,49 +295,6 @@
   .call-status-pill{display:none;align-items:center;gap:6px;background:var(--danger-soft);color:var(--danger);border-radius:var(--radius-full);padding:4px 11px;font-size:0.72rem;font-weight:700;cursor:pointer;border:none;font-family:inherit;}
   .call-status-pill.show{display:inline-flex;}
   .call-status-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--danger);animation:pulseDot 1.1s ease-in-out infinite;flex-shrink:0;}
-
-  .poll-banner{
-    flex-shrink:0;margin:8px 20px 0;background:var(--surface);border:1px solid var(--border);
-    border-radius:var(--radius-sm);overflow:hidden;transition:border-color .15s ease,background .15s ease;
-  }
-  .poll-banner:hover{border-color:var(--border-strong);}
-  .poll-banner-row{
-    min-height:50px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 10px 8px 14px;
-  }
-  .poll-banner-title{font-size:.8rem;font-weight:700;color:var(--text-1);}
-  .poll-view-btn{
-    appearance:none;border:1px solid var(--border-strong);background:var(--inset);color:var(--text-1);
-    border-radius:var(--radius-full);padding:7px 12px;font:inherit;font-size:.72rem;font-weight:700;cursor:pointer;
-    transition:background .15s ease,border-color .15s ease;
-  }
-  .poll-view-btn:hover{background:var(--surface-hover);border-color:var(--text-3);}
-  .poll-view-btn:active{transform:scale(.97);}
-  .poll-panel{
-    display:grid;grid-template-rows:0fr;transition:grid-template-rows .22s ease;
-  }
-  .poll-banner.open .poll-panel{grid-template-rows:1fr;}
-  .poll-panel-inner{min-height:0;overflow:hidden;}
-  .poll-content{padding:0 14px 14px;border-top:1px solid var(--border);}
-  .poll-question{font-size:.86rem;font-weight:700;line-height:1.45;padding:14px 0 12px;}
-  .poll-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-  .poll-option{
-    appearance:none;border:1px solid var(--border-strong);background:var(--inset);color:var(--text-1);
-    border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;font:inherit;font-size:.78rem;font-weight:700;
-    display:flex;align-items:center;justify-content:space-between;gap:10px;transition:background .15s ease,border-color .15s ease;
-  }
-  .poll-option:hover{background:var(--surface-hover);}
-  .poll-option.selected{background:var(--accent-soft);border-color:var(--accent);color:var(--on-accent);}
-  .poll-option:disabled{cursor:default;}
-  .poll-option-label{min-width:0;}
-  .poll-option-count{font-size:.7rem;color:var(--text-3);font-weight:700;font-variant-numeric:tabular-nums;}
-  .poll-option.selected .poll-option-count{color:var(--accent-hover);}
-  .poll-status{min-height:18px;padding-top:9px;color:var(--text-3);font-size:.7rem;font-weight:600;}
-  @media(max-width:560px){
-    .poll-banner{margin-left:12px;margin-right:12px;}
-    .poll-options{grid-template-columns:1fr;}
-  }
-
-
   #call-grid{display:none;flex-direction:column;gap:0;flex-shrink:0;margin:10px 18px 0;background:linear-gradient(180deg,#151922 0%,#10131a 100%);border:1px solid #292e3a;border-radius:18px;overflow:hidden;box-shadow:0 18px 50px -34px rgba(0,0,0,.8);}
   #call-grid.active{display:flex;}
   .call-topbar{min-height:58px;display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid #292e3a;background:rgba(255,255,255,.018);}
@@ -573,23 +531,6 @@
   .admin-image-selected-head{display:flex;align-items:center;justify-content:space-between;gap:16px;}
   .admin-image-selected-head h2{margin-bottom:4px;}
   .admin-image-selected-avatar{width:52px;height:52px;font-size:.8rem;}
-  .admin-image-preview-wrap{display:flex;flex-direction:column;gap:12px;margin-top:16px;padding:14px;background:var(--inset);border:1px solid var(--border);border-radius:12px;}
-  .admin-image-preview{width:100%;height:76px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;flex:none;background-size:cover;background-position:center;font-size:1rem;font-weight:700;color:#fff;padding:0 14px;position:relative;}
-  .customization-subsection{margin-top:24px;padding-top:24px;border-top:1px solid var(--border);}
-  .customization-subsection:first-of-type{margin-top:18px;padding-top:0;border-top:0;}
-  .customization-subsection-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
-  .customization-subsection-head h3{font-size:.88rem;font-weight:800;margin-bottom:4px;}
-  .customization-status{font-size:.68rem;color:var(--text-3);font-weight:750;white-space:nowrap;padding:5px 9px;background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-full);}
-  .customization-audio-card{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px;padding:13px;background:var(--inset);border:1px solid var(--border);border-radius:12px;}
-  .customization-audio-info{display:flex;align-items:center;gap:10px;min-width:0;}
-  .customization-audio-icon{width:34px;height:34px;border-radius:10px;background:var(--surface-active);display:grid;place-items:center;color:var(--text-2);flex:none;}
-  .customization-audio-name{font-size:.78rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .customization-audio-help{font-size:.68rem;color:var(--text-3);margin-top:3px;}
-  .customization-audio-card audio{width:250px;height:34px;max-width:45%;}
-  .admin-image-preview::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;}
-  .admin-image-preview > *{position:relative;z-index:1;}
-  .admin-image-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
-  .admin-image-preview-title{font-size:.84rem;font-weight:750;margin-bottom:5px;}
   .admin-image-editor-card[hidden]{display:none;}
   @media (max-width:860px){
     #sidebar{position:fixed;top:0;bottom:0;left:0;z-index:40;transform:translateX(-100%);transition:transform .22s ease;box-shadow:20px 0 50px -20px rgba(0,0,0,0.6);}
@@ -605,24 +546,6 @@
   body.compact-mode .bubble-stack{gap:2px;}
   body.compact-mode .bubble{padding:7px 12px;font-size:0.87rem;}
   body.compact-mode .group-body{gap:2px;}
-
-
-  .notification-btn{position:relative;}
-  .notification-badge{position:absolute;top:2px;right:2px;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);}
-  .notification-panel{position:absolute;top:58px;right:18px;width:min(360px,calc(100vw - 36px));background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 24px 60px -24px rgba(0,0,0,.75);z-index:80;display:none;overflow:hidden;}
-  .notification-panel.open{display:block;}
-  .notification-head{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid var(--border);font-size:.8rem;font-weight:800;}
-  .notification-head button{border:0;background:transparent;color:var(--accent-hover);font:inherit;font-size:.7rem;cursor:pointer;}
-  .notification-list{max-height:360px;overflow:auto;}
-  .notification-empty{padding:34px 18px;text-align:center;color:var(--text-3);font-size:.78rem;}
-  .notification-item{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.045);cursor:pointer;background:transparent;transition:background .15s ease;}
-  .notification-item:hover{background:var(--surface-hover);}
-  .notification-item.unread{background:var(--accent-soft);}
-  .notification-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:6px;flex:0 0 auto;}
-  .notification-copy{min-width:0;display:flex;flex-direction:column;gap:3px;}
-  .notification-title{font-size:.76rem;font-weight:750;color:var(--text-1);}
-  .notification-text{font-size:.72rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .notification-time{font-size:.65rem;color:var(--text-3);}
   .media-picker,.favorites-panel{position:absolute;bottom:68px;left:18px;width:300px;background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 24px 60px -24px rgba(0,0,0,.8);z-index:70;display:none;overflow:hidden;}
   .media-picker.open,.favorites-panel.open{display:block;}
   .media-picker-head,.favorites-head{display:flex;align-items:center;justify-content:space-between;padding:12px 12px 10px;border-bottom:1px solid var(--border);font-size:.78rem;font-weight:800;}
@@ -656,7 +579,6 @@
   .msg-profile-link{cursor:pointer;}
   .msg-profile-link:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;}
   .msg-group:hover .group-meta{color:var(--text-1);}
-  @media(max-width:560px){.media-picker,.favorites-panel{left:12px;width:calc(100vw - 24px);}.notification-panel{right:12px;top:54px;}}
 
   .management-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;}
   .management-card{background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;}
@@ -677,12 +599,6 @@
 </style>
 </head>
 <body>
-
-<div id="g_id_onload"
-     data-client_id="483379820524-5uc4blgidcnantc7ebhjloosic1va499.apps.googleusercontent.com"
-     data-callback="handleCredentialResponse"
-     data-auto_prompt="false">
-</div>
 
 <div id="app">
 
@@ -710,8 +626,6 @@
           <input type="password" id="login-password" class="field" placeholder="Password" autocomplete="current-password">
         </div>
         <div class="hint muted" id="login-hint"></div>
-        <div class="google-btn-row"><div id="google-btn-login-slot"></div></div>
-        <div class="auth-divider"><span>or</span></div>
         <button id="login-btn" class="btn btn-primary" style="width:100%;" type="button">
           <span id="login-btn-label">Log in</span>
         </button>
@@ -729,8 +643,6 @@
           <input type="password" id="reg-confirm" class="field" placeholder="Confirm password" autocomplete="new-password">
         </div>
         <div class="hint muted" id="reg-hint">Usernames need 3 to 20 characters using letters, numbers, or underscores. Passwords need at least 6 characters.</div>
-        <div class="google-btn-row"><div id="google-btn-register-slot"></div></div>
-        <div class="auth-divider"><span>or</span></div>
         <button id="register-btn" class="btn btn-primary" style="width:100%;" type="button" disabled>
           <span id="register-btn-label">Create account</span>
         </button>
@@ -777,7 +689,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
           Console
         </a>
-        <a href="/admin/images" data-route="/admin/images" class="side-nav-item" data-view="admin-images" id="nav-admin-images-link" style="display:none;">
+        <a href="/admin/images" data-route="/admin/images" class="side-nav-item" data-view="admin-images" id="nav-admin-images-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-4.5-4.5L8 19"/></svg>
           Customization
         </a
@@ -812,13 +724,6 @@
             </button>
           </div>
           <div class="header-actions">
-            <button id="notification-btn" class="icon-btn notification-btn" type="button" title="Notifications" aria-label="Notifications">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
-                <path d="M10 21h4"/>
-              </svg>
-              <span id="notification-badge" class="notification-badge" hidden>0</span>
-            </button>
             <button id="call-toggle-btn" class="icon-btn" type="button" title="Join the call">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -827,10 +732,7 @@
           </div>
         </header>
 
-        <div id="notification-panel" class="notification-panel" aria-hidden="true">
-          <div class="notification-head"><span>Notifications</span><button id="notification-clear" type="button">Mark all read</button></div>
-          <div id="notification-list" class="notification-list"></div>
-        </div>
+        
 
         <div id="call-grid">
           <div class="call-topbar">
@@ -849,30 +751,7 @@
           <div class="call-controls-bar" id="call-controls-bar"></div>
         </div>
 
-        <div id="poll-banner" class="poll-banner">
-          <div class="poll-banner-row">
-            <span class="poll-banner-title">View Poll</span>
-            <button type="button" id="poll-view-btn" class="poll-view-btn">View</button>
-          </div>
-          <div class="poll-panel">
-            <div class="poll-panel-inner">
-              <div class="poll-content">
-                <div class="poll-question">Should we require optic to use email and password only?</div>
-                <div class="poll-options">
-                  <button type="button" class="poll-option" data-poll-option="yes">
-                    <span class="poll-option-label">Yes</span>
-                    <span class="poll-option-count" id="poll-count-yes">0</span>
-                  </button>
-                  <button type="button" class="poll-option" data-poll-option="no">
-                    <span class="poll-option-label">No</span>
-                    <span class="poll-option-count" id="poll-count-no">0</span>
-                  </button>
-                </div>
-                <div id="poll-status" class="poll-status"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
 
         <div id="chat-box"></div>
 
@@ -948,6 +827,7 @@
         </form>
       </section>
 
+      
       <section id="panel-settings" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -955,80 +835,6 @@
               <h1>Settings</h1>
               <p>Manage how you appear to your team and how you sign in.</p>
             </div>
-
-            <section class="settings-card">
-              <h2>Profile photo</h2>
-              <div class="avatar-row">
-                <div class="avatar-lg" id="settings-avatar"></div>
-                <div class="avatar-row-actions">
-                  <input type="file" id="avatar-file-input" hidden accept="image/*">
-                  <button type="button" class="btn-outline" id="avatar-upload-btn">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    Upload a photo
-                  </button>
-                  <button type="button" class="btn-outline" id="avatar-remove-btn" style="display:none;color:var(--danger);border-color:rgba(229,72,77,0.35);">Remove photo</button>
-                </div>
-              </div>
-            </section>
-
-            <section class="settings-card">
-              <h2>Display name and bio</h2>
-              <p class="settings-help">Personalize how you appear to your team. Leave the display name blank to show your username instead.</p>
-              <div class="stacked-field">
-                <input type="text" id="settings-displayname-input" class="field" placeholder="Display name" maxlength="40">
-              </div>
-              <div class="stacked-field">
-                <textarea id="settings-bio-input" class="field" placeholder="Write a short bio" maxlength="240" rows="3" style="resize:vertical;border-radius:var(--radius-md);"></textarea>
-              </div>
-              <button type="button" class="btn-outline" id="save-profile-details-btn">Save profile details</button>
-            </section>
-
-            <section class="settings-card">
-              <h2>Profile link</h2>
-              <p class="settings-help">Anyone with this link can view your public profile.</p>
-              <div class="link-row">
-                <code id="profile-link-code">/users/…</code>
-                <button type="button" class="icon-btn" id="profile-link-copy" title="Copy link">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                </button>
-                <a class="icon-btn" id="profile-link-open" href="#" target="_blank" title="Open profile">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                </a>
-              </div>
-            </section>
-
-            <section class="settings-card">
-              <h2>Preferences</h2>
-              <p class="settings-help">Customize how Aurora behaves for you. These sync to your account across devices.</p>
-              <div class="pref-row">
-                <div class="pref-row-text">
-                  <div class="pref-row-title">Notification sound</div>
-                  <div class="pref-row-desc">Play a short sound when a new message arrives.</div>
-                </div>
-                <label class="switch"><input type="checkbox" id="pref-sound" checked><span class="switch-track"></span></label>
-              </div>
-              <div class="pref-row">
-                <div class="pref-row-text">
-                  <div class="pref-row-title">Send with Enter</div>
-                  <div class="pref-row-desc">Press Enter to send. Turn off to only send with the button (Shift+Enter always adds a line break).</div>
-                </div>
-                <label class="switch"><input type="checkbox" id="pref-send-enter" checked><span class="switch-track"></span></label>
-              </div>
-              <div class="pref-row">
-                <div class="pref-row-text">
-                  <div class="pref-row-title">Link previews</div>
-                  <div class="pref-row-desc">Automatically expand YouTube, Spotify, and other links into playable embeds.</div>
-                </div>
-                <label class="switch"><input type="checkbox" id="pref-embeds" checked><span class="switch-track"></span></label>
-              </div>
-              <div class="pref-row">
-                <div class="pref-row-text">
-                  <div class="pref-row-title">Compact messages</div>
-                  <div class="pref-row-desc">Reduce spacing between messages to fit more on screen.</div>
-                </div>
-                <label class="switch"><input type="checkbox" id="pref-compact"><span class="switch-track"></span></label>
-              </div>
-            </section>
 
             <section class="settings-card">
               <h2>Account</h2>
@@ -1097,15 +903,6 @@
               <div id="admin-online-list" class="admin-user-list"></div>
             </section>
 
-            
-            <section class="settings-card">
-              <h2>Security status</h2>
-              <div class="security-notice"><strong>Frontend security boundary</strong><span>The interface is structured for authenticated access, but Firebase database rules and a trusted backend must enforce authorization. Client side checks are not treated as sufficient security.</span></div>
-              <div class="info-row"><span>Authentication</span><span>Configured</span></div>
-              <div class="info-row"><span>Realtime database</span><span>Connected</span></div>
-              <div class="info-row"><span>Administrative authorization</span><span>Requires server rules</span></div>
-            </section>
-
             <section class="settings-card danger-card">
               <h2>Clear all messages</h2>
               <p class="settings-help">This removes every message in the chat for everyone. This action cannot be undone.</p>
@@ -1120,7 +917,7 @@
           <div class="page-shell admin-images-shell">
             <div class="page-head">
               <h1>Customization</h1>
-              <p>Customize how individual users appear and what happens when their profile is opened.</p>
+              <p>Manage profile sounds for Aurora users.</p>
             </div>
 
             <section class="settings-card">
@@ -1139,25 +936,6 @@
                 </div>
                 <div class="mini-avatar admin-image-selected-avatar" id="admin-image-selected-avatar"></div>
               </div>
-
-              <div class="customization-subsection">
-                <div class="customization-subsection-head">
-                  <div>
-                    <h3>People signed in background</h3>
-                    <p class="settings-help">Set a custom background image for this user's entry. Their normal profile picture remains unchanged.</p>
-                  </div>
-                  <span class="customization-status" id="admin-image-status">Default</span>
-                </div>
-                <div class="admin-image-preview-wrap">
-                  <div class="admin-image-preview" id="admin-image-preview"></div>
-                </div>
-                <input type="file" id="admin-image-file" accept="image/*" hidden>
-                <div class="profile-editor-actions">
-                  <button type="button" class="btn-outline" id="admin-image-upload-btn">Choose image</button>
-                  <button type="button" class="btn-outline-danger" id="admin-image-remove-btn">Remove custom image</button>
-                </div>
-              </div>
-
               <div class="customization-subsection">
                 <div class="customization-subsection-head">
                   <div>
@@ -1202,7 +980,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyANBev0K1e06T5aHBC5EKXaswbMwELSkkQ",
@@ -1217,7 +994,6 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  const GOOGLE_CLIENT_ID = "483379820524-5uc4blgidcnantc7ebhjloosic1va499.apps.googleusercontent.com";
   const FOUNDER_USERNAME = "brodanistheman";
   const NAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
   const PASSWORD_MIN_LEN = 6;
@@ -1236,7 +1012,6 @@
 
   let profilesCache = {};
   let usersCache = {};
-  let adminPeopleEntryImages = {};
   let liveCalls = {};
   let lastOnlineCount = 1;
   let presenceCache = {};
@@ -1255,9 +1030,7 @@
   let totalMessageCount = 0;
   let totalMediaCount = 0;
   let adminSearchQuery = '';
-  let prefs = { sound: true, sendEnter: true, embeds: true, compact: false };
   let messageCache = {}; // key -> raw message object, needed to redraw on edits
-  let notifications = [];
   let favoriteTab = 'favorites';
   let mediaInputAccept = '*/*';
   const viewAuth = document.getElementById('view-auth');
@@ -1303,13 +1076,6 @@
   const callStatusPill = document.getElementById('call-status-pill');
   const callStatusPillText = document.getElementById('call-status-pill-text');
 
-  const pollBanner = document.getElementById('poll-banner');
-  const pollViewBtn = document.getElementById('poll-view-btn');
-  const pollStatus = document.getElementById('poll-status');
-  const pollCountYes = document.getElementById('poll-count-yes');
-  const pollCountNo = document.getElementById('poll-count-no');
-  const pollOptionButtons = document.querySelectorAll('.poll-option');
-
   const chatBox = document.getElementById('chat-box');
   const typingRow = document.getElementById('typing-row');
   const chatForm = document.getElementById('chat-form');
@@ -1332,11 +1098,6 @@
   const favoritesClose = document.getElementById('favorites-close');
   const favoritesList = document.getElementById('favorites-list');
   const favoriteTabs = document.querySelectorAll('.favorite-tab');
-  const notificationBtn = document.getElementById('notification-btn');
-  const notificationBadge = document.getElementById('notification-badge');
-  const notificationPanel = document.getElementById('notification-panel');
-  const notificationList = document.getElementById('notification-list');
-  const notificationClear = document.getElementById('notification-clear');
   const micBtn = document.getElementById('mic-btn');
   const composerEl = document.getElementById('composer');
   const recTimerEl = document.getElementById('rec-timer');
@@ -1346,19 +1107,6 @@
 
   const toastStack = document.getElementById('toast-stack');
 
-  const settingsAvatar = document.getElementById('settings-avatar');
-  const avatarUploadBtn = document.getElementById('avatar-upload-btn');
-  const avatarFileInput = document.getElementById('avatar-file-input');
-  const avatarRemoveBtn = document.getElementById('avatar-remove-btn');
-  const settingsDisplayNameInput = document.getElementById('settings-displayname-input');
-  const settingsBioInput = document.getElementById('settings-bio-input');
-  const saveProfileDetailsBtn = document.getElementById('save-profile-details-btn');
-  const profileLinkCode = document.getElementById('profile-link-code');
-  const profileLinkCopy = document.getElementById('profile-link-copy');
-  const profileLinkOpen = document.getElementById('profile-link-open');
-  const settingsUsername = document.getElementById('settings-username');
-  const settingsAccountId = document.getElementById('settings-account-id');
-  const settingsJoined = document.getElementById('settings-joined');
   const settingsCurrentPassword = document.getElementById('settings-current-password');
   const settingsNewPassword = document.getElementById('settings-new-password');
   const settingsConfirmPassword = document.getElementById('settings-confirm-password');
@@ -1366,11 +1114,6 @@
   const settingsLogoutBtn = document.getElementById('settings-logout-btn');
   const settingsDeletePassword = document.getElementById('settings-delete-password');
   const deleteAccountBtn = document.getElementById('delete-account-btn');
-
-  const prefSoundToggle = document.getElementById('pref-sound');
-  const prefSendEnterToggle = document.getElementById('pref-send-enter');
-  const prefEmbedsToggle = document.getElementById('pref-embeds');
-  const prefCompactToggle = document.getElementById('pref-compact');
 
   const adminStatAccounts = document.getElementById('admin-stat-accounts');
   const adminStatMessages = document.getElementById('admin-stat-messages');
@@ -1382,14 +1125,6 @@
   const adminImageUserSearch = document.getElementById('admin-image-user-search');
   const adminImageUserList = document.getElementById('admin-image-user-list');
   const adminImageEditorCard = document.getElementById('admin-image-editor-card');
-  const adminImageSelectedName = document.getElementById('admin-image-selected-name');
-  const adminImageSelectedHandle = document.getElementById('admin-image-selected-handle');
-  const adminImageSelectedAvatar = document.getElementById('admin-image-selected-avatar');
-  const adminImagePreview = document.getElementById('admin-image-preview');
-  const adminImageFile = document.getElementById('admin-image-file');
-  const adminImageUploadBtn = document.getElementById('admin-image-upload-btn');
-  const adminImageRemoveBtn = document.getElementById('admin-image-remove-btn');
-  const adminImageStatus = document.getElementById('admin-image-status');
   const adminSoundStatus = document.getElementById('admin-sound-status');
   const adminSoundName = document.getElementById('admin-sound-name');
   const adminSoundPreview = document.getElementById('admin-sound-preview');
@@ -1452,24 +1187,6 @@
   function editIconSVG(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>'; }
   function trashIconSVG(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg>'; }
   function eyeIconSVG(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>'; }
-  let audioCtx = null;
-  function playNotificationSound(){
-    if (!prefs.sound) return;
-    try {
-      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(740, now);
-      osc.frequency.exponentialRampToValueAtTime(920, now + 0.09);
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.14, now + 0.015);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(now); osc.stop(now + 0.24);
-    } catch (err) { /* audio not available, ignore */ }
-  }
   async function sha256Hex(str){
     const enc = new TextEncoder().encode(str);
     const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -1492,96 +1209,6 @@
     const computed = await hashPassword(password, user.salt);
     return computed === user.hash;
   }
-  function base64UrlDecode(str){
-    str = str.replace(/-/g, '+').replace(/_/g, '/');
-    while (str.length % 4) str += '=';
-    const bin = atob(str);
-    try { return decodeURIComponent(bin.split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')); }
-    catch (e) { return bin; }
-  }
-  function decodeGoogleCredential(token){
-    const parts = token.split('.');
-    if (parts.length < 2) return null;
-    try { return JSON.parse(base64UrlDecode(parts[1])); } catch (e) { return null; }
-  }
-  async function provisionGoogleUsername(seed){
-    let base = (seed || 'user').toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 16);
-    if (base.length < 3) base = (base + 'user').slice(0, 16);
-    let candidate = base;
-    let suffix = 0;
-    while (suffix < 60) {
-      const usernameRef = db.ref('usernames/' + candidate);
-      const result = await usernameRef.transaction(cur => (cur === null ? true : undefined));
-      if (result.committed) return candidate;
-      suffix += 1;
-      const suffixStr = String(suffix);
-      candidate = base.slice(0, Math.max(3, 16 - suffixStr.length)) + suffixStr;
-    }
-    return null;
-  }
-  async function handleCredentialResponse(response){
-    const payload = decodeGoogleCredential(response.credential);
-    if (!payload || !payload.sub) { toast('Google sign in could not be completed.', 'error'); return; }
-    try {
-      const linkSnap = await db.ref('googleAccounts/' + payload.sub).once('value');
-      const linkedId = linkSnap.val();
-      if (linkedId) {
-        const userSnap = await db.ref('users/' + linkedId).once('value');
-        const user = userSnap.val();
-        if (!user) { toast('Your linked account could not be found.', 'error'); return; }
-        currentUsername = user.username; currentKey = user.usernameLower; currentUserId = linkedId; currentCreatedAt = user.createdAt;
-        isFounder = (currentKey === FOUNDER_USERNAME);
-        await claimPresenceAndEnter();
-        return;
-      }
-      const seed = payload.email ? payload.email.split('@')[0] : (payload.name || 'user');
-      const candidate = await provisionGoogleUsername(seed);
-      if (!candidate) { toast('An account could not be created right now. Please try again.', 'error'); return; }
-      const counterResult = await db.ref('meta/userCount').transaction(cur => (cur || 0) + 1);
-      const newId = counterResult.snapshot.val();
-      const salt = randomSaltHex(16);
-      const hash = await hashPassword(randomSaltHex(24), salt);
-      const createdAt = Date.now();
-      await db.ref('users/' + newId).set({ username: candidate, usernameLower: candidate, salt, hash, createdAt });
-      await db.ref('googleAccounts/' + payload.sub).set(newId);
-      if (payload.name) await db.ref('profiles/' + candidate).update({ displayName: payload.name });
-      currentUsername = candidate; currentKey = candidate; currentUserId = newId; currentCreatedAt = createdAt;
-      isFounder = (candidate === FOUNDER_USERNAME);
-      await claimPresenceAndEnter();
-    } catch (err) {
-      toast('Google sign in could not be completed. Please try again.', 'error');
-    }
-  }
-  window.handleCredentialResponse = handleCredentialResponse;
-  let googleButtonsReady = false;
-  function renderOneGoogleButton(slotId, text){
-    const el = document.getElementById(slotId);
-    if (!el || !window.google || !google.accounts || !google.accounts.id) return;
-    const row = el.closest('.google-btn-row') || el.parentElement;
-    const width = Math.max(200, Math.min(400, Math.round(row.getBoundingClientRect().width)));
-    el.innerHTML = '';
-    try {
-      google.accounts.id.renderButton(el, { type: 'standard', shape: 'pill', theme: 'filled_black', text: text, size: 'large', logo_alignment: 'left', width: width });
-    } catch (err) { /* GIS not ready yet, next retry will catch it */ }
-  }
-  function renderGoogleButtons(){
-    renderOneGoogleButton('google-btn-login-slot', 'signin_with');
-    renderOneGoogleButton('google-btn-register-slot', 'signup_with');
-  }
-  function initGoogleButtons(attempt){
-    attempt = attempt || 0;
-    if (!window.google || !google.accounts || !google.accounts.id) {
-      if (attempt < 40) setTimeout(() => initGoogleButtons(attempt + 1), 150);
-      return;
-    }
-    if (!googleButtonsReady) {
-      googleButtonsReady = true;
-      try { google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse, auto_select: false }); } catch (err) {}
-    }
-    renderGoogleButtons();
-  }
-  window.addEventListener('resize', () => { if (googleButtonsReady) renderGoogleButtons(); });
-  initGoogleButtons();
   function profilePathFor(id){ return '/users/' + id + '/profile'; }
   function profileUrlFor(id){ return location.origin + profilePathFor(id); }
 
@@ -1603,7 +1230,6 @@
     viewShell.classList.remove('active');
     viewAuth.classList.toggle('active', which === 'auth');
     viewProfile.classList.toggle('active', which === 'profile');
-    if (which === 'auth') initGoogleButtons();
   }
 
   function showShell(panelName){
@@ -1635,7 +1261,7 @@
       showStandalone('auth');
       return;
     }
-    if ((route.view === 'admin' || route.view === 'admin-images') && !isFounder) {
+    if (route.view === 'admin' && !isFounder) {
       toast('Administrator access is required for that page.', 'error');
       navigate('/');
       return;
@@ -1683,9 +1309,10 @@
       if (!prof.profileSoundData && adminProfileSounds[lower]) prof.profileSoundData = adminProfileSounds[lower];
       const displayName = prof.displayName || user.username;
       const memberDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
-      const avatar = prof.avatarData ? '<img src="' + escapeHTML(prof.avatarData) + '" alt="">' : initials(user.username);
+      const avatarX = Number.isFinite(Number(prof.avatarPositionX)) ? Number(prof.avatarPositionX) : 50; const avatarY = Number.isFinite(Number(prof.avatarPositionY)) ? Number(prof.avatarPositionY) : 50; const coverX = Number.isFinite(Number(prof.coverPositionX)) ? Number(prof.coverPositionX) : 50; const coverY = Number.isFinite(Number(prof.coverPositionY)) ? Number(prof.coverPositionY) : 50;
+      const avatar = prof.avatarData ? '<img src="' + escapeHTML(prof.avatarData) + '" alt="" style="object-position:' + avatarX + '% ' + avatarY + '%;">' : initials(user.username);
       const avatarStyleValue = prof.avatarData ? '' : avatarStyle(user.username);
-      const coverStyle = prof.coverData ? 'background-image:url("' + escapeHTML(prof.coverData) + '")' : '';
+      const coverStyle = prof.coverData ? 'background-image:url("' + escapeHTML(prof.coverData) + '");background-position:' + coverX + '% ' + coverY + '%;' : '';
       const bio = prof.bio ? '<p class="profile-bio">' + escapeHTML(prof.bio) + '</p>' : '<p class="profile-empty">No biography has been added to this profile yet.</p>';
       const location = prof.location ? escapeHTML(prof.location) : 'Not provided';
       const website = prof.website ? '<a href="' + escapeHTML(prof.website) + '" target="_blank" rel="noopener noreferrer">' + escapeHTML(prof.website) + '</a>' : 'Not provided';
@@ -1710,7 +1337,7 @@
             '<div class="profile-info-item"><div class="profile-info-label">Username</div><div class="profile-info-value">@' + escapeHTML(user.username) + '</div></div>' +
           '</div></section>' +
           '<section class="profile-section"><h2 class="profile-section-title">Profile</h2><p class="profile-side-note">This is the public profile for <strong>' + escapeHTML(displayName) + '</strong>. Information shown here is controlled by the account owner.</p></section>' +
-          (own ? '<section class="profile-editor" id="profile-editor"><div class="profile-editor-head"><div><h2 class="profile-editor-title">Customize your profile</h2><p class="profile-editor-subtitle">Control the information and imagery people see when they visit your profile.</p></div></div><div class="profile-editor-grid"><div class="profile-editor-field full"><label>Profile picture</label><div class="profile-upload-row"><div id="profile-editor-avatar-preview" class="profile-editor-avatar-preview"></div><div><input id="profile-edit-avatar" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-avatar-btn">Choose profile picture</button><button type="button" class="profile-editor-remove" id="profile-edit-avatar-remove">Remove</button><div class="profile-editor-help">JPG, PNG, GIF, or WebP. Recommended square image.</div></div></div></div><div class="profile-editor-field full"><label>Profile cover</label><div class="profile-upload-row"><div id="profile-editor-cover-preview" class="profile-editor-cover-preview"></div><div><input id="profile-edit-cover" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-cover-btn">Choose cover image</button><button type="button" class="profile-editor-remove" id="profile-edit-cover-remove">Remove</button><div class="profile-editor-help">Recommended wide image. This appears across the top of your profile.</div></div></div></div><div class="profile-editor-field"><label for="profile-edit-displayname">Display name</label><input id="profile-edit-displayname" maxlength="40" value="' + escapeHTML(prof.displayName || '') + '"></div><div class="profile-editor-field"><label for="profile-edit-location">Location</label><input id="profile-edit-location" maxlength="80" value="' + escapeHTML(prof.location || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-website">Website</label><input id="profile-edit-website" maxlength="200" value="' + escapeHTML(prof.website || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-bio">Biography</label><textarea id="profile-edit-bio" maxlength="240">' + escapeHTML(prof.bio || '') + '</textarea></div></div><div class="profile-editor-actions"><button type="button" class="profile-editor-cancel" id="profile-editor-cancel">Cancel</button><button type="button" class="profile-editor-save" id="profile-editor-save">Save changes</button></div></section>' : '') +
+          (own ? '<section class="profile-editor" id="profile-editor"><div class="profile-editor-head"><div><h2 class="profile-editor-title">Customize your profile</h2><p class="profile-editor-subtitle">Control the information and imagery people see when they visit your profile.</p></div></div><div class="profile-editor-grid"><div class="profile-editor-field full"><label>Profile picture</label><div class="profile-upload-row"><div id="profile-editor-avatar-preview" class="profile-editor-avatar-preview"></div><div><input id="profile-edit-avatar" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-avatar-btn">Choose profile picture</button><button type="button" class="profile-editor-remove" id="profile-edit-avatar-remove">Remove</button><div class="profile-editor-help">JPG, PNG, GIF, or WebP. Recommended square image.</div></div></div><div class="profile-position-controls"><div class="profile-position-control"><label for="profile-avatar-x">Horizontal position</label><input id="profile-avatar-x" type="range" min="0" max="100" value="50"><span class="profile-position-value" id="profile-avatar-x-value">50%</span></div><div class="profile-position-control"><label for="profile-avatar-y">Vertical position</label><input id="profile-avatar-y" type="range" min="0" max="100" value="50"><span class="profile-position-value" id="profile-avatar-y-value">50%</span></div></div></div><div class="profile-editor-field full"><label>Profile banner</label><div class="profile-upload-row"><div id="profile-editor-cover-preview" class="profile-editor-cover-preview"></div><div><input id="profile-edit-cover" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-cover-btn">Choose banner image</button><button type="button" class="profile-editor-remove" id="profile-edit-cover-remove">Remove</button><div class="profile-editor-help">Choose a banner image, then adjust its horizontal and vertical position.</div></div></div><div class="profile-position-controls"><div class="profile-position-control"><label for="profile-cover-x">Horizontal position</label><input id="profile-cover-x" type="range" min="0" max="100" value="50"><span class="profile-position-value" id="profile-cover-x-value">50%</span></div><div class="profile-position-control"><label for="profile-cover-y">Vertical position</label><input id="profile-cover-y" type="range" min="0" max="100" value="50"><span class="profile-position-value" id="profile-cover-y-value">50%</span></div></div></div><div class="profile-editor-field"><label for="profile-edit-displayname">Display name</label><input id="profile-edit-displayname" maxlength="40" value="' + escapeHTML(prof.displayName || '') + '"></div><div class="profile-editor-field"><label for="profile-edit-location">Location</label><input id="profile-edit-location" maxlength="80" value="' + escapeHTML(prof.location || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-website">Website</label><input id="profile-edit-website" maxlength="200" value="' + escapeHTML(prof.website || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-bio">Biography</label><textarea id="profile-edit-bio" maxlength="240">' + escapeHTML(prof.bio || '') + '</textarea></div></div><div class="profile-editor-actions"><button type="button" class="profile-editor-cancel" id="profile-editor-cancel">Cancel</button><button type="button" class="profile-editor-save" id="profile-editor-save">Save changes</button></div></section>' : '') +
         '</div>' +
         '<aside class="profile-column">' +
           '<section class="profile-side-card"><h2 class="profile-side-title">Profile information</h2><div class="profile-side-list">' +
@@ -1737,9 +1364,22 @@
         const coverPreview = document.getElementById('profile-editor-cover-preview');
         let nextAvatarData = prof.avatarData || null;
         let nextCoverData = prof.coverData || null;
-        const setAvatarPreview = value => { avatarPreview.innerHTML = value ? '<img src="' + escapeHTML(value) + '" alt="">' : initials(user.username); avatarPreview.setAttribute('style', value ? '' : avatarStyle(user.username)); };
-        const setCoverPreview = value => { coverPreview.style.backgroundImage = value ? 'url("' + escapeHTML(value) + '")' : ''; coverPreview.classList.toggle('empty', !value); };
-        setAvatarPreview(nextAvatarData); setCoverPreview(nextCoverData);
+        let nextAvatarX = Number.isFinite(Number(prof.avatarPositionX)) ? Number(prof.avatarPositionX) : 50;
+        let nextAvatarY = Number.isFinite(Number(prof.avatarPositionY)) ? Number(prof.avatarPositionY) : 50;
+        let nextCoverX = Number.isFinite(Number(prof.coverPositionX)) ? Number(prof.coverPositionX) : 50;
+        let nextCoverY = Number.isFinite(Number(prof.coverPositionY)) ? Number(prof.coverPositionY) : 50;
+        const avatarXInput = document.getElementById('profile-avatar-x');
+        const avatarYInput = document.getElementById('profile-avatar-y');
+        const coverXInput = document.getElementById('profile-cover-x');
+        const coverYInput = document.getElementById('profile-cover-y');
+        const avatarXValue = document.getElementById('profile-avatar-x-value');
+        const avatarYValue = document.getElementById('profile-avatar-y-value');
+        const coverXValue = document.getElementById('profile-cover-x-value');
+        const coverYValue = document.getElementById('profile-cover-y-value');
+        const setAvatarPreview = value => { avatarPreview.innerHTML = value ? '<img src="' + escapeHTML(value) + '" alt="" style="object-position:' + nextAvatarX + '% ' + nextAvatarY + '%;">' : initials(user.username); avatarPreview.setAttribute('style', value ? '' : avatarStyle(user.username)); };
+        const setCoverPreview = value => { coverPreview.style.backgroundImage = value ? 'url("' + escapeHTML(value) + '")' : ''; coverPreview.style.backgroundPosition = nextCoverX + '% ' + nextCoverY + '%'; coverPreview.classList.toggle('empty', !value); };
+        const updatePositionUI = () => { avatarXInput.value = nextAvatarX; avatarYInput.value = nextAvatarY; coverXInput.value = nextCoverX; coverYInput.value = nextCoverY; avatarXValue.textContent = nextAvatarX + '%'; avatarYValue.textContent = nextAvatarY + '%'; coverXValue.textContent = nextCoverX + '%'; coverYValue.textContent = nextCoverY + '%'; setAvatarPreview(nextAvatarData); setCoverPreview(nextCoverData); };
+        updatePositionUI();
         avatarBtn.addEventListener('click', () => avatarInput.click());
         avatarRemove.addEventListener('click', () => { nextAvatarData = null; avatarInput.value = ''; setAvatarPreview(null); });
         coverBtn.addEventListener('click', () => coverInput.click());
@@ -1747,6 +1387,10 @@
         const readProfileImage = (file, maxSize, callback) => { if (!file || !file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; } const reader = new FileReader(); reader.onload = () => { const img = new Image(); img.onload = () => { const scale = Math.min(1, maxSize / Math.max(img.width, img.height)); const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(img.width * scale)); canvas.height = Math.max(1, Math.round(img.height * scale)); const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,canvas.width,canvas.height); callback(canvas.toDataURL('image/jpeg',0.88)); }; img.src = reader.result; }; reader.readAsDataURL(file); };
         avatarInput.addEventListener('change', () => readProfileImage(avatarInput.files[0], 512, value => { nextAvatarData = value; setAvatarPreview(value); }));
         coverInput.addEventListener('change', () => readProfileImage(coverInput.files[0], 1600, value => { nextCoverData = value; setCoverPreview(value); }));
+        avatarXInput.addEventListener('input', () => { nextAvatarX = Number(avatarXInput.value); updatePositionUI(); });
+        avatarYInput.addEventListener('input', () => { nextAvatarY = Number(avatarYInput.value); updatePositionUI(); });
+        coverXInput.addEventListener('input', () => { nextCoverX = Number(coverXInput.value); updatePositionUI(); });
+        coverYInput.addEventListener('input', () => { nextCoverY = Number(coverYInput.value); updatePositionUI(); });
         editBtn.addEventListener('click', e => { e.preventDefault(); editor.classList.add('open'); editor.scrollIntoView({behavior:'smooth',block:'start'}); });
         cancel.addEventListener('click', () => editor.classList.remove('open'));
         save.addEventListener('click', async () => {
@@ -1757,8 +1401,8 @@
           if (websiteValue && !/^https?:\/\//i.test(websiteValue)) { toast('Website links must start with http:// or https://.', 'error'); return; }
           save.disabled = true;
           try {
-            await db.ref('profiles/' + lower).update({displayName:displayNameValue || null, location:locationValue || null, website:websiteValue || null, bio:bioValue || null, avatarData:nextAvatarData || null, coverData:nextCoverData || null});
-            profilesCache[lower] = Object.assign({}, profilesCache[lower] || {}, {displayName:displayNameValue || null, location:locationValue || null, website:websiteValue || null, bio:bioValue || null, avatarData:nextAvatarData || null, coverData:nextCoverData || null});
+            await db.ref('profiles/' + lower).update({displayName:displayNameValue || null, location:locationValue || null, website:websiteValue || null, bio:bioValue || null, avatarData:nextAvatarData || null, coverData:nextCoverData || null, avatarPositionX:nextAvatarX, avatarPositionY:nextAvatarY, coverPositionX:nextCoverX, coverPositionY:nextCoverY});
+            profilesCache[lower] = Object.assign({}, profilesCache[lower] || {}, {displayName:displayNameValue || null, location:locationValue || null, website:websiteValue || null, bio:bioValue || null, avatarData:nextAvatarData || null, coverData:nextCoverData || null, avatarPositionX:nextAvatarX, avatarPositionY:nextAvatarY, coverPositionX:nextCoverX, coverPositionY:nextCoverY});
             toast('Profile updated.');
             await renderPublicProfile(id);
           } catch (err) { toast('Your profile could not be updated.', 'error'); }
@@ -1775,7 +1419,7 @@
     const name = el.dataset.avatarName || key || '';
     const profile = profilesCache[key];
     if (profile && profile.avatarData) {
-      el.style.cssText += `background-image:url('${profile.avatarData}');background-size:cover;background-position:center;`;
+      el.style.cssText += `background-image:url('${profile.avatarData}');background-size:cover;background-position:${Number.isFinite(Number(profile.avatarPositionX)) ? Number(profile.avatarPositionX) : 50}% ${Number.isFinite(Number(profile.avatarPositionY)) ? Number(profile.avatarPositionY) : 50}%;`;
       el.textContent = '';
     } else {
       const existing = el.getAttribute('style') || '';
@@ -1783,16 +1427,7 @@
       el.textContent = initials(name);
     }
   }
-  function refreshPeopleEntryBackgrounds(){
-    document.querySelectorAll('.user-row[data-entry-key]').forEach(row => {
-      const image = adminPeopleEntryImages[row.dataset.entryKey] || '';
-      const bg = row.querySelector('.user-row-bg');
-      if (!bg) return;
-      if (image) { bg.src = image; bg.classList.add('has-image'); }
-      else { bg.removeAttribute('src'); bg.classList.remove('has-image'); }
-    });
-  }
-  function refreshAllAvatars(){ document.querySelectorAll('[data-avatar-key]').forEach(applyAvatarVisual); refreshPeopleEntryBackgrounds(); }
+  function refreshAllAvatars(){ document.querySelectorAll('[data-avatar-key]').forEach(applyAvatarVisual); }
   function blobToDataURL(blob){
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -1933,7 +1568,6 @@
   authTabs.forEach(tab => tab.addEventListener('click', () => {
     authTabs.forEach(t => t.classList.toggle('active', t === tab));
     authSections.forEach(s => s.classList.toggle('active', s.dataset.section === tab.dataset.tab));
-    renderGoogleButtons();
   }));
 
   let regCheckTimer = null;
@@ -2109,7 +1743,7 @@
     selfPillLink.setAttribute('href', profilePathFor(currentUserId));
     selfPillLink.setAttribute('data-route', profilePathFor(currentUserId));
     navAdminLink.style.display = isFounder ? 'flex' : 'none';
-    if (navAdminImagesLink) navAdminImagesLink.style.display = isFounder ? 'flex' : 'none';
+    if (navAdminImagesLink) navAdminImagesLink.style.display = 'flex';
 
     if (!listenersStarted) {
       listenersStarted = true;
@@ -2117,11 +1751,9 @@
       listenForProfiles();
       listenForMessages();
       listenForTyping();
-      listenForPoll();
       callChannel.listenLive();
       initSettingsHandlers();
       initAdminHandlers();
-      initPreferenceHandlers();
     }
 
     const target = pendingRoute || '/';
@@ -2143,37 +1775,7 @@
 
   menuBtn.addEventListener('click', () => { sidebar.classList.add('open'); drawerOverlay.classList.add('open'); });
   drawerOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); drawerOverlay.classList.remove('open'); });
-  function applyPrefsToUI(){
-    document.body.classList.toggle('compact-mode', !!prefs.compact);
-    if (prefSoundToggle) prefSoundToggle.checked = prefs.sound !== false;
-    if (prefSendEnterToggle) prefSendEnterToggle.checked = prefs.sendEnter !== false;
-    if (prefEmbedsToggle) prefEmbedsToggle.checked = prefs.embeds !== false;
-    if (prefCompactToggle) prefCompactToggle.checked = !!prefs.compact;
-  }
-  function loadPrefsFromProfile(profile){
-    const p = (profile && profile.preferences) || {};
-    prefs = {
-      sound: p.sound !== false,
-      sendEnter: p.sendEnter !== false,
-      embeds: p.embeds !== false,
-      compact: !!p.compact
-    };
-    applyPrefsToUI();
-  }
   let prefHandlersReady = false;
-  function initPreferenceHandlers(){
-    if (prefHandlersReady) return;
-    prefHandlersReady = true;
-    function savePref(key, value){
-      prefs[key] = value;
-      applyPrefsToUI();
-      db.ref('profiles/' + currentKey + '/preferences').update({ [key]: value }).catch(() => toast('Your preference could not be saved.', 'error'));
-    }
-    prefSoundToggle.addEventListener('change', () => savePref('sound', prefSoundToggle.checked));
-    prefSendEnterToggle.addEventListener('change', () => savePref('sendEnter', prefSendEnterToggle.checked));
-    prefEmbedsToggle.addEventListener('change', () => savePref('embeds', prefEmbedsToggle.checked));
-    prefCompactToggle.addEventListener('change', () => savePref('compact', prefCompactToggle.checked));
-  }
   function renderOnlineRows(){
     const rows = [];
     const adminRows = [];
@@ -2186,10 +1788,8 @@
       const status = v.status === 'away' ? 'away' : 'online';
       const name = getDisplayName(key, v.display);
       const path = profilePathFor(v.id);
-      const entryImage = adminPeopleEntryImages[key] || '';
       rows.push(
         `<a href="${path}" data-route="${path}" class="user-row" data-entry-key="${key}">` +
-          (entryImage ? '<img class="user-row-bg has-image" src="' + escapeHTML(entryImage) + '" alt="">' : '<img class="user-row-bg" alt="">') +
           '<div class="mini-avatar" data-avatar-key="' + key + '" data-avatar-name="' + escapeHTML(v.display) + '">' +
             '<span class="status-dot' + (status === 'away' ? ' away' : '') + '"></span>' +
           '</div>' +
@@ -2235,13 +1835,6 @@
       profilesCache = snap.val() || {};
       refreshAllAvatars();
       renderOnlineRows();
-      if (currentKey) loadPrefsFromProfile(profilesCache[currentKey]);
-    });
-    db.ref('adminPeopleEntryImages').on('value', snap => {
-      adminPeopleEntryImages = snap.val() || {};
-      refreshAllAvatars();
-      if (isFounder) renderAdminImageUsers();
-      renderOnlineRows();
     });
     db.ref('adminProfileSounds').on('value', snap => {
       adminProfileSounds = snap.val() || {};
@@ -2265,7 +1858,7 @@
         }
       });
       usersCache = next;
-      if (isFounder) renderAdminImageUsers();
+      renderAdminImageUsers();
     });
   }
   function onComposerChanged(){
@@ -2302,7 +1895,7 @@
       if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); applyAutocomplete(autocompleteIndex); return; }
       if (e.key === 'Escape') { e.preventDefault(); hideEmojiAutocomplete(); return; }
     }
-    if (e.key === 'Enter' && !e.shiftKey && prefs.sendEnter) { e.preventDefault(); chatForm.requestSubmit(); }
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatForm.requestSubmit(); }
   });
 
   function listenForTyping(){
@@ -2559,8 +2152,7 @@
     return null;
   }
   function extractEmbeds(text){
-    if (!prefs.embeds) return [];
-    const found = text.match(/(https?:\/\/[^\s<]+)/gi) || [];
+        const found = text.match(/(https?:\/\/[^\s<]+)/gi) || [];
     const embeds = []; const seen = new Set();
     for (const raw of found) {
       if (embeds.length >= 2) break;
@@ -2600,7 +2192,6 @@
   }
   function extractTenorPostId(url){
     try {
-      const u = new URL(url);
       if (u.hostname !== 'tenor.com' && !u.hostname.endsWith('.tenor.com')) return null;
       const match = u.pathname.match(/(?:gif-|sticker-|post-)?(\d{6,})\/?$/i);
       return match ? match[1] : null;
@@ -2745,35 +2336,8 @@
     if (adminStatCalls) adminStatCalls.textContent = Object.keys(liveCalls).length;
   }
 
-  function notificationStorageKey(){ return 'aurora.notifications.' + currentKey; }
-  function loadNotifications(){
-    try { notifications = JSON.parse(localStorage.getItem(notificationStorageKey()) || '[]'); } catch (err) { notifications = []; }
-    if (!Array.isArray(notifications)) notifications = [];
-    renderNotifications();
-  }
-  function saveNotifications(){ try { localStorage.setItem(notificationStorageKey(), JSON.stringify(notifications.slice(0,50))); } catch (err) {} }
-  function addNotification(type, title, text, messageKey){
-    notifications.unshift({ id: Date.now() + '-' + Math.random().toString(36).slice(2), type, title, text, messageKey: messageKey || null, unread:true, timestamp:Date.now() });
-    notifications = notifications.slice(0,50); saveNotifications(); renderNotifications();
-  }
-  function renderNotifications(){
-    if (!notificationList || !notificationBadge) return;
-    const unread = notifications.filter(n => n.unread).length;
-    notificationBadge.hidden = unread === 0; notificationBadge.textContent = unread > 99 ? '99+' : String(unread);
-    if (!notifications.length) { notificationList.innerHTML = '<div class="notification-empty">You are all caught up.</div>'; return; }
-    notificationList.innerHTML = notifications.map(n => '<div class="notification-item' + (n.unread ? ' unread' : '') + '" data-notification-id="' + escapeHTML(n.id) + '"><span class="notification-dot"></span><div class="notification-copy"><span class="notification-title">' + escapeHTML(n.title) + '</span><span class="notification-text">' + escapeHTML(n.text || '') + '</span><span class="notification-time">' + escapeHTML(formatTime(n.timestamp)) + '</span></div></div>').join('');
-    notificationList.querySelectorAll('.notification-item').forEach(el => el.addEventListener('click', () => {
-      const n = notifications.find(x => x.id === el.dataset.notificationId); if (!n) return;
-      n.unread = false; saveNotifications(); renderNotifications();
-      if (n.messageKey) jumpToMessage(n.messageKey);
-      notificationPanel.classList.remove('open'); notificationPanel.setAttribute('aria-hidden','true');
-    }));
-  }
-  notificationBtn.addEventListener('click', e => { e.stopPropagation(); const open = notificationPanel.classList.toggle('open'); notificationPanel.setAttribute('aria-hidden', String(!open)); mediaPicker.classList.remove('open'); favoritesPanel.classList.remove('open'); });
-  notificationClear.addEventListener('click', () => { notifications.forEach(n => n.unread = false); saveNotifications(); renderNotifications(); });
-
   function closeMediaPopovers(){ mediaPicker.classList.remove('open'); favoritesPanel.classList.remove('open'); mediaPicker.setAttribute('aria-hidden','true'); favoritesPanel.setAttribute('aria-hidden','true'); }
-  attachBtn.addEventListener('click', e => { e.stopPropagation(); const open = mediaPicker.classList.toggle('open'); mediaPicker.setAttribute('aria-hidden', String(!open)); favoritesPanel.classList.remove('open'); favoritesPanel.setAttribute('aria-hidden','true'); notificationPanel.classList.remove('open'); });
+  attachBtn.addEventListener('click', e => { e.stopPropagation(); const open = mediaPicker.classList.toggle('open'); mediaPicker.setAttribute('aria-hidden', String(!open)); favoritesPanel.classList.remove('open'); favoritesPanel.setAttribute('aria-hidden','true'); });
   mediaPickerClose.addEventListener('click', closeMediaPopovers);
   favoritesClose.addEventListener('click', closeMediaPopovers);
   favoritesOpen.addEventListener('click', () => { mediaPicker.classList.remove('open'); favoritesPanel.classList.add('open'); favoritesPanel.setAttribute('aria-hidden','false'); loadFavorites(favoriteTab); });
@@ -2783,7 +2347,7 @@
     mediaInputAccept = type === 'audio' ? 'audio/*' : type === 'image' ? 'image/*' : 'video/*';
     fileInput.accept = mediaInputAccept; fileInput.click(); closeMediaPopovers();
   }));
-  document.addEventListener('click', e => { if (!mediaPicker.contains(e.target) && e.target !== attachBtn && !favoritesPanel.contains(e.target) && !notificationPanel.contains(e.target) && e.target !== notificationBtn) closeMediaPopovers(); });
+  document.addEventListener('click', e => { if (!mediaPicker.contains(e.target) && e.target !== attachBtn && !favoritesPanel.contains(e.target)) closeMediaPopovers(); });
 
   let favoritesDbPromise = null;
   function openFavoritesDb(){
@@ -2824,7 +2388,6 @@
   }
 
   function listenForMessages(){
-    loadNotifications();
     chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
     const messagesRef = db.ref('messages');
     let initialLoadDone = false;
@@ -2838,10 +2401,7 @@
       if (msg.type && msg.type !== 'text') totalMediaCount++;
       updateAdminStats();
       if (initialLoadDone && msg.username && msg.username.toLowerCase() !== currentUsername.toLowerCase()) {
-        playNotificationSound();
         const text = msg.type === 'text' ? (msg.text || '') : (msg.type === 'tenor' ? 'Sent a GIF' : msg.type === 'image' ? 'Sent an image' : msg.type === 'voice' ? 'Sent a voice message' : 'Sent a file');
-        const mentionPattern = new RegExp('(^|\\s)@' + currentUsername.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&') + '(?=\\s|$)', 'i');
-        addNotification(mentionPattern.test(msg.text || '') ? 'mention' : 'message', mentionPattern.test(msg.text || '') ? 'You were mentioned' : 'New message', getDisplayName(msg.username.toLowerCase(), msg.username) + ': ' + text, snap.key);
       }
     });
     messagesRef.on('child_changed', snap => {
@@ -3534,67 +3094,6 @@
 
   callStatusPill.addEventListener('click',() => { if (!callChannel.state.active) callChannel.start(); });
 
-  const POLL_ID = 'optic-email-password';
-  let currentPollVote = null;
-
-  function renderPollVoteState(data){
-    data = data || {};
-    const votes = data.votes || {};
-    const yesVotes = Object.values(votes).filter(v => v === 'yes').length;
-    const noVotes = Object.values(votes).filter(v => v === 'no').length;
-    const totalVotes = yesVotes + noVotes;
-    const yesPct = totalVotes ? Math.round((yesVotes / totalVotes) * 100) : 0;
-    const noPct = totalVotes ? Math.round((noVotes / totalVotes) * 100) : 0;
-
-    pollCountYes.textContent = yesPct + '%';
-    pollCountNo.textContent = noPct + '%';
-
-    currentPollVote = currentKey && votes[currentKey] ? votes[currentKey] : null;
-    pollOptionButtons.forEach(btn => {
-      const selected = btn.dataset.pollOption === currentPollVote;
-      btn.classList.toggle('selected', selected);
-    });
-
-    if (currentPollVote) {
-      pollStatus.textContent = 'Your vote is saved. ' + totalVotes + ' total ' + (totalVotes === 1 ? 'vote' : 'votes') + '.';
-    } else {
-      pollStatus.textContent = 'Select an option to vote.';
-    }
-  }
-
-  function listenForPoll(){
-    db.ref('polls/' + POLL_ID).on('value', snap => {
-      renderPollVoteState(snap.val());
-    });
-  }
-
-  async function submitPollVote(option){
-    if (!currentKey || (option !== 'yes' && option !== 'no')) return;
-    pollOptionButtons.forEach(btn => { btn.disabled = true; });
-    pollStatus.textContent = 'Saving your vote...';
-    try {
-      await db.ref('polls/' + POLL_ID + '/votes/' + currentKey).set(option);
-    } catch (err) {
-      pollStatus.textContent = 'Your vote could not be saved. Please try again.';
-    } finally {
-      pollOptionButtons.forEach(btn => { btn.disabled = false; });
-    }
-  }
-
-  pollViewBtn.addEventListener('click', () => {
-    const open = pollBanner.classList.toggle('open');
-    pollViewBtn.textContent = open ? 'Hide' : 'View';
-    if (open) {
-      requestAnimationFrame(() => {
-        chatBox.scrollTop = Math.max(0, chatBox.scrollHeight - 20);
-      });
-    }
-  });
-
-  pollOptionButtons.forEach(btn => {
-    btn.addEventListener('click', () => submitPollVote(btn.dataset.pollOption));
-  });
-
   const callChannel = createCallChannel({
     liveNode: 'calls', watchNode: 'watchCall', rtcNode: 'rtcCall',
     getStream: () => navigator.mediaDevices.getUserMedia({ video: true, audio: true }),
@@ -3629,44 +3128,6 @@
   function initSettingsHandlers(){
     if (settingsHandlersReady) return;
     settingsHandlersReady = true;
-
-    avatarUploadBtn.addEventListener('click', () => avatarFileInput.click());
-    avatarFileInput.addEventListener('change', async (e) => {
-      const file = e.target.files[0]; avatarFileInput.value = '';
-      if (!file) return;
-      if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
-      if (file.size > MAX_FILE_BYTES) { toast('Images must be under 100 MB.', 'error'); return; }
-      try {
-        const dataUrl = await compressImage(file, 512, 0.85, false);
-        await db.ref('profiles/' + currentKey).update({ avatarData: dataUrl });
-        profilesCache[currentKey] = Object.assign({}, profilesCache[currentKey], { avatarData: dataUrl });
-        refreshAllAvatars(); populateSettingsPanel(); toast('Your profile photo has been updated.');
-      } catch (err) { toast('Your photo could not be updated.', 'error'); }
-    });
-    avatarRemoveBtn.addEventListener('click', async () => {
-      try {
-        await db.ref('profiles/' + currentKey + '/avatarData').remove();
-        if (profilesCache[currentKey]) delete profilesCache[currentKey].avatarData;
-        refreshAllAvatars(); populateSettingsPanel();
-      } catch (err) { toast('Your photo could not be removed.', 'error'); }
-    });
-
-    saveProfileDetailsBtn.addEventListener('click', async () => {
-      const displayName = settingsDisplayNameInput.value.trim().slice(0, 40);
-      const bio = settingsBioInput.value.trim().slice(0, 240);
-      try {
-        await db.ref('profiles/' + currentKey).update({ displayName: displayName || null, bio: bio || null });
-        profilesCache[currentKey] = Object.assign({}, profilesCache[currentKey], { displayName: displayName || null, bio: bio || null });
-        refreshAllAvatars(); renderOnlineRows();
-        toast('Your profile has been updated.');
-      } catch (err) { toast('Your profile could not be updated.', 'error'); }
-    });
-
-    profileLinkCopy.addEventListener('click', async () => {
-      const url = profileUrlFor(currentUserId);
-      try { await navigator.clipboard.writeText(url); toast('Your profile link has been copied.'); }
-      catch (err) { toast(url, 'error'); }
-    });
 
     changePasswordBtn.addEventListener('click', async () => {
       const current = settingsCurrentPassword.value;
@@ -3713,21 +3174,10 @@
     });
   }
   function populateSettingsPanel(){
-    const profile = profilesCache[currentKey] || {};
-    settingsAvatar.dataset.avatarKey = currentKey;
-    settingsAvatar.dataset.avatarName = currentUsername;
-    applyAvatarVisual(settingsAvatar);
-    avatarRemoveBtn.style.display = profile.avatarData ? 'inline-flex' : 'none';
-    settingsDisplayNameInput.value = profile.displayName || '';
-    settingsBioInput.value = profile.bio || '';
-    const url = profileUrlFor(currentUserId);
-    profileLinkCode.textContent = url;
-    profileLinkOpen.href = url;
     settingsUsername.textContent = '@' + currentUsername;
     settingsAccountId.textContent = String(currentUserId);
-    settingsJoined.textContent = currentCreatedAt ? new Date(currentCreatedAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : '—';
+    settingsJoined.textContent = currentCreatedAt ? new Date(currentCreatedAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
     settingsCurrentPassword.value = ''; settingsNewPassword.value = ''; settingsConfirmPassword.value = ''; settingsDeletePassword.value = '';
-    loadPrefsFromProfile(profile);
   }
   let adminImageHandlersReady = false;
   let adminImageSearchQuery = '';
@@ -3741,21 +3191,12 @@
     return (profile && profile.displayName) || (user && user.username) || 'Unknown user';
   }
 
+
   function renderAdminImagePreview(){
     if (!selectedAdminImageUserKey) return;
     const user = Object.values(usersCache).find(u => u.usernameLower === selectedAdminImageUserKey);
     if (!user) return;
-    const name = getAdminImageUserDisplayName(user);
-    const custom = adminPeopleEntryImages[selectedAdminImageUserKey] || null;
     const sound = adminProfileSounds[selectedAdminImageUserKey] || null;
-    adminImageSelectedName.textContent = name;
-    adminImageSelectedHandle.textContent = '@' + user.username;
-    adminImageSelectedAvatar.dataset.avatarKey = selectedAdminImageUserKey;
-    adminImageSelectedAvatar.dataset.avatarName = user.username;
-    adminImagePreview.style.backgroundImage = custom ? `url('${custom}')` : '';
-    adminImagePreview.innerHTML = '<span>' + escapeHTML(name) + '</span>';
-    adminImageRemoveBtn.style.display = custom ? 'inline-flex' : 'none';
-    adminImageStatus.textContent = custom ? 'Custom image' : 'Default';
     adminSoundStatus.textContent = sound ? 'Custom sound' : 'No sound';
     adminSoundName.textContent = sound ? (sound.name || 'Custom profile sound') : 'No custom profile sound';
     if (sound && sound.dataUrl) {
@@ -3768,9 +3209,8 @@
     }
     adminSoundRemoveBtn.style.display = sound ? 'inline-flex' : 'none';
   }
-
   function renderAdminImageUsers(){
-    if (!adminImageUserList || !isFounder) return;
+    if (!adminImageUserList) return;
     const users = Object.values(usersCache).sort((a,b) => getAdminImageUserDisplayName(a).localeCompare(getAdminImageUserDisplayName(b)));
     const filtered = users.filter(user => {
       if (!adminImageSearchQuery) return true;
@@ -3780,12 +3220,11 @@
     adminImageUserList.innerHTML = filtered.length ? filtered.map(user => {
       const key = user.usernameLower;
       const selected = key === selectedAdminImageUserKey ? ' selected' : '';
-      const custom = !!adminPeopleEntryImages[key];
       const hasSound = !!adminProfileSounds[key];
       return '<div class="admin-image-user-row' + selected + '" data-user-key="' + escapeHTML(key) + '">' +
         '<div class="mini-avatar" data-avatar-key="' + escapeHTML(key) + '" data-avatar-name="' + escapeHTML(user.username) + '"></div>' +
         '<div class="admin-image-user-info"><span class="admin-image-user-name">' + escapeHTML(getAdminImageUserDisplayName(user)) + '</span><span class="admin-image-user-handle">@' + escapeHTML(user.username) + '</span></div>' +
-        '<span class="admin-image-user-status">' + (custom && hasSound ? 'Image + sound' : custom ? 'Custom image' : hasSound ? 'Custom sound' : 'Default') + '</span>' +
+        '<span class="admin-image-user-status">' + (hasSound ? 'Custom sound' : 'No sound') + '</span>' +
       '</div>';
     }).join('') : '<div class="list-empty">No users match that search.</div>';
     adminImageUserList.querySelectorAll('.admin-image-user-row').forEach(row => {
@@ -3802,37 +3241,6 @@
   function initAdminImageHandlers(){
     if (adminImageHandlersReady) return;
     adminImageHandlersReady = true;
-    adminImageUserSearch?.addEventListener('input', () => {
-      adminImageSearchQuery = adminImageUserSearch.value.trim().toLowerCase();
-      renderAdminImageUsers();
-    });
-    adminImageUploadBtn?.addEventListener('click', () => {
-      if (!selectedAdminImageUserKey) { toast('Select a user first.', 'error'); return; }
-      adminImageFile.click();
-    });
-    adminImageFile?.addEventListener('change', async e => {
-      const file = e.target.files[0];
-      e.target.value = '';
-      if (!file || !selectedAdminImageUserKey) return;
-      if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
-      try {
-        const dataUrl = await compressImage(file, 512, 0.82, false);
-        await db.ref('adminPeopleEntryImages/' + selectedAdminImageUserKey).set(dataUrl);
-        toast('Custom People signed in background saved.');
-      } catch (err) {
-        toast('That image could not be saved.', 'error');
-      }
-    });
-    adminImageRemoveBtn?.addEventListener('click', async () => {
-      if (!selectedAdminImageUserKey) return;
-      try {
-        await db.ref('adminPeopleEntryImages/' + selectedAdminImageUserKey).remove();
-        toast('Custom background removed.');
-      } catch (err) {
-        toast('The custom image could not be removed.', 'error');
-      }
-    });
-
     adminSoundUploadBtn?.addEventListener('click', () => {
       if (!selectedAdminImageUserKey) { toast('Select a user first.', 'error'); return; }
       adminSoundFile.click();
@@ -3872,7 +3280,6 @@
   }
 
   function populateAdminImagesPanel(){
-    if (!isFounder) return;
     if (adminImageUserSearch) adminImageUserSearch.value = adminImageSearchQuery;
     initAdminImageHandlers();
     renderAdminImageUsers();
