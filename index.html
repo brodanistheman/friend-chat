@@ -262,8 +262,9 @@
     transition:background .15s ease,border-color .15s ease;
   }
   .user-row{position:relative;overflow:hidden;}
-  .user-row::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;z-index:0;}
-  .user-row > *:not(.user-row-bg){position:relative;z-index:1;}
+  .user-row::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;z-index:1;}
+  .user-row-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none;z-index:0;}
+  .user-row > *:not(.user-row-bg){position:relative;z-index:2;}
   .user-row:hover{background-color:var(--surface-hover);border-color:var(--border-strong);}
   .mini-avatar{position:relative;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:700;color:var(--on-accent);flex-shrink:0;overflow:hidden;background-size:cover;background-position:center;}
   .status-dot{position:absolute;right:-1px;bottom:-1px;width:8px;height:8px;border-radius:50%;background:var(--online);border:2px solid var(--bg-elevated);}
@@ -338,14 +339,14 @@
   @media(max-width:560px){.call-topbar{padding:9px 11px}.call-speaker-status{max-width:48%}#call-participants-line{padding-left:11px;padding-right:11px}#call-tiles-row{grid-template-columns:1fr 1fr;padding:9px;gap:8px}.call-tile{height:116px;border-radius:12px}.call-tile-label{left:6px;bottom:6px;padding:5px 7px;font-size:.66rem}.call-tile-controls{left:6px;top:6px}.call-tile-expand,.call-tile-leave{top:6px;width:28px;height:28px}.call-tile-expand{right:6px}.call-tile-leave{right:40px}}
 
 
-  #chat-box{flex:1;overflow-y:auto;padding:20px 20px 4px;display:flex;flex-direction:column;gap:14px;background:var(--bg);contain:layout paint;}
+  #chat-box{flex:1;overflow-y:auto;padding:20px 20px 4px;display:flex;flex-direction:column;gap:14px;background:var(--bg);}
   #chat-box::-webkit-scrollbar{width:6px;}
   #chat-box::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
   #chat-box::-webkit-scrollbar-track{background:transparent;}
 
   .empty-state{margin:auto;text-align:center;color:var(--text-3);font-size:0.86rem;font-weight:500;padding:40px 20px;}
 
-  .msg-group{display:flex;gap:11px;max-width:78%;animation:riseIn .18s ease both;content-visibility:auto;contain-intrinsic-size:80px;}
+  .msg-group{display:flex;gap:11px;max-width:78%;animation:riseIn .18s ease both;}
   @keyframes riseIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
   .msg-group .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.66rem;font-weight:700;color:var(--on-accent);flex-shrink:0;margin-top:2px;overflow:hidden;background-size:cover;background-position:center;}
   .group-body{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1;}
@@ -531,7 +532,9 @@
   .admin-image-selected-head{display:flex;align-items:center;justify-content:space-between;gap:16px;}
   .admin-image-selected-head h2{margin-bottom:4px;}
   .admin-image-selected-avatar{width:52px;height:52px;font-size:.8rem;}
-  .admin-image-editor-card[hidden]{display:none;} .custom-row-preview{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;min-height:54px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:.84rem;font-weight:700;} .custom-row-preview::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;} .custom-row-preview>*{position:relative;z-index:1;} .custom-row-preview{background-size:cover;background-position:center;}
+  .admin-image-editor-card[hidden]{display:none;}
+  .admin-user-row-bg-preview{width:190px;height:72px;border-radius:9px;background:#171b24 center/cover no-repeat;flex:none;border:1px solid #2b303b;}
+  .admin-user-row-bg-preview.empty{display:grid;place-items:center;color:var(--text-3);font-size:.7rem;font-weight:700;text-align:center;padding:8px;}
   @media (max-width:860px){
     #sidebar{position:fixed;top:0;bottom:0;left:0;z-index:40;transform:translateX(-100%);transition:transform .22s ease;box-shadow:20px 0 50px -20px rgba(0,0,0,0.6);}
     #sidebar.open{transform:translateX(0);}
@@ -916,32 +919,39 @@
         <div class="panel-scroll">
           <div class="page-shell admin-images-shell">
             <div class="page-head">
-              <h1>Customization</h1>
-              <p>Customize your own profile. Profile images and banners can only be edited from your own profile.</p>
+              <h1>User-row customization</h1>
+              <p>Choose any account and set the background image shown behind that user in People signed in.</p>
             </div>
 
             <section class="settings-card">
-              <h2>People signed in</h2>
-              <p class="settings-help">Customize the image shown behind your own user row. You can only change your own row.</p>
-              <div class="custom-row-preview" id="custom-row-preview">
-                <div class="mini-avatar" id="custom-row-avatar"></div>
-                <span id="custom-row-name">Your profile</span>
+              <h2>Users</h2>
+              <div class="stacked-field">
+                <input type="text" id="admin-image-user-search" class="field" placeholder="Search users">
               </div>
-              <input type="file" id="custom-row-file" accept="image/*" hidden>
-              <div class="profile-editor-actions">
-                <button type="button" class="profile-editor-upload" id="custom-row-upload">Upload image</button>
-                <button type="button" class="profile-editor-remove" id="custom-row-remove">Remove image</button>
-              </div>
-              <p class="profile-editor-help">This image appears only on your own entry in People signed in.</p>
+              <div id="admin-image-user-list" class="admin-image-user-list"></div>
             </section>
 
-            <section class="settings-card">
-              <h2>Your profile</h2>
-              <p class="settings-help">Open your profile to edit your profile picture, banner, display name, biography, and image positioning.</p>
-              <div class="profile-editor-actions">
-                <a class="profile-edit-btn" id="customization-open-profile" href="#">Open my profile</a>
+            <section class="settings-card admin-image-editor-card" id="admin-image-editor-card" hidden>
+              <div class="admin-image-selected-head">
+                <div>
+                  <h2 id="admin-image-selected-name">Select a user</h2>
+                  <p class="settings-help" id="admin-image-selected-handle">Choose a user above.</p>
+                </div>
+                <div class="mini-avatar admin-image-selected-avatar" id="admin-image-selected-avatar"></div>
+              </div>
+              <div class="profile-upload-row" style="margin-top:16px;">
+                <div id="admin-user-row-bg-preview" class="admin-user-row-bg-preview"></div>
+                <div>
+                  <input id="admin-user-row-bg-file" type="file" accept="image/*" hidden>
+                  <button type="button" class="profile-editor-upload" id="admin-user-row-bg-upload">Choose background image</button>
+                  <button type="button" class="profile-editor-remove" id="admin-user-row-bg-remove">Remove</button>
+                  <div class="profile-editor-help">This changes only the background behind the selected user's row in People signed in. It does not change their profile picture.</div>
+                </div>
               </div>
             </section>
+          </div>
+        </div>
+      </section>
           </div>
         </div>
       </section>
@@ -955,7 +965,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyANBev0K1e06T5aHBC5EKXaswbMwELSkkQ",
@@ -1007,8 +1017,6 @@
   let totalMediaCount = 0;
   let adminSearchQuery = '';
   let messageCache = {}; // key -> raw message object, needed to redraw on edits
-  let adminProfileSounds = {};
-  let loadingInitialMessages = false;
   let favoriteTab = 'favorites';
   let mediaInputAccept = '*/*';
   const viewAuth = document.getElementById('view-auth');
@@ -1085,6 +1093,9 @@
 
   const toastStack = document.getElementById('toast-stack');
 
+  const settingsUsername = document.getElementById('settings-username');
+  const settingsAccountId = document.getElementById('settings-account-id');
+  const settingsJoined = document.getElementById('settings-joined');
   const settingsCurrentPassword = document.getElementById('settings-current-password');
   const settingsNewPassword = document.getElementById('settings-new-password');
   const settingsConfirmPassword = document.getElementById('settings-confirm-password');
@@ -1100,6 +1111,16 @@
   const adminOnlineList = document.getElementById('admin-online-list');
   const adminUserSearch = document.getElementById('admin-user-search');
   const adminClearBtn = document.getElementById('admin-clear-btn');
+  const adminImageUserSearch = document.getElementById('admin-image-user-search');
+  const adminImageUserList = document.getElementById('admin-image-user-list');
+  const adminImageEditorCard = document.getElementById('admin-image-editor-card');
+  const adminImageSelectedName = document.getElementById('admin-image-selected-name');
+  const adminImageSelectedHandle = document.getElementById('admin-image-selected-handle');
+  const adminImageSelectedAvatar = document.getElementById('admin-image-selected-avatar');
+  const adminUserRowBgPreview = document.getElementById('admin-user-row-bg-preview');
+  const adminUserRowBgFile = document.getElementById('admin-user-row-bg-file');
+  const adminUserRowBgUpload = document.getElementById('admin-user-row-bg-upload');
+  const adminUserRowBgRemove = document.getElementById('admin-user-row-bg-remove');
   function escapeHTML(str){
     return String(str).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t));
   }
@@ -1133,7 +1154,7 @@
     setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 250); }, 4200);
   }
   function twemojiIn(el){
-    if (window.twemoji) { try { window.twemoji.parse(el, { base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/', folder: 'svg', ext: '.svg' }); } catch(e){} }
+    if (window.twemoji) { try { window.twemoji.parse(el, { folder: 'svg', ext: '.svg' }); } catch(e){} }
   }
   function setButtonLoading(labelEl, loading, idleText){
     labelEl.innerHTML = loading ? '<span class="spinner-lg"></span>' : idleText;
@@ -1736,11 +1757,10 @@
     selfAvatar.dataset.avatarKey = currentKey;
     selfAvatar.dataset.avatarName = currentUsername;
     selfName.textContent = '@' + currentUsername;
-    populateSettingsPanel();
     selfPillLink.setAttribute('href', profilePathFor(currentUserId));
     selfPillLink.setAttribute('data-route', profilePathFor(currentUserId));
     navAdminLink.style.display = isFounder ? 'flex' : 'none';
-    if (navAdminImagesLink) navAdminImagesLink.style.display = 'flex';
+    if (navAdminImagesLink) navAdminImagesLink.style.display = isFounder ? 'flex' : 'none';
 
     if (!listenersStarted) {
       listenersStarted = true;
@@ -1773,6 +1793,26 @@
   menuBtn.addEventListener('click', () => { sidebar.classList.add('open'); drawerOverlay.classList.add('open'); });
   drawerOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); drawerOverlay.classList.remove('open'); });
   let prefHandlersReady = false;
+  function applyUserRowBackground(row){
+    const key = row.dataset.entryKey;
+    if (!key) return;
+    const profile = profilesCache[key] || {};
+    const bg = profile.userRowBackgroundData;
+    let img = row.querySelector('.user-row-bg');
+    if (bg && bg.dataUrl) {
+      if (!img) {
+        img = document.createElement('img');
+        img.className = 'user-row-bg';
+        img.alt = '';
+        row.prepend(img);
+      }
+      img.src = bg.dataUrl;
+      img.style.objectPosition = (Number.isFinite(Number(bg.positionX)) ? Number(bg.positionX) : 50) + '% ' + (Number.isFinite(Number(bg.positionY)) ? Number(bg.positionY) : 50) + '%';
+    } else if (img) {
+      img.remove();
+    }
+  }
+
   function renderOnlineRows(){
     const rows = [];
     const adminRows = [];
@@ -1786,7 +1826,7 @@
       const name = getDisplayName(key, v.display);
       const path = profilePathFor(v.id);
       rows.push(
-        `<a href="${path}" data-route="${path}" class="user-row" data-entry-key="${key}">` +
+        `<a href="${path}" data-route="${path}" class="user-row" data-entry-key="${escapeHTML(key)}">` +
           '<div class="mini-avatar" data-avatar-key="' + key + '" data-avatar-name="' + escapeHTML(v.display) + '">' +
             '<span class="status-dot' + (status === 'away' ? ' away' : '') + '"></span>' +
           '</div>' +
@@ -1810,6 +1850,7 @@
       if (keys.length === 0) adminOnlineList.innerHTML = '<div class="list-empty">Nobody else is here yet.</div>';
       else adminOnlineList.innerHTML = adminRows.join('') || '<div class="list-empty">No one matches that search.</div>';
     }
+    onlineList.querySelectorAll('.user-row').forEach(applyUserRowBackground);
     refreshAllAvatars();
   }
 
@@ -1832,7 +1873,6 @@
       profilesCache = snap.val() || {};
       refreshAllAvatars();
       renderOnlineRows();
-      renderCustomRowPreview();
     });
     db.ref('adminProfileSounds').on('value', snap => {
       adminProfileSounds = snap.val() || {};
@@ -1854,6 +1894,7 @@
         }
       });
       usersCache = next;
+      if (isFounder) renderAdminImageUsers();
         });
   }
   function onComposerChanged(){
@@ -2171,14 +2212,14 @@
     if (embed.kind === 'spotify' || embed.kind === 'soundcloud') {
       const wrap = document.createElement('div');
       wrap.className = 'embed-audio-frame';
-      const iframe = document.createElement('iframe'); iframe.loading = 'lazy';
+      const iframe = document.createElement('iframe');
       iframe.src = embed.embedSrc; iframe.loading = 'lazy'; iframe.allow = 'autoplay; encrypted-media'; iframe.style.border = '0';
       wrap.appendChild(iframe);
       return wrap;
     }
     const wrap = document.createElement('div');
     wrap.className = 'embed-video-frame';
-    const iframe = document.createElement('iframe'); iframe.loading = 'lazy';
+    const iframe = document.createElement('iframe');
     iframe.src = embed.embedSrc; iframe.loading = 'lazy';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
     iframe.allowFullscreen = true; iframe.style.border = '0';
@@ -2311,7 +2352,7 @@
     closeBtn.innerHTML = closeIconSVG();
     bar.appendChild(barInfo); bar.appendChild(closeBtn);
 
-    const iframe = document.createElement('iframe'); iframe.loading = 'lazy';
+    const iframe = document.createElement('iframe');
     iframe.setAttribute('sandbox', 'allow-scripts allow-modals allow-popups');
     iframe.srcdoc = html;
 
@@ -2391,43 +2432,21 @@
   }
 
   function listenForMessages(){
-    chatBox.innerHTML = '<div class="empty-state">Loading messages…</div>';
+    chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
     const messagesRef = db.ref('messages');
     let initialLoadDone = false;
-    loadingInitialMessages = true;
-    messagesRef.limitToLast(400).once('value').then(snap => {
-      const fragment = document.createDocumentFragment();
-      chatBox.innerHTML = '';
-      const children = [];
-      snap.forEach(child => children.push(child));
-      children.forEach(child => {
-        const msg = child.val();
-        messageCache[child.key] = msg;
-        appendMessage(child.key, msg, false, fragment);
-        totalMessageCount++;
-        if (msg.type && msg.type !== 'text') totalMediaCount++;
-      });
-      if (!children.length) chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
-      else chatBox.appendChild(fragment);
-      loadingInitialMessages = false;
-      chatBox.scrollTop = chatBox.scrollHeight;
-      refreshAllAvatars();
-      updateAdminStats();
-      initialLoadDone = true;
-    }).catch(() => {
-      loadingInitialMessages = false;
-      chatBox.innerHTML = '<div class="empty-state">Messages could not be loaded right now.</div>';
-    });
-
+    messagesRef.once('value').then(() => { initialLoadDone = true; });
     messagesRef.on('child_added', snap => {
-      if (!initialLoadDone) return;
       const msg = snap.val();
       messageCache[snap.key] = msg;
-      appendMessage(snap.key, msg, true);
+      appendMessage(snap.key, msg);
       watchForSpamBurst(snap.key, msg);
       totalMessageCount++;
       if (msg.type && msg.type !== 'text') totalMediaCount++;
       updateAdminStats();
+      if (initialLoadDone && msg.username && msg.username.toLowerCase() !== currentUsername.toLowerCase()) {
+        const text = msg.type === 'text' ? (msg.text || '') : (msg.type === 'tenor' ? 'Sent a GIF' : msg.type === 'image' ? 'Sent an image' : msg.type === 'voice' ? 'Sent a voice message' : 'Sent a file');
+      }
     });
     messagesRef.on('child_changed', snap => {
       messageCache[snap.key] = snap.val();
@@ -2455,7 +2474,7 @@
     } catch (err) { toast('That profile could not be opened.', 'error'); }
   }
 
-  function appendMessage(key, msg, shouldScroll = true, target = null){
+  function appendMessage(key, msg){
     const emptyState = chatBox.querySelector('.empty-state');
     if (emptyState) emptyState.remove();
 
@@ -2482,11 +2501,11 @@
       group.innerHTML = inner;
       group.querySelectorAll('.msg-profile-link').forEach(el => el.addEventListener('click', e => { e.stopPropagation(); openProfileForUsername(msg.username); }));
 
-      (target || chatBox).appendChild(group);
+      chatBox.appendChild(group);
       group.querySelector('.bubble-stack').appendChild(createBubble(key, msg));
-      if (!target) refreshAllAvatars();
+      refreshAllAvatars();
     }
-    if (shouldScroll && !target) { const nearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 1200; if (nearBottom) chatBox.scrollTop = chatBox.scrollHeight; }
+    chatBox.scrollTop = chatBox.scrollHeight;
   }
 
   function createBubble(key, msg){
@@ -2521,7 +2540,7 @@
     } else if (msg.type === 'file' && msg.fileType && msg.fileType.startsWith('video/')) {
       bubble.className = 'bubble bubble-media';
       const wrap = document.createElement('div'); wrap.className = 'video-msg';
-      const video = document.createElement('video'); video.preload = 'metadata';
+      const video = document.createElement('video');
       video.src = msg.fileData; video.controls = true; video.preload = 'metadata'; video.playsInline = true;
       wrap.appendChild(video); bubble.appendChild(wrap);
       addMediaFavoriteControl(bubble, key, msg);
@@ -3199,80 +3218,151 @@
     });
   }
   function populateSettingsPanel(){
-    const user = Object.values(usersCache).find(u => String(u.id) === String(currentUserId)) || {};
-    const username = currentUsername || user.username || '';
-    const accountId = currentUserId !== null && currentUserId !== undefined ? currentUserId : (user.id || '');
-    const createdAt = currentCreatedAt || user.createdAt || null;
-    settingsUsername.textContent = username ? '@' + username : 'Unavailable';
-    settingsAccountId.textContent = accountId !== '' ? String(accountId) : 'Unavailable';
-    settingsJoined.textContent = createdAt ? new Date(createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unavailable';
+    settingsUsername.textContent = '@' + currentUsername;
+    settingsAccountId.textContent = String(currentUserId);
+    settingsJoined.textContent = currentCreatedAt ? new Date(currentCreatedAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
     settingsCurrentPassword.value = ''; settingsNewPassword.value = ''; settingsConfirmPassword.value = ''; settingsDeletePassword.value = '';
   }
-  let customRowHandlersReady = false;
-  const customRowFile = document.getElementById('custom-row-file');
-  const customRowUpload = document.getElementById('custom-row-upload');
-  const customRowRemove = document.getElementById('custom-row-remove');
-  const customRowPreview = document.getElementById('custom-row-preview');
-  const customRowAvatar = document.getElementById('custom-row-avatar');
-  const customRowName = document.getElementById('custom-row-name');
+  let adminImageHandlersReady = false;
+  let adminImageSearchQuery = '';
+  let selectedAdminImageUserKey = null;
 
-  function renderCustomRowPreview(){
-    const ownKey = currentKey;
-    if (!ownKey) return;
-    const profile = profilesCache[ownKey] || {};
-    const image = profile.userRowImageData || '';
-    if (customRowName) customRowName.textContent = getDisplayName(ownKey, currentUsername);
-    if (customRowAvatar) {
-      customRowAvatar.dataset.avatarKey = ownKey;
-      customRowAvatar.dataset.avatarName = currentUsername;
-      applyAvatarVisual(customRowAvatar);
-    }
-    if (customRowPreview) {
-      customRowPreview.style.backgroundImage = image ? `url('${escapeHTML(image)}')` : '';
-      customRowPreview.classList.toggle('has-image', !!image);
-    }
-    if (customRowRemove) customRowRemove.style.display = image ? 'inline-flex' : 'none';
+  function getAdminImageUserDisplayName(user){
+    const key = user && (user.usernameLower || String(user.username || '').toLowerCase());
+    const profile = key ? profilesCache[key] : null;
+    return (profile && profile.displayName) || (user && user.username) || key || 'Unknown user';
   }
 
-  function initCustomRowHandlers(){
-    if (customRowHandlersReady) return;
-    customRowHandlersReady = true;
-    customRowUpload?.addEventListener('click', () => customRowFile?.click());
-    customRowFile?.addEventListener('change', async e => {
-      const file = e.target.files[0];
+  function getUserRowBackground(key){
+    const profile = profilesCache[key] || {};
+    return profile.userRowBackgroundData || null;
+  }
+
+  function renderAdminImagePreview(){
+    const key = selectedAdminImageUserKey;
+    if (!key) return;
+    const user = usersCache[key];
+    if (!user) return;
+    const profile = profilesCache[key] || {};
+    const displayName = getAdminImageUserDisplayName(user);
+    const bg = getUserRowBackground(key);
+
+    if (adminImageSelectedName) adminImageSelectedName.textContent = displayName;
+    if (adminImageSelectedHandle) adminImageSelectedHandle.textContent = '@' + (user.username || key);
+    if (adminImageSelectedAvatar) {
+      adminImageSelectedAvatar.dataset.avatarKey = key;
+      adminImageSelectedAvatar.dataset.avatarName = user.username || key;
+      applyAvatarVisual(adminImageSelectedAvatar);
+    }
+    if (adminUserRowBgPreview) {
+      if (bg && bg.dataUrl) {
+        adminUserRowBgPreview.classList.remove('empty');
+        adminUserRowBgPreview.style.backgroundImage = `url("${bg.dataUrl}")`;
+        adminUserRowBgPreview.style.backgroundPosition = (Number.isFinite(Number(bg.positionX)) ? Number(bg.positionX) : 50) + '% ' + (Number.isFinite(Number(bg.positionY)) ? Number(bg.positionY) : 50) + '%';
+        adminUserRowBgPreview.textContent = '';
+      } else {
+        adminUserRowBgPreview.classList.add('empty');
+        adminUserRowBgPreview.style.backgroundImage = 'none';
+        adminUserRowBgPreview.textContent = 'No custom row background';
+      }
+    }
+    if (adminUserRowBgRemove) adminUserRowBgRemove.style.display = bg ? 'inline-flex' : 'none';
+    if (adminImageEditorCard) adminImageEditorCard.hidden = false;
+  }
+
+  function renderAdminImageUsers(){
+    if (!adminImageUserList || !isFounder) return;
+    const users = Object.values(usersCache).sort((a,b) => String(a.username || '').localeCompare(String(b.username || '')));
+    const q = adminImageSearchQuery.trim().toLowerCase();
+    const filtered = users.filter(user => {
+      const key = String(user.usernameLower || user.username || '').toLowerCase();
+      const name = getAdminImageUserDisplayName(user).toLowerCase();
+      return !q || key.includes(q) || name.includes(q);
+    });
+
+    adminImageUserList.innerHTML = filtered.map(user => {
+      const key = String(user.usernameLower || user.username || '').toLowerCase();
+      const selected = key === selectedAdminImageUserKey ? ' selected' : '';
+      const bg = getUserRowBackground(key);
+      return '<div class="admin-image-user-row' + selected + '" data-user-key="' + escapeHTML(key) + '">' +
+        '<div class="mini-avatar" data-avatar-key="' + escapeHTML(key) + '" data-avatar-name="' + escapeHTML(user.username || key) + '"></div>' +
+        '<div class="admin-image-user-info">' +
+          '<span class="admin-image-user-name">' + escapeHTML(getAdminImageUserDisplayName(user)) + '</span>' +
+          '<span class="admin-image-user-handle">@' + escapeHTML(user.username || key) + '</span>' +
+        '</div>' +
+        '<span class="admin-image-user-status">' + (bg ? 'Custom background' : 'No background') + '</span>' +
+      '</div>';
+    }).join('') || '<div class="list-empty">No users match that search.</div>';
+
+    adminImageUserList.querySelectorAll('.admin-image-user-row').forEach(row => {
+      row.addEventListener('click', () => {
+        selectedAdminImageUserKey = row.dataset.userKey;
+        renderAdminImageUsers();
+        renderAdminImagePreview();
+      });
+    });
+    refreshAllAvatars();
+  }
+
+  function initAdminImageHandlers(){
+    if (adminImageHandlersReady) return;
+    adminImageHandlersReady = true;
+
+    adminImageUserSearch?.addEventListener('input', () => {
+      adminImageSearchQuery = adminImageUserSearch.value.trim().toLowerCase();
+      renderAdminImageUsers();
+    });
+
+    adminUserRowBgUpload?.addEventListener('click', () => {
+      if (!isFounder || !selectedAdminImageUserKey) return;
+      adminUserRowBgFile?.click();
+    });
+
+    adminUserRowBgFile?.addEventListener('change', async e => {
+      const file = e.target.files?.[0];
       e.target.value = '';
-      if (!file || !currentKey) return;
+      const key = selectedAdminImageUserKey;
+      if (!file || !key || !isFounder) return;
       if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
       try {
-        const dataUrl = await compressImage(file, 900, 0.78, false);
-        await db.ref('profiles/' + currentKey + '/userRowImageData').set(dataUrl);
-        profilesCache[currentKey] = Object.assign({}, profilesCache[currentKey] || {}, { userRowImageData: dataUrl });
-        renderCustomRowPreview();
+        const dataUrl = await compressImage(file, 1400, 0.82, false);
+        const bgData = { dataUrl, positionX: 50, positionY: 50, updatedAt: Date.now() };
+        await db.ref('profiles/' + key + '/userRowBackgroundData').set(bgData);
+        profilesCache[key] = Object.assign({}, profilesCache[key] || {}, { userRowBackgroundData: bgData });
+        renderAdminImageUsers();
+        renderAdminImagePreview();
         renderOnlineRows();
-        toast('User row image saved.');
+        toast('User-row background saved.');
       } catch (err) {
-        toast('That image could not be saved.', 'error');
+        toast('That background image could not be saved.', 'error');
       }
     });
-    customRowRemove?.addEventListener('click', async () => {
-      if (!currentKey) return;
+
+    adminUserRowBgRemove?.addEventListener('click', async () => {
+      const key = selectedAdminImageUserKey;
+      if (!key || !isFounder) return;
       try {
-        await db.ref('profiles/' + currentKey + '/userRowImageData').remove();
-        if (profilesCache[currentKey]) delete profilesCache[currentKey].userRowImageData;
-        renderCustomRowPreview();
+        await db.ref('profiles/' + key + '/userRowBackgroundData').remove();
+        if (profilesCache[key]) delete profilesCache[key].userRowBackgroundData;
+        renderAdminImageUsers();
+        renderAdminImagePreview();
         renderOnlineRows();
-        toast('User row image removed.');
+        toast('User-row background removed.');
       } catch (err) {
-        toast('The user row image could not be removed.', 'error');
+        toast('The user-row background could not be removed.', 'error');
       }
     });
   }
 
   function populateAdminImagesPanel(){
-    if (!currentKey) return;
-    initCustomRowHandlers();
-    renderCustomRowPreview();
-    if (customizationOpenProfile) customizationOpenProfile.href = profilePathFor(currentUserId);
+    if (!isFounder) return;
+    initAdminImageHandlers();
+    if (!selectedAdminImageUserKey || !usersCache[selectedAdminImageUserKey]) {
+      const first = Object.values(usersCache).sort((a,b) => String(a.username || '').localeCompare(String(b.username || '')))[0];
+      selectedAdminImageUserKey = first ? String(first.usernameLower || first.username).toLowerCase() : null;
+    }
+    renderAdminImageUsers();
+    renderAdminImagePreview();
   }
 
   let adminHandlersReady = false;
