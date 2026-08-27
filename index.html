@@ -925,8 +925,8 @@
             <section class="settings-card">
               <div class="admin-image-selected-head">
                 <div>
-                  <h2>Choose a user</h2>
-                  <p class="settings-help">Click a user below to edit only their user-row banner image.</p>
+                  <h2>Your user-row</h2>
+                  <p class="settings-help">Customize the banner image behind your own entry in People signed in.</p>
                 </div>
               </div>
               <div id="admin-image-user-list" class="admin-image-user-grid"></div>
@@ -1815,8 +1815,12 @@
       const status = v.status === 'away' ? 'away' : 'online';
       const name = getDisplayName(key, v.display);
       const path = profilePathFor(v.id);
+      const rowProfile = profilesCache[key] || {};
+      const rowBg = rowProfile.userRowBackgroundData?.dataUrl || '';
+      const rowBgImg = rowBg ? '<img class="user-row-bg" src="' + escapeHTML(rowBg) + '" alt="">' : '';
       rows.push(
         `<a href="${path}" data-route="${path}" class="user-row" data-entry-key="${key}">` +
+          rowBgImg +
           '<div class="mini-avatar" data-avatar-key="' + key + '" data-avatar-name="' + escapeHTML(v.display) + '">' +
             '<span class="status-dot' + (status === 'away' ? ' away' : '') + '"></span>' +
           '</div>' +
