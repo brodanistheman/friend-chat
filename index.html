@@ -338,14 +338,14 @@
   @media(max-width:560px){.call-topbar{padding:9px 11px}.call-speaker-status{max-width:48%}#call-participants-line{padding-left:11px;padding-right:11px}#call-tiles-row{grid-template-columns:1fr 1fr;padding:9px;gap:8px}.call-tile{height:116px;border-radius:12px}.call-tile-label{left:6px;bottom:6px;padding:5px 7px;font-size:.66rem}.call-tile-controls{left:6px;top:6px}.call-tile-expand,.call-tile-leave{top:6px;width:28px;height:28px}.call-tile-expand{right:6px}.call-tile-leave{right:40px}}
 
 
-  #chat-box{flex:1;overflow-y:auto;padding:20px 20px 4px;display:flex;flex-direction:column;gap:14px;background:var(--bg);}
+  #chat-box{flex:1;overflow-y:auto;padding:20px 20px 4px;display:flex;flex-direction:column;gap:14px;background:var(--bg);contain:layout paint;}
   #chat-box::-webkit-scrollbar{width:6px;}
   #chat-box::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
   #chat-box::-webkit-scrollbar-track{background:transparent;}
 
   .empty-state{margin:auto;text-align:center;color:var(--text-3);font-size:0.86rem;font-weight:500;padding:40px 20px;}
 
-  .msg-group{display:flex;gap:11px;max-width:78%;animation:riseIn .18s ease both;}
+  .msg-group{display:flex;gap:11px;max-width:78%;animation:riseIn .18s ease both;content-visibility:auto;contain-intrinsic-size:80px;}
   @keyframes riseIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
   .msg-group .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.66rem;font-weight:700;color:var(--on-accent);flex-shrink:0;margin-top:2px;overflow:hidden;background-size:cover;background-position:center;}
   .group-body{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1;}
@@ -531,7 +531,7 @@
   .admin-image-selected-head{display:flex;align-items:center;justify-content:space-between;gap:16px;}
   .admin-image-selected-head h2{margin-bottom:4px;}
   .admin-image-selected-avatar{width:52px;height:52px;font-size:.8rem;}
-  .admin-image-editor-card[hidden]{display:none;}
+  .admin-image-editor-card[hidden]{display:none;} .custom-row-preview{position:relative;overflow:hidden;display:flex;align-items:center;gap:10px;min-height:54px;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:.84rem;font-weight:700;} .custom-row-preview::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;} .custom-row-preview>*{position:relative;z-index:1;} .custom-row-preview{background-size:cover;background-position:center;}
   @media (max-width:860px){
     #sidebar{position:fixed;top:0;bottom:0;left:0;z-index:40;transform:translateX(-100%);transition:transform .22s ease;box-shadow:20px 0 50px -20px rgba(0,0,0,0.6);}
     #sidebar.open{transform:translateX(0);}
@@ -921,6 +921,21 @@
             </div>
 
             <section class="settings-card">
+              <h2>People signed in</h2>
+              <p class="settings-help">Customize the image shown behind your own user row. You can only change your own row.</p>
+              <div class="custom-row-preview" id="custom-row-preview">
+                <div class="mini-avatar" id="custom-row-avatar"></div>
+                <span id="custom-row-name">Your profile</span>
+              </div>
+              <input type="file" id="custom-row-file" accept="image/*" hidden>
+              <div class="profile-editor-actions">
+                <button type="button" class="profile-editor-upload" id="custom-row-upload">Upload image</button>
+                <button type="button" class="profile-editor-remove" id="custom-row-remove">Remove image</button>
+              </div>
+              <p class="profile-editor-help">This image appears only on your own entry in People signed in.</p>
+            </section>
+
+            <section class="settings-card">
               <h2>Your profile</h2>
               <p class="settings-help">Open your profile to edit your profile picture, banner, display name, biography, and image positioning.</p>
               <div class="profile-editor-actions">
@@ -992,6 +1007,8 @@
   let totalMediaCount = 0;
   let adminSearchQuery = '';
   let messageCache = {}; // key -> raw message object, needed to redraw on edits
+  let adminProfileSounds = {};
+  let loadingInitialMessages = false;
   let favoriteTab = 'favorites';
   let mediaInputAccept = '*/*';
   const viewAuth = document.getElementById('view-auth');
@@ -1083,10 +1100,6 @@
   const adminOnlineList = document.getElementById('admin-online-list');
   const adminUserSearch = document.getElementById('admin-user-search');
   const adminClearBtn = document.getElementById('admin-clear-btn');
-  const adminSoundPreview = document.getElementById('admin-sound-preview');
-  const adminSoundFile = document.getElementById('admin-sound-file');
-  const adminSoundUploadBtn = document.getElementById('admin-sound-upload-btn');
-  const adminSoundRemoveBtn = document.getElementById('admin-sound-remove-btn');
   function escapeHTML(str){
     return String(str).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t));
   }
@@ -1723,6 +1736,7 @@
     selfAvatar.dataset.avatarKey = currentKey;
     selfAvatar.dataset.avatarName = currentUsername;
     selfName.textContent = '@' + currentUsername;
+    populateSettingsPanel();
     selfPillLink.setAttribute('href', profilePathFor(currentUserId));
     selfPillLink.setAttribute('data-route', profilePathFor(currentUserId));
     navAdminLink.style.display = isFounder ? 'flex' : 'none';
@@ -1818,6 +1832,7 @@
       profilesCache = snap.val() || {};
       refreshAllAvatars();
       renderOnlineRows();
+      renderCustomRowPreview();
     });
     db.ref('adminProfileSounds').on('value', snap => {
       adminProfileSounds = snap.val() || {};
@@ -2156,14 +2171,14 @@
     if (embed.kind === 'spotify' || embed.kind === 'soundcloud') {
       const wrap = document.createElement('div');
       wrap.className = 'embed-audio-frame';
-      const iframe = document.createElement('iframe');
+      const iframe = document.createElement('iframe'); iframe.loading = 'lazy';
       iframe.src = embed.embedSrc; iframe.loading = 'lazy'; iframe.allow = 'autoplay; encrypted-media'; iframe.style.border = '0';
       wrap.appendChild(iframe);
       return wrap;
     }
     const wrap = document.createElement('div');
     wrap.className = 'embed-video-frame';
-    const iframe = document.createElement('iframe');
+    const iframe = document.createElement('iframe'); iframe.loading = 'lazy';
     iframe.src = embed.embedSrc; iframe.loading = 'lazy';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
     iframe.allowFullscreen = true; iframe.style.border = '0';
@@ -2296,7 +2311,7 @@
     closeBtn.innerHTML = closeIconSVG();
     bar.appendChild(barInfo); bar.appendChild(closeBtn);
 
-    const iframe = document.createElement('iframe');
+    const iframe = document.createElement('iframe'); iframe.loading = 'lazy';
     iframe.setAttribute('sandbox', 'allow-scripts allow-modals allow-popups');
     iframe.srcdoc = html;
 
@@ -2376,21 +2391,43 @@
   }
 
   function listenForMessages(){
-    chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
+    chatBox.innerHTML = '<div class="empty-state">Loading messages…</div>';
     const messagesRef = db.ref('messages');
     let initialLoadDone = false;
-    messagesRef.once('value').then(() => { initialLoadDone = true; });
+    loadingInitialMessages = true;
+    messagesRef.limitToLast(400).once('value').then(snap => {
+      const fragment = document.createDocumentFragment();
+      chatBox.innerHTML = '';
+      const children = [];
+      snap.forEach(child => children.push(child));
+      children.forEach(child => {
+        const msg = child.val();
+        messageCache[child.key] = msg;
+        appendMessage(child.key, msg, false, fragment);
+        totalMessageCount++;
+        if (msg.type && msg.type !== 'text') totalMediaCount++;
+      });
+      if (!children.length) chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
+      else chatBox.appendChild(fragment);
+      loadingInitialMessages = false;
+      chatBox.scrollTop = chatBox.scrollHeight;
+      refreshAllAvatars();
+      updateAdminStats();
+      initialLoadDone = true;
+    }).catch(() => {
+      loadingInitialMessages = false;
+      chatBox.innerHTML = '<div class="empty-state">Messages could not be loaded right now.</div>';
+    });
+
     messagesRef.on('child_added', snap => {
+      if (!initialLoadDone) return;
       const msg = snap.val();
       messageCache[snap.key] = msg;
-      appendMessage(snap.key, msg);
+      appendMessage(snap.key, msg, true);
       watchForSpamBurst(snap.key, msg);
       totalMessageCount++;
       if (msg.type && msg.type !== 'text') totalMediaCount++;
       updateAdminStats();
-      if (initialLoadDone && msg.username && msg.username.toLowerCase() !== currentUsername.toLowerCase()) {
-        const text = msg.type === 'text' ? (msg.text || '') : (msg.type === 'tenor' ? 'Sent a GIF' : msg.type === 'image' ? 'Sent an image' : msg.type === 'voice' ? 'Sent a voice message' : 'Sent a file');
-      }
     });
     messagesRef.on('child_changed', snap => {
       messageCache[snap.key] = snap.val();
@@ -2418,7 +2455,7 @@
     } catch (err) { toast('That profile could not be opened.', 'error'); }
   }
 
-  function appendMessage(key, msg){
+  function appendMessage(key, msg, shouldScroll = true, target = null){
     const emptyState = chatBox.querySelector('.empty-state');
     if (emptyState) emptyState.remove();
 
@@ -2445,11 +2482,11 @@
       group.innerHTML = inner;
       group.querySelectorAll('.msg-profile-link').forEach(el => el.addEventListener('click', e => { e.stopPropagation(); openProfileForUsername(msg.username); }));
 
-      chatBox.appendChild(group);
+      (target || chatBox).appendChild(group);
       group.querySelector('.bubble-stack').appendChild(createBubble(key, msg));
-      refreshAllAvatars();
+      if (!target) refreshAllAvatars();
     }
-    chatBox.scrollTop = chatBox.scrollHeight;
+    if (shouldScroll && !target) { const nearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 1200; if (nearBottom) chatBox.scrollTop = chatBox.scrollHeight; }
   }
 
   function createBubble(key, msg){
@@ -2484,7 +2521,7 @@
     } else if (msg.type === 'file' && msg.fileType && msg.fileType.startsWith('video/')) {
       bubble.className = 'bubble bubble-media';
       const wrap = document.createElement('div'); wrap.className = 'video-msg';
-      const video = document.createElement('video');
+      const video = document.createElement('video'); video.preload = 'metadata';
       video.src = msg.fileData; video.controls = true; video.preload = 'metadata'; video.playsInline = true;
       wrap.appendChild(video); bubble.appendChild(wrap);
       addMediaFavoriteControl(bubble, key, msg);
@@ -3162,195 +3199,81 @@
     });
   }
   function populateSettingsPanel(){
-    settingsUsername.textContent = '@' + currentUsername;
-    settingsAccountId.textContent = String(currentUserId);
-    settingsJoined.textContent = currentCreatedAt ? new Date(currentCreatedAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
+    const user = Object.values(usersCache).find(u => String(u.id) === String(currentUserId)) || {};
+    const username = currentUsername || user.username || '';
+    const accountId = currentUserId !== null && currentUserId !== undefined ? currentUserId : (user.id || '');
+    const createdAt = currentCreatedAt || user.createdAt || null;
+    settingsUsername.textContent = username ? '@' + username : 'Unavailable';
+    settingsAccountId.textContent = accountId !== '' ? String(accountId) : 'Unavailable';
+    settingsJoined.textContent = createdAt ? new Date(createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unavailable';
     settingsCurrentPassword.value = ''; settingsNewPassword.value = ''; settingsConfirmPassword.value = ''; settingsDeletePassword.value = '';
   }
-  let adminImageHandlersReady = false;
-  let adminImageSearchQuery = '';
-  let selectedAdminImageUserKey = null;
+  let customRowHandlersReady = false;
+  const customRowFile = document.getElementById('custom-row-file');
+  const customRowUpload = document.getElementById('custom-row-upload');
+  const customRowRemove = document.getElementById('custom-row-remove');
+  const customRowPreview = document.getElementById('custom-row-preview');
+  const customRowAvatar = document.getElementById('custom-row-avatar');
+  const customRowName = document.getElementById('custom-row-name');
 
-  function getAdminImageUserDisplayName(user){
-    const key = user && (user.usernameLower || String(user.username || '').toLowerCase());
-    const profile = key ? profilesCache[key] : null;
-    return (profile && profile.displayName) || (user && user.username) || currentUsername || 'Unknown user';
-  }
-
-  function getOwnCustomizationKey(){
-    return currentKey || '';
-  }
-
-  function renderAdminImagePreview(){
-    const ownKey = getOwnCustomizationKey();
+  function renderCustomRowPreview(){
+    const ownKey = currentKey;
     if (!ownKey) return;
-
-    selectedAdminImageUserKey = ownKey;
-
     const profile = profilesCache[ownKey] || {};
-    const sound = profile.profileSoundData || adminProfileSounds[ownKey] || null;
-
-    if (adminImageSelectedName) {
-      adminImageSelectedName.textContent = profile.displayName || currentUsername || 'Your profile';
+    const image = profile.userRowImageData || '';
+    if (customRowName) customRowName.textContent = getDisplayName(ownKey, currentUsername);
+    if (customRowAvatar) {
+      customRowAvatar.dataset.avatarKey = ownKey;
+      customRowAvatar.dataset.avatarName = currentUsername;
+      applyAvatarVisual(customRowAvatar);
     }
-    if (adminImageSelectedHandle) {
-      adminImageSelectedHandle.textContent = '@' + (currentUsername || ownKey);
+    if (customRowPreview) {
+      customRowPreview.style.backgroundImage = image ? `url('${escapeHTML(image)}')` : '';
+      customRowPreview.classList.toggle('has-image', !!image);
     }
-
-    if (adminSoundStatus) {
-      adminSoundStatus.textContent = sound ? 'Custom sound' : 'No sound';
-    }
-    if (adminSoundName) {
-      adminSoundName.textContent = sound ? (sound.name || 'Custom profile sound') : 'No custom profile sound';
-    }
-
-    if (sound && sound.dataUrl) {
-      adminSoundPreview.hidden = false;
-      adminSoundPreview.src = sound.dataUrl;
-    } else {
-      adminSoundPreview.pause();
-      adminSoundPreview.removeAttribute('src');
-      adminSoundPreview.hidden = true;
-    }
-
-    adminSoundRemoveBtn.style.display = sound ? 'inline-flex' : 'none';
+    if (customRowRemove) customRowRemove.style.display = image ? 'inline-flex' : 'none';
   }
 
-  function renderAdminImageUsers(){
-    const ownKey = getOwnCustomizationKey();
-    if (!ownKey || !adminImageUserList) return;
-
-    selectedAdminImageUserKey = ownKey;
-
-    const profile = profilesCache[ownKey] || {};
-    const displayName = profile.displayName || currentUsername || ownKey;
-    const hasSound = !!(profile.profileSoundData || adminProfileSounds[ownKey]);
-
-    adminImageUserList.innerHTML =
-      '<div class="admin-image-user-row selected" data-user-key="' + escapeHTML(ownKey) + '">' +
-        '<div class="mini-avatar" data-avatar-key="' + escapeHTML(ownKey) + '" data-avatar-name="' + escapeHTML(currentUsername || ownKey) + '"></div>' +
-        '<div class="admin-image-user-info">' +
-          '<span class="admin-image-user-name">' + escapeHTML(displayName) + '</span>' +
-          '<span class="admin-image-user-handle">@' + escapeHTML(currentUsername || ownKey) + '</span>' +
-        '</div>' +
-        '<span class="admin-image-user-status">' + (hasSound ? 'Custom sound' : 'No sound') + '</span>' +
-      '</div>';
-
-    const ownRow = adminImageUserList.querySelector('.admin-image-user-row');
-    ownRow?.addEventListener('click', () => {
-      selectedAdminImageUserKey = ownKey;
-      adminImageEditorCard.hidden = false;
-        });
-
-    refreshAllAvatars();
-  }
-
-  function initAdminImageHandlers(){
-    if (adminImageHandlersReady) return;
-    adminImageHandlersReady = true;
-
-    adminSoundUploadBtn?.addEventListener('click', () => {
-      const ownKey = getOwnCustomizationKey();
-
-      if (!ownKey) {
-        toast('You must be signed in to customize your profile.', 'error');
-        return;
-      }
-
-      selectedAdminImageUserKey = ownKey;
-      adminSoundFile.click();
-    });
-
-    adminSoundFile?.addEventListener('change', async e => {
+  function initCustomRowHandlers(){
+    if (customRowHandlersReady) return;
+    customRowHandlersReady = true;
+    customRowUpload?.addEventListener('click', () => customRowFile?.click());
+    customRowFile?.addEventListener('change', async e => {
       const file = e.target.files[0];
       e.target.value = '';
-
-      const ownKey = getOwnCustomizationKey();
-
-      if (!file || !ownKey) return;
-
-      if (selectedAdminImageUserKey !== ownKey) {
-        selectedAdminImageUserKey = ownKey;
-      }
-
-      if (!file.type.startsWith('audio/')) {
-        toast('Please choose an audio file.', 'error');
-        return;
-      }
-
-      if (file.size > MAX_PROFILE_SOUND_BYTES) {
-        toast('Profile sounds must be under 10 MB.', 'error');
-        return;
-      }
-
+      if (!file || !currentKey) return;
+      if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
       try {
-        const dataUrl = await blobToDataURL(file);
-        const soundData = {
-          dataUrl: dataUrl,
-          name: file.name,
-          type: file.type,
-          updatedAt: Date.now()
-        };
-
-        await db.ref('profiles/' + ownKey + '/profileSoundData').set(soundData);
-
-        profilesCache[ownKey] = Object.assign(
-          {},
-          profilesCache[ownKey] || {},
-          { profileSoundData: soundData }
-        );
-
-        adminProfileSounds[ownKey] = soundData;
-        selectedAdminImageUserKey = ownKey;
-
-                    toast('Profile sound saved.');
+        const dataUrl = await compressImage(file, 900, 0.78, false);
+        await db.ref('profiles/' + currentKey + '/userRowImageData').set(dataUrl);
+        profilesCache[currentKey] = Object.assign({}, profilesCache[currentKey] || {}, { userRowImageData: dataUrl });
+        renderCustomRowPreview();
+        renderOnlineRows();
+        toast('User row image saved.');
       } catch (err) {
-        toast('That sound could not be saved.', 'error');
+        toast('That image could not be saved.', 'error');
       }
     });
-
-    adminSoundRemoveBtn?.addEventListener('click', async () => {
-      const ownKey = getOwnCustomizationKey();
-
-      if (!ownKey) return;
-
-      selectedAdminImageUserKey = ownKey;
-
+    customRowRemove?.addEventListener('click', async () => {
+      if (!currentKey) return;
       try {
-        await db.ref('profiles/' + ownKey + '/profileSoundData').remove();
-
-        if (profilesCache[ownKey]) {
-          delete profilesCache[ownKey].profileSoundData;
-        }
-
-        delete adminProfileSounds[ownKey];
-
-                    toast('Profile sound removed.');
+        await db.ref('profiles/' + currentKey + '/userRowImageData').remove();
+        if (profilesCache[currentKey]) delete profilesCache[currentKey].userRowImageData;
+        renderCustomRowPreview();
+        renderOnlineRows();
+        toast('User row image removed.');
       } catch (err) {
-        toast('The profile sound could not be removed.', 'error');
+        toast('The user row image could not be removed.', 'error');
       }
     });
   }
 
   function populateAdminImagesPanel(){
-    const ownKey = getOwnCustomizationKey();
-    if (!ownKey) return;
-
-    selectedAdminImageUserKey = ownKey;
-
-    if (adminImageUserSearch) {
-      adminImageUserSearch.value = '';
-      adminImageUserSearch.disabled = true;
-      adminImageUserSearch.placeholder = 'Only your profile can be customized';
-    }
-
-    initAdminImageHandlers();
-
-    if (adminImageEditorCard) {
-      adminImageEditorCard.hidden = false;
-    }
-
-      }
+    if (!currentKey) return;
+    initCustomRowHandlers();
+    renderCustomRowPreview();
+    if (customizationOpenProfile) customizationOpenProfile.href = profilePathFor(currentUserId);
+  }
 
   let adminHandlersReady = false;
   function initAdminHandlers(){
