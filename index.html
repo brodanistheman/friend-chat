@@ -257,9 +257,11 @@
     font-size:0.85rem;font-weight:500;color:var(--text-1);text-decoration:none;
     transition:background .15s ease,border-color .15s ease;
   }
-  .user-row{position:relative;overflow:hidden;background-size:cover;background-position:center;}
-  .user-row::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;}
-  .user-row > *{position:relative;z-index:1;}
+  .user-row{position:relative;overflow:hidden;}
+  .user-row-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:none;pointer-events:none;z-index:0;}
+  .user-row-bg.has-image{display:block;}
+  .user-row::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;z-index:0;}
+  .user-row > *:not(.user-row-bg){position:relative;z-index:1;}
   .user-row:hover{background-color:var(--surface-hover);border-color:var(--border-strong);}
   .mini-avatar{position:relative;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-weight:700;color:var(--on-accent);flex-shrink:0;overflow:hidden;background-size:cover;background-position:center;}
   .status-dot{position:absolute;right:-1px;bottom:-1px;width:8px;height:8px;border-radius:50%;background:var(--online);border:2px solid var(--bg-elevated);}
@@ -1713,7 +1715,10 @@
   function refreshPeopleEntryBackgrounds(){
     document.querySelectorAll('.user-row[data-entry-key]').forEach(row => {
       const image = adminPeopleEntryImages[row.dataset.entryKey] || '';
-      row.style.backgroundImage = image ? `url('${image}')` : '';
+      const bg = row.querySelector('.user-row-bg');
+      if (!bg) return;
+      if (image) { bg.src = image; bg.classList.add('has-image'); }
+      else { bg.removeAttribute('src'); bg.classList.remove('has-image'); }
     });
   }
   function refreshAllAvatars(){ document.querySelectorAll('[data-avatar-key]').forEach(applyAvatarVisual); refreshPeopleEntryBackgrounds(); }
@@ -2111,9 +2116,9 @@
       const name = getDisplayName(key, v.display);
       const path = profilePathFor(v.id);
       const entryImage = adminPeopleEntryImages[key] || '';
-      const entryStyle = entryImage ? ` style="background-image:url('${escapeHTML(entryImage)}')"` : '';
       rows.push(
-        `<a href="${path}" data-route="${path}" class="user-row" data-entry-key="${key}"${entryStyle}>` +
+        `<a href="${path}" data-route="${path}" class="user-row" data-entry-key="${key}">` +
+          (entryImage ? '<img class="user-row-bg has-image" src="' + escapeHTML(entryImage) + '" alt="">' : '<img class="user-row-bg" alt="">') +
           '<div class="mini-avatar" data-avatar-key="' + key + '" data-avatar-name="' + escapeHTML(v.display) + '">' +
             '<span class="status-dot' + (status === 'away' ? ' away' : '') + '"></span>' +
           '</div>' +
