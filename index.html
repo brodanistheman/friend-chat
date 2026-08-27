@@ -1952,7 +1952,7 @@
 
       currentUsername = username; currentKey = lower; currentUserId = newId; currentCreatedAt = createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
-      await claimPresenceAndEnter();
+      enterApp();
     } catch (err) {
       if (reserved && newId === null) { try { await usernameRef.remove(); } catch(e){} }
       regHint.className = 'hint bad'; regHint.textContent = 'Something went wrong while creating your account. Please try again.';
@@ -1999,7 +1999,7 @@
 
       currentUsername = user.username; currentKey = lower; currentUserId = id; currentCreatedAt = user.createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
-      await claimPresenceAndEnter();
+      enterApp();
     } catch (err) {
       loginHint.className = 'hint bad'; loginHint.textContent = 'A connection error occurred. Please try again.';
       setButtonLoading(loginBtnLabel, false, 'Log in'); loginBtn.disabled = false;
@@ -2036,8 +2036,8 @@
       setupPresence();
       enterApp();
     } catch (err) {
-      loginHint.className = 'hint bad'; loginHint.textContent = 'A connection error occurred. Please try again.';
-      setButtonLoading(loginBtnLabel, false, 'Log in'); loginBtn.disabled = false;
+      setupPresence();
+      enterApp();
     }
   }
 
