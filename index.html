@@ -955,7 +955,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyANBev0K1e06T5aHBC5EKXaswbMwELSkkQ",
@@ -1133,7 +1133,7 @@
     setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 250); }, 4200);
   }
   function twemojiIn(el){
-    if (window.twemoji) { try { window.twemoji.parse(el, { folder: 'svg', ext: '.svg' }); } catch(e){} }
+    if (window.twemoji) { try { window.twemoji.parse(el, { base: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/', folder: 'svg', ext: '.svg' }); } catch(e){} }
   }
   function setButtonLoading(labelEl, loading, idleText){
     labelEl.innerHTML = loading ? '<span class="spinner-lg"></span>' : idleText;
