@@ -221,6 +221,7 @@
   .profile-notfound-text{font-size:.88rem;color:var(--text-2);margin-bottom:24px;}
   .profile-back{display:inline-flex;color:var(--text-1);background:#181c25;border:1px solid var(--border-strong);border-radius:9px;padding:10px 15px;font-size:.82rem;font-weight:750;text-decoration:none;}
   .profile-page-loading{min-height:620px;display:grid;place-items:center;color:var(--text-3);font-size:.9rem;}
+  @media(max-width:560px){.customization-subsection-head{display:block}.customization-status{display:inline-flex;margin-top:8px}.customization-audio-card{align-items:flex-start;flex-direction:column}.customization-audio-card audio{width:100%;max-width:none;}}
   @media(max-width:900px){.profile-page-bar{padding:0 22px}.profile-hero-inner,.profile-layout{width:calc(100% - 40px)}.profile-layout{grid-template-columns:1fr}.profile-identity-row{align-items:flex-start;flex-wrap:wrap}.profile-hero-actions{margin-left:0}.profile-edit-btn{display:inline-flex}.profile-editor-grid{grid-template-columns:1fr}}
   @media(max-width:560px){.profile-page-bar{height:58px;padding:0 14px}.profile-page-brand span{display:none}.profile-page-back{font-size:.76rem}.profile-cover{height:230px}.profile-hero-inner,.profile-layout{width:calc(100% - 24px)}.profile-identity-row{gap:16px;margin-top:-58px;padding-bottom:26px}.profile-avatar-large{width:116px;height:116px;flex-basis:116px;border-width:6px;font-size:2rem}.profile-name{font-size:1.8rem}.profile-handle{font-size:.86rem}.profile-meta-line{margin-top:12px}.profile-layout{padding-top:20px;gap:16px}.profile-section,.profile-side-card,.profile-editor{padding:20px}.profile-info-grid{grid-template-columns:1fr}.profile-side-row{display:block}.profile-side-value{text-align:left;margin-top:4px}}
   #view-shell{display:none;height:100%;width:100%;}
@@ -574,6 +575,17 @@
   .admin-image-selected-avatar{width:52px;height:52px;font-size:.8rem;}
   .admin-image-preview-wrap{display:flex;flex-direction:column;gap:12px;margin-top:16px;padding:14px;background:var(--inset);border:1px solid var(--border);border-radius:12px;}
   .admin-image-preview{width:100%;height:76px;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:flex-start;flex:none;background-size:cover;background-position:center;font-size:1rem;font-weight:700;color:#fff;padding:0 14px;position:relative;}
+  .customization-subsection{margin-top:24px;padding-top:24px;border-top:1px solid var(--border);}
+  .customization-subsection:first-of-type{margin-top:18px;padding-top:0;border-top:0;}
+  .customization-subsection-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+  .customization-subsection-head h3{font-size:.88rem;font-weight:800;margin-bottom:4px;}
+  .customization-status{font-size:.68rem;color:var(--text-3);font-weight:750;white-space:nowrap;padding:5px 9px;background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-full);}
+  .customization-audio-card{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px;padding:13px;background:var(--inset);border:1px solid var(--border);border-radius:12px;}
+  .customization-audio-info{display:flex;align-items:center;gap:10px;min-width:0;}
+  .customization-audio-icon{width:34px;height:34px;border-radius:10px;background:var(--surface-active);display:grid;place-items:center;color:var(--text-2);flex:none;}
+  .customization-audio-name{font-size:.78rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .customization-audio-help{font-size:.68rem;color:var(--text-3);margin-top:3px;}
+  .customization-audio-card audio{width:250px;height:34px;max-width:45%;}
   .admin-image-preview::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.46),rgba(0,0,0,.20));pointer-events:none;}
   .admin-image-preview > *{position:relative;z-index:1;}
   .admin-image-preview img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
@@ -767,8 +779,8 @@
         </a>
         <a href="/admin/images" data-route="/admin/images" class="side-nav-item" data-view="admin-images" id="nav-admin-images-link" style="display:none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-4.5-4.5L8 19"/></svg>
-          People signed in images
-        </a>
+          Customization
+        </a
       </nav>
 
       <div class="sidebar-scroll">
@@ -1107,8 +1119,8 @@
         <div class="panel-scroll">
           <div class="page-shell admin-images-shell">
             <div class="page-head">
-              <h1>People signed in images</h1>
-              <p>Choose a user and set the custom image shown for them in the People signed in list.</p>
+              <h1>Customization</h1>
+              <p>Customize how individual users appear and what happens when their profile is opened.</p>
             </div>
 
             <section class="settings-card">
@@ -1127,17 +1139,53 @@
                 </div>
                 <div class="mini-avatar admin-image-selected-avatar" id="admin-image-selected-avatar"></div>
               </div>
-              <div class="admin-image-preview-wrap">
-                <div class="admin-image-preview" id="admin-image-preview"></div>
-                <div>
-                  <div class="admin-image-preview-title">People signed in background</div>
-                  <div class="settings-help">This sets the background image for this user's People signed in entry. Their normal profile picture remains unchanged.</div>
+
+              <div class="customization-subsection">
+                <div class="customization-subsection-head">
+                  <div>
+                    <h3>People signed in background</h3>
+                    <p class="settings-help">Set a custom background image for this user's entry. Their normal profile picture remains unchanged.</p>
+                  </div>
+                  <span class="customization-status" id="admin-image-status">Default</span>
+                </div>
+                <div class="admin-image-preview-wrap">
+                  <div class="admin-image-preview" id="admin-image-preview"></div>
+                </div>
+                <input type="file" id="admin-image-file" accept="image/*" hidden>
+                <div class="profile-editor-actions">
+                  <button type="button" class="btn-outline" id="admin-image-upload-btn">Choose image</button>
+                  <button type="button" class="btn-outline-danger" id="admin-image-remove-btn">Remove custom image</button>
                 </div>
               </div>
-              <input type="file" id="admin-image-file" accept="image/*" hidden>
-              <div class="profile-editor-actions">
-                <button type="button" class="btn-outline" id="admin-image-upload-btn">Choose image</button>
-                <button type="button" class="btn-outline-danger" id="admin-image-remove-btn">Remove custom image</button>
+
+              <div class="customization-subsection">
+                <div class="customization-subsection-head">
+                  <div>
+                    <h3>Profile sound</h3>
+                    <p class="settings-help">Choose a sound that plays when someone opens this user's profile from People signed in.</p>
+                  </div>
+                  <span class="customization-status" id="admin-sound-status">No sound</span>
+                </div>
+                <div class="customization-audio-card">
+                  <div class="customization-audio-info">
+                    <div class="customization-audio-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
+                        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div class="customization-audio-name" id="admin-sound-name">No custom profile sound</div>
+                      <div class="customization-audio-help">Audio files up to 10 MB</div>
+                    </div>
+                  </div>
+                  <audio id="admin-sound-preview" controls preload="none" hidden></audio>
+                </div>
+                <input type="file" id="admin-sound-file" accept="audio/*" hidden>
+                <div class="profile-editor-actions">
+                  <button type="button" class="btn-outline" id="admin-sound-upload-btn">Choose sound</button>
+                  <button type="button" class="btn-outline-danger" id="admin-sound-remove-btn">Remove sound</button>
+                </div>
               </div>
             </section>
           </div>
@@ -1341,6 +1389,13 @@
   const adminImageFile = document.getElementById('admin-image-file');
   const adminImageUploadBtn = document.getElementById('admin-image-upload-btn');
   const adminImageRemoveBtn = document.getElementById('admin-image-remove-btn');
+  const adminImageStatus = document.getElementById('admin-image-status');
+  const adminSoundStatus = document.getElementById('admin-sound-status');
+  const adminSoundName = document.getElementById('admin-sound-name');
+  const adminSoundPreview = document.getElementById('admin-sound-preview');
+  const adminSoundFile = document.getElementById('admin-sound-file');
+  const adminSoundUploadBtn = document.getElementById('admin-sound-upload-btn');
+  const adminSoundRemoveBtn = document.getElementById('admin-sound-remove-btn');
   function escapeHTML(str){
     return String(str).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t));
   }
@@ -1595,6 +1650,21 @@
     const href = link.getAttribute('href');
     if (!href || href === '#') return;
     e.preventDefault();
+    const profileMatch = href.match(/^\/users\/(\d+)(?:\/profile)?\/?$/);
+    if (profileMatch) {
+      const userId = profileMatch[1];
+      const entryKey = Object.keys(presenceCache).find(key => String(presenceCache[key]?.id) === String(userId));
+      if (entryKey) {
+        const sound = profilesCache[entryKey] && profilesCache[entryKey].profileSoundData;
+        if (sound) {
+          try {
+            const audio = new Audio(sound.dataUrl || sound);
+            audio.volume = 1;
+            audio.play().catch(() => {});
+          } catch (err) {}
+        }
+      }
+    }
     navigate(href);
   });
   async function renderPublicProfile(id){
@@ -1610,6 +1680,7 @@
       const lower = user.usernameLower;
       const profSnap = await db.ref('profiles/' + lower).once('value');
       const prof = profSnap.val() || {};
+      if (!prof.profileSoundData && adminProfileSounds[lower]) prof.profileSoundData = adminProfileSounds[lower];
       const displayName = prof.displayName || user.username;
       const memberDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
       const avatar = prof.avatarData ? '<img src="' + escapeHTML(prof.avatarData) + '" alt="">' : initials(user.username);
@@ -2171,6 +2242,14 @@
       refreshAllAvatars();
       if (isFounder) renderAdminImageUsers();
       renderOnlineRows();
+    });
+    db.ref('adminProfileSounds').on('value', snap => {
+      adminProfileSounds = snap.val() || {};
+      Object.keys(adminProfileSounds).forEach(key => {
+        profilesCache[key] = Object.assign({}, profilesCache[key] || {}, { profileSoundData: adminProfileSounds[key] });
+      });
+      renderAdminImageUsers();
+      renderAdminImagePreview();
     });
     db.ref('users').on('value', snap => {
       const next = {};
@@ -3653,6 +3732,8 @@
   let adminImageHandlersReady = false;
   let adminImageSearchQuery = '';
   let selectedAdminImageUserKey = null;
+  let adminProfileSounds = {};
+  const MAX_PROFILE_SOUND_BYTES = 10 * 1024 * 1024;
 
   function getAdminImageUserDisplayName(user){
     const key = user && (user.usernameLower || String(user.username || '').toLowerCase());
@@ -3666,6 +3747,7 @@
     if (!user) return;
     const name = getAdminImageUserDisplayName(user);
     const custom = adminPeopleEntryImages[selectedAdminImageUserKey] || null;
+    const sound = adminProfileSounds[selectedAdminImageUserKey] || null;
     adminImageSelectedName.textContent = name;
     adminImageSelectedHandle.textContent = '@' + user.username;
     adminImageSelectedAvatar.dataset.avatarKey = selectedAdminImageUserKey;
@@ -3673,6 +3755,18 @@
     adminImagePreview.style.backgroundImage = custom ? `url('${custom}')` : '';
     adminImagePreview.innerHTML = '<span>' + escapeHTML(name) + '</span>';
     adminImageRemoveBtn.style.display = custom ? 'inline-flex' : 'none';
+    adminImageStatus.textContent = custom ? 'Custom image' : 'Default';
+    adminSoundStatus.textContent = sound ? 'Custom sound' : 'No sound';
+    adminSoundName.textContent = sound ? (sound.name || 'Custom profile sound') : 'No custom profile sound';
+    if (sound && sound.dataUrl) {
+      adminSoundPreview.hidden = false;
+      adminSoundPreview.src = sound.dataUrl;
+    } else {
+      adminSoundPreview.pause();
+      adminSoundPreview.removeAttribute('src');
+      adminSoundPreview.hidden = true;
+    }
+    adminSoundRemoveBtn.style.display = sound ? 'inline-flex' : 'none';
   }
 
   function renderAdminImageUsers(){
@@ -3687,10 +3781,11 @@
       const key = user.usernameLower;
       const selected = key === selectedAdminImageUserKey ? ' selected' : '';
       const custom = !!adminPeopleEntryImages[key];
+      const hasSound = !!adminProfileSounds[key];
       return '<div class="admin-image-user-row' + selected + '" data-user-key="' + escapeHTML(key) + '">' +
         '<div class="mini-avatar" data-avatar-key="' + escapeHTML(key) + '" data-avatar-name="' + escapeHTML(user.username) + '"></div>' +
         '<div class="admin-image-user-info"><span class="admin-image-user-name">' + escapeHTML(getAdminImageUserDisplayName(user)) + '</span><span class="admin-image-user-handle">@' + escapeHTML(user.username) + '</span></div>' +
-        '<span class="admin-image-user-status">' + (custom ? 'Custom image' : 'Default') + '</span>' +
+        '<span class="admin-image-user-status">' + (custom && hasSound ? 'Image + sound' : custom ? 'Custom image' : hasSound ? 'Custom sound' : 'Default') + '</span>' +
       '</div>';
     }).join('') : '<div class="list-empty">No users match that search.</div>';
     adminImageUserList.querySelectorAll('.admin-image-user-row').forEach(row => {
@@ -3735,6 +3830,43 @@
         toast('Custom background removed.');
       } catch (err) {
         toast('The custom image could not be removed.', 'error');
+      }
+    });
+
+    adminSoundUploadBtn?.addEventListener('click', () => {
+      if (!selectedAdminImageUserKey) { toast('Select a user first.', 'error'); return; }
+      adminSoundFile.click();
+    });
+
+    adminSoundFile?.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      e.target.value = '';
+      if (!file || !selectedAdminImageUserKey) return;
+      if (!file.type.startsWith('audio/')) { toast('Please choose an audio file.', 'error'); return; }
+      if (file.size > MAX_PROFILE_SOUND_BYTES) { toast('Profile sounds must be under 10 MB.', 'error'); return; }
+      try {
+        const dataUrl = await blobToDataURL(file);
+        const soundData = { dataUrl: dataUrl, name: file.name, type: file.type, updatedAt: Date.now() };
+        await db.ref('adminProfileSounds/' + selectedAdminImageUserKey).set(soundData);
+        await db.ref('profiles/' + selectedAdminImageUserKey + '/profileSoundData').set(soundData);
+        profilesCache[selectedAdminImageUserKey] = Object.assign({}, profilesCache[selectedAdminImageUserKey] || {}, { profileSoundData: soundData });
+        renderAdminImagePreview();
+        toast('Profile sound saved.');
+      } catch (err) {
+        toast('That sound could not be saved.', 'error');
+      }
+    });
+
+    adminSoundRemoveBtn?.addEventListener('click', async () => {
+      if (!selectedAdminImageUserKey) return;
+      try {
+        await db.ref('adminProfileSounds/' + selectedAdminImageUserKey).remove();
+        await db.ref('profiles/' + selectedAdminImageUserKey + '/profileSoundData').remove();
+        if (profilesCache[selectedAdminImageUserKey]) delete profilesCache[selectedAdminImageUserKey].profileSoundData;
+        renderAdminImagePreview();
+        toast('Profile sound removed.');
+      } catch (err) {
+        toast('The profile sound could not be removed.', 'error');
       }
     });
   }
