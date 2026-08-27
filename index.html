@@ -605,6 +605,24 @@
   body.compact-mode .bubble-stack{gap:2px;}
   body.compact-mode .bubble{padding:7px 12px;font-size:0.87rem;}
   body.compact-mode .group-body{gap:2px;}
+
+
+  .notification-btn{position:relative;}
+  .notification-badge{position:absolute;top:2px;right:2px;min-width:15px;height:15px;padding:0 4px;border-radius:999px;background:var(--danger);color:#fff;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);}
+  .notification-panel{position:absolute;top:58px;right:18px;width:min(360px,calc(100vw - 36px));background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 24px 60px -24px rgba(0,0,0,.75);z-index:80;display:none;overflow:hidden;}
+  .notification-panel.open{display:block;}
+  .notification-head{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid var(--border);font-size:.8rem;font-weight:800;}
+  .notification-head button{border:0;background:transparent;color:var(--accent-hover);font:inherit;font-size:.7rem;cursor:pointer;}
+  .notification-list{max-height:360px;overflow:auto;}
+  .notification-empty{padding:34px 18px;text-align:center;color:var(--text-3);font-size:.78rem;}
+  .notification-item{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.045);cursor:pointer;background:transparent;transition:background .15s ease;}
+  .notification-item:hover{background:var(--surface-hover);}
+  .notification-item.unread{background:var(--accent-soft);}
+  .notification-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:6px;flex:0 0 auto;}
+  .notification-copy{min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .notification-title{font-size:.76rem;font-weight:750;color:var(--text-1);}
+  .notification-text{font-size:.72rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .notification-time{font-size:.65rem;color:var(--text-3);}
   .media-picker,.favorites-panel{position:absolute;bottom:68px;left:18px;width:300px;background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 24px 60px -24px rgba(0,0,0,.8);z-index:70;display:none;overflow:hidden;}
   .media-picker.open,.favorites-panel.open{display:block;}
   .media-picker-head,.favorites-head{display:flex;align-items:center;justify-content:space-between;padding:12px 12px 10px;border-bottom:1px solid var(--border);font-size:.78rem;font-weight:800;}
@@ -638,7 +656,7 @@
   .msg-profile-link{cursor:pointer;}
   .msg-profile-link:hover{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;}
   .msg-group:hover .group-meta{color:var(--text-1);}
-  @media(max-width:560px){.media-picker,.favorites-panel{left:12px;width:calc(100vw - 24px);}}
+  @media(max-width:560px){.media-picker,.favorites-panel{left:12px;width:calc(100vw - 24px);}.notification-panel{right:12px;top:54px;}}
 
   .management-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px;}
   .management-card{background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;}
@@ -794,6 +812,13 @@
             </button>
           </div>
           <div class="header-actions">
+            <button id="notification-btn" class="icon-btn notification-btn" type="button" title="Notifications" aria-label="Notifications">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                <path d="M10 21h4"/>
+              </svg>
+              <span id="notification-badge" class="notification-badge" hidden>0</span>
+            </button>
             <button id="call-toggle-btn" class="icon-btn" type="button" title="Join the call">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -801,6 +826,11 @@
             </button>
           </div>
         </header>
+
+        <div id="notification-panel" class="notification-panel" aria-hidden="true">
+          <div class="notification-head"><span>Notifications</span><button id="notification-clear" type="button">Mark all read</button></div>
+          <div id="notification-list" class="notification-list"></div>
+        </div>
 
         <div id="call-grid">
           <div class="call-topbar">
@@ -970,6 +1000,13 @@
             <section class="settings-card">
               <h2>Preferences</h2>
               <p class="settings-help">Customize how Aurora behaves for you. These sync to your account across devices.</p>
+              <div class="pref-row">
+                <div class="pref-row-text">
+                  <div class="pref-row-title">Notification sound</div>
+                  <div class="pref-row-desc">Play a short sound when a new message arrives.</div>
+                </div>
+                <label class="switch"><input type="checkbox" id="pref-sound" checked><span class="switch-track"></span></label>
+              </div>
               <div class="pref-row">
                 <div class="pref-row-text">
                   <div class="pref-row-title">Send with Enter</div>
@@ -1145,7 +1182,7 @@
                   <audio id="admin-sound-preview" controls preload="none" hidden></audio>
                 </div>
                 <input type="file" id="admin-sound-file" accept="audio/*" hidden>
-                <div class="profile-editor-actions" id="admin-sound-actions" style="display:none;">
+                <div class="profile-editor-actions">
                   <button type="button" class="btn-outline" id="admin-sound-upload-btn">Choose sound</button>
                   <button type="button" class="btn-outline-danger" id="admin-sound-remove-btn">Remove sound</button>
                 </div>
@@ -1218,8 +1255,9 @@
   let totalMessageCount = 0;
   let totalMediaCount = 0;
   let adminSearchQuery = '';
-  let prefs = { sendEnter: true, embeds: true, compact: false };
+  let prefs = { sound: true, sendEnter: true, embeds: true, compact: false };
   let messageCache = {}; // key -> raw message object, needed to redraw on edits
+  let notifications = [];
   let favoriteTab = 'favorites';
   let mediaInputAccept = '*/*';
   const viewAuth = document.getElementById('view-auth');
@@ -1294,6 +1332,11 @@
   const favoritesClose = document.getElementById('favorites-close');
   const favoritesList = document.getElementById('favorites-list');
   const favoriteTabs = document.querySelectorAll('.favorite-tab');
+  const notificationBtn = document.getElementById('notification-btn');
+  const notificationBadge = document.getElementById('notification-badge');
+  const notificationPanel = document.getElementById('notification-panel');
+  const notificationList = document.getElementById('notification-list');
+  const notificationClear = document.getElementById('notification-clear');
   const micBtn = document.getElementById('mic-btn');
   const composerEl = document.getElementById('composer');
   const recTimerEl = document.getElementById('rec-timer');
@@ -1324,6 +1367,7 @@
   const settingsDeletePassword = document.getElementById('settings-delete-password');
   const deleteAccountBtn = document.getElementById('delete-account-btn');
 
+  const prefSoundToggle = document.getElementById('pref-sound');
   const prefSendEnterToggle = document.getElementById('pref-send-enter');
   const prefEmbedsToggle = document.getElementById('pref-embeds');
   const prefCompactToggle = document.getElementById('pref-compact');
@@ -1352,7 +1396,6 @@
   const adminSoundFile = document.getElementById('admin-sound-file');
   const adminSoundUploadBtn = document.getElementById('admin-sound-upload-btn');
   const adminSoundRemoveBtn = document.getElementById('admin-sound-remove-btn');
-  const adminSoundActions = document.getElementById('admin-sound-actions');
   function escapeHTML(str){
     return String(str).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t));
   }
@@ -1410,6 +1453,23 @@
   function trashIconSVG(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/></svg>'; }
   function eyeIconSVG(){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>'; }
   let audioCtx = null;
+  function playNotificationSound(){
+    if (!prefs.sound) return;
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(740, now);
+      osc.frequency.exponentialRampToValueAtTime(920, now + 0.09);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.14, now + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.24);
+    } catch (err) { /* audio not available, ignore */ }
+  }
   async function sha256Hex(str){
     const enc = new TextEncoder().encode(str);
     const buf = await crypto.subtle.digest('SHA-256', enc);
@@ -1575,7 +1635,7 @@
       showStandalone('auth');
       return;
     }
-    if (route.view === 'admin' && !isFounder) {
+    if ((route.view === 'admin' || route.view === 'admin-images') && !isFounder) {
       toast('Administrator access is required for that page.', 'error');
       navigate('/');
       return;
@@ -1952,7 +2012,7 @@
 
       currentUsername = username; currentKey = lower; currentUserId = newId; currentCreatedAt = createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
-      enterApp();
+      await claimPresenceAndEnter();
     } catch (err) {
       if (reserved && newId === null) { try { await usernameRef.remove(); } catch(e){} }
       regHint.className = 'hint bad'; regHint.textContent = 'Something went wrong while creating your account. Please try again.';
@@ -1999,7 +2059,7 @@
 
       currentUsername = user.username; currentKey = lower; currentUserId = id; currentCreatedAt = user.createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
-      enterApp();
+      await claimPresenceAndEnter();
     } catch (err) {
       loginHint.className = 'hint bad'; loginHint.textContent = 'A connection error occurred. Please try again.';
       setButtonLoading(loginBtnLabel, false, 'Log in'); loginBtn.disabled = false;
@@ -2036,8 +2096,8 @@
       setupPresence();
       enterApp();
     } catch (err) {
-      setupPresence();
-      enterApp();
+      loginHint.className = 'hint bad'; loginHint.textContent = 'A connection error occurred. Please try again.';
+      setButtonLoading(loginBtnLabel, false, 'Log in'); loginBtn.disabled = false;
     }
   }
 
@@ -2049,7 +2109,7 @@
     selfPillLink.setAttribute('href', profilePathFor(currentUserId));
     selfPillLink.setAttribute('data-route', profilePathFor(currentUserId));
     navAdminLink.style.display = isFounder ? 'flex' : 'none';
-    if (navAdminImagesLink) navAdminImagesLink.style.display = 'flex';
+    if (navAdminImagesLink) navAdminImagesLink.style.display = isFounder ? 'flex' : 'none';
 
     if (!listenersStarted) {
       listenersStarted = true;
@@ -2085,6 +2145,7 @@
   drawerOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); drawerOverlay.classList.remove('open'); });
   function applyPrefsToUI(){
     document.body.classList.toggle('compact-mode', !!prefs.compact);
+    if (prefSoundToggle) prefSoundToggle.checked = prefs.sound !== false;
     if (prefSendEnterToggle) prefSendEnterToggle.checked = prefs.sendEnter !== false;
     if (prefEmbedsToggle) prefEmbedsToggle.checked = prefs.embeds !== false;
     if (prefCompactToggle) prefCompactToggle.checked = !!prefs.compact;
@@ -2092,6 +2153,7 @@
   function loadPrefsFromProfile(profile){
     const p = (profile && profile.preferences) || {};
     prefs = {
+      sound: p.sound !== false,
       sendEnter: p.sendEnter !== false,
       embeds: p.embeds !== false,
       compact: !!p.compact
@@ -2107,6 +2169,7 @@
       applyPrefsToUI();
       db.ref('profiles/' + currentKey + '/preferences').update({ [key]: value }).catch(() => toast('Your preference could not be saved.', 'error'));
     }
+    prefSoundToggle.addEventListener('change', () => savePref('sound', prefSoundToggle.checked));
     prefSendEnterToggle.addEventListener('change', () => savePref('sendEnter', prefSendEnterToggle.checked));
     prefEmbedsToggle.addEventListener('change', () => savePref('embeds', prefEmbedsToggle.checked));
     prefCompactToggle.addEventListener('change', () => savePref('compact', prefCompactToggle.checked));
@@ -2682,8 +2745,35 @@
     if (adminStatCalls) adminStatCalls.textContent = Object.keys(liveCalls).length;
   }
 
+  function notificationStorageKey(){ return 'aurora.notifications.' + currentKey; }
+  function loadNotifications(){
+    try { notifications = JSON.parse(localStorage.getItem(notificationStorageKey()) || '[]'); } catch (err) { notifications = []; }
+    if (!Array.isArray(notifications)) notifications = [];
+    renderNotifications();
+  }
+  function saveNotifications(){ try { localStorage.setItem(notificationStorageKey(), JSON.stringify(notifications.slice(0,50))); } catch (err) {} }
+  function addNotification(type, title, text, messageKey){
+    notifications.unshift({ id: Date.now() + '-' + Math.random().toString(36).slice(2), type, title, text, messageKey: messageKey || null, unread:true, timestamp:Date.now() });
+    notifications = notifications.slice(0,50); saveNotifications(); renderNotifications();
+  }
+  function renderNotifications(){
+    if (!notificationList || !notificationBadge) return;
+    const unread = notifications.filter(n => n.unread).length;
+    notificationBadge.hidden = unread === 0; notificationBadge.textContent = unread > 99 ? '99+' : String(unread);
+    if (!notifications.length) { notificationList.innerHTML = '<div class="notification-empty">You are all caught up.</div>'; return; }
+    notificationList.innerHTML = notifications.map(n => '<div class="notification-item' + (n.unread ? ' unread' : '') + '" data-notification-id="' + escapeHTML(n.id) + '"><span class="notification-dot"></span><div class="notification-copy"><span class="notification-title">' + escapeHTML(n.title) + '</span><span class="notification-text">' + escapeHTML(n.text || '') + '</span><span class="notification-time">' + escapeHTML(formatTime(n.timestamp)) + '</span></div></div>').join('');
+    notificationList.querySelectorAll('.notification-item').forEach(el => el.addEventListener('click', () => {
+      const n = notifications.find(x => x.id === el.dataset.notificationId); if (!n) return;
+      n.unread = false; saveNotifications(); renderNotifications();
+      if (n.messageKey) jumpToMessage(n.messageKey);
+      notificationPanel.classList.remove('open'); notificationPanel.setAttribute('aria-hidden','true');
+    }));
+  }
+  notificationBtn.addEventListener('click', e => { e.stopPropagation(); const open = notificationPanel.classList.toggle('open'); notificationPanel.setAttribute('aria-hidden', String(!open)); mediaPicker.classList.remove('open'); favoritesPanel.classList.remove('open'); });
+  notificationClear.addEventListener('click', () => { notifications.forEach(n => n.unread = false); saveNotifications(); renderNotifications(); });
+
   function closeMediaPopovers(){ mediaPicker.classList.remove('open'); favoritesPanel.classList.remove('open'); mediaPicker.setAttribute('aria-hidden','true'); favoritesPanel.setAttribute('aria-hidden','true'); }
-  attachBtn.addEventListener('click', e => { e.stopPropagation(); const open = mediaPicker.classList.toggle('open'); mediaPicker.setAttribute('aria-hidden', String(!open)); favoritesPanel.classList.remove('open'); favoritesPanel.setAttribute('aria-hidden','true'); });
+  attachBtn.addEventListener('click', e => { e.stopPropagation(); const open = mediaPicker.classList.toggle('open'); mediaPicker.setAttribute('aria-hidden', String(!open)); favoritesPanel.classList.remove('open'); favoritesPanel.setAttribute('aria-hidden','true'); notificationPanel.classList.remove('open'); });
   mediaPickerClose.addEventListener('click', closeMediaPopovers);
   favoritesClose.addEventListener('click', closeMediaPopovers);
   favoritesOpen.addEventListener('click', () => { mediaPicker.classList.remove('open'); favoritesPanel.classList.add('open'); favoritesPanel.setAttribute('aria-hidden','false'); loadFavorites(favoriteTab); });
@@ -2693,7 +2783,7 @@
     mediaInputAccept = type === 'audio' ? 'audio/*' : type === 'image' ? 'image/*' : 'video/*';
     fileInput.accept = mediaInputAccept; fileInput.click(); closeMediaPopovers();
   }));
-  document.addEventListener('click', e => { if (!mediaPicker.contains(e.target) && e.target !== attachBtn && !favoritesPanel.contains(e.target)) closeMediaPopovers(); });
+  document.addEventListener('click', e => { if (!mediaPicker.contains(e.target) && e.target !== attachBtn && !favoritesPanel.contains(e.target) && !notificationPanel.contains(e.target) && e.target !== notificationBtn) closeMediaPopovers(); });
 
   let favoritesDbPromise = null;
   function openFavoritesDb(){
@@ -2734,6 +2824,7 @@
   }
 
   function listenForMessages(){
+    loadNotifications();
     chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
     const messagesRef = db.ref('messages');
     let initialLoadDone = false;
@@ -2747,6 +2838,10 @@
       if (msg.type && msg.type !== 'text') totalMediaCount++;
       updateAdminStats();
       if (initialLoadDone && msg.username && msg.username.toLowerCase() !== currentUsername.toLowerCase()) {
+        playNotificationSound();
+        const text = msg.type === 'text' ? (msg.text || '') : (msg.type === 'tenor' ? 'Sent a GIF' : msg.type === 'image' ? 'Sent an image' : msg.type === 'voice' ? 'Sent a voice message' : 'Sent a file');
+        const mentionPattern = new RegExp('(^|\\s)@' + currentUsername.replace(/[.*+?^${}()|[\\]\\]/g, '\\$&') + '(?=\\s|$)', 'i');
+        addNotification(mentionPattern.test(msg.text || '') ? 'mention' : 'message', mentionPattern.test(msg.text || '') ? 'You were mentioned' : 'New message', getDisplayName(msg.username.toLowerCase(), msg.username) + ': ' + text, snap.key);
       }
     });
     messagesRef.on('child_changed', snap => {
@@ -3672,11 +3767,10 @@
       adminSoundPreview.hidden = true;
     }
     adminSoundRemoveBtn.style.display = sound ? 'inline-flex' : 'none';
-    if (adminSoundActions) adminSoundActions.style.display = isFounder ? 'flex' : 'none';
   }
 
   function renderAdminImageUsers(){
-    if (!adminImageUserList) return;
+    if (!adminImageUserList || !isFounder) return;
     const users = Object.values(usersCache).sort((a,b) => getAdminImageUserDisplayName(a).localeCompare(getAdminImageUserDisplayName(b)));
     const filtered = users.filter(user => {
       if (!adminImageSearchQuery) return true;
@@ -3724,7 +3818,7 @@
       try {
         const dataUrl = await compressImage(file, 512, 0.82, false);
         await db.ref('adminPeopleEntryImages/' + selectedAdminImageUserKey).set(dataUrl);
-        toast('Custom background saved.');
+        toast('Custom People signed in background saved.');
       } catch (err) {
         toast('That image could not be saved.', 'error');
       }
@@ -3740,13 +3834,11 @@
     });
 
     adminSoundUploadBtn?.addEventListener('click', () => {
-      if (!isFounder) { toast('Only the owner can add profile sounds.', 'error'); return; }
       if (!selectedAdminImageUserKey) { toast('Select a user first.', 'error'); return; }
       adminSoundFile.click();
     });
 
     adminSoundFile?.addEventListener('change', async e => {
-      if (!isFounder) { e.target.value = ''; return; }
       const file = e.target.files[0];
       e.target.value = '';
       if (!file || !selectedAdminImageUserKey) return;
@@ -3766,7 +3858,6 @@
     });
 
     adminSoundRemoveBtn?.addEventListener('click', async () => {
-      if (!isFounder) { toast('Only the owner can remove profile sounds.', 'error'); return; }
       if (!selectedAdminImageUserKey) return;
       try {
         await db.ref('adminProfileSounds/' + selectedAdminImageUserKey).remove();
@@ -3781,7 +3872,7 @@
   }
 
   function populateAdminImagesPanel(){
-    if (!adminImageUserList) return;
+    if (!isFounder) return;
     if (adminImageUserSearch) adminImageUserSearch.value = adminImageSearchQuery;
     initAdminImageHandlers();
     renderAdminImageUsers();
