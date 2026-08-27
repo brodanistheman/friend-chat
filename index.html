@@ -917,53 +917,14 @@
           <div class="page-shell admin-images-shell">
             <div class="page-head">
               <h1>Customization</h1>
-              <p>Manage profile sounds for Aurora users.</p>
+              <p>Customize your own profile. Profile images and banners can only be edited from your own profile.</p>
             </div>
 
             <section class="settings-card">
-              <h2>Users</h2>
-              <div class="stacked-field">
-                <input type="text" id="admin-image-user-search" class="field" placeholder="Search users">
-              </div>
-              <div id="admin-image-user-list" class="admin-image-user-list"></div>
-            </section>
-
-            <section class="settings-card admin-image-editor-card" id="admin-image-editor-card" hidden>
-              <div class="admin-image-selected-head">
-                <div>
-                  <h2 id="admin-image-selected-name">Select a user</h2>
-                  <p id="admin-image-selected-handle" class="settings-help">Choose a user from the list above.</p>
-                </div>
-                <div class="mini-avatar admin-image-selected-avatar" id="admin-image-selected-avatar"></div>
-              </div>
-              <div class="customization-subsection">
-                <div class="customization-subsection-head">
-                  <div>
-                    <h3>Profile sound</h3>
-                    <p class="settings-help">Choose a sound that plays when someone opens this user's profile from People signed in.</p>
-                  </div>
-                  <span class="customization-status" id="admin-sound-status">No sound</span>
-                </div>
-                <div class="customization-audio-card">
-                  <div class="customization-audio-info">
-                    <div class="customization-audio-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M11 5 6 9H3v6h3l5 4V5Z"/>
-                        <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
-                      </svg>
-                    </div>
-                    <div>
-                      <div class="customization-audio-name" id="admin-sound-name">No custom profile sound</div>
-                      <div class="customization-audio-help">Audio files up to 10 MB</div>
-                    </div>
-                  </div>
-                  <audio id="admin-sound-preview" controls preload="none" hidden></audio>
-                </div>
-                <input type="file" id="admin-sound-file" accept="audio/*" hidden>
-                <div class="profile-editor-actions">
-                  <button type="button" class="btn-outline" id="admin-sound-upload-btn">Choose sound</button>
-                  <button type="button" class="btn-outline-danger" id="admin-sound-remove-btn">Remove sound</button>
-                </div>
+              <h2>Your profile</h2>
+              <p class="settings-help">Open your profile to edit your profile picture, banner, display name, biography, and image positioning.</p>
+              <div class="profile-editor-actions">
+                <a class="profile-edit-btn" id="customization-open-profile" href="#">Open my profile</a>
               </div>
             </section>
           </div>
@@ -1122,11 +1083,6 @@
   const adminOnlineList = document.getElementById('admin-online-list');
   const adminUserSearch = document.getElementById('admin-user-search');
   const adminClearBtn = document.getElementById('admin-clear-btn');
-  const adminImageUserSearch = document.getElementById('admin-image-user-search');
-  const adminImageUserList = document.getElementById('admin-image-user-list');
-  const adminImageEditorCard = document.getElementById('admin-image-editor-card');
-  const adminSoundStatus = document.getElementById('admin-sound-status');
-  const adminSoundName = document.getElementById('admin-sound-name');
   const adminSoundPreview = document.getElementById('admin-sound-preview');
   const adminSoundFile = document.getElementById('admin-sound-file');
   const adminSoundUploadBtn = document.getElementById('admin-sound-upload-btn');
@@ -1384,9 +1340,36 @@
         avatarRemove.addEventListener('click', () => { nextAvatarData = null; avatarInput.value = ''; setAvatarPreview(null); });
         coverBtn.addEventListener('click', () => coverInput.click());
         coverRemove.addEventListener('click', () => { nextCoverData = null; coverInput.value = ''; setCoverPreview(null); });
-        const readProfileImage = (file, maxSize, callback) => { if (!file || !file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; } const reader = new FileReader(); reader.onload = () => { const img = new Image(); img.onload = () => { const scale = Math.min(1, maxSize / Math.max(img.width, img.height)); const canvas = document.createElement('canvas'); canvas.width = Math.max(1, Math.round(img.width * scale)); canvas.height = Math.max(1, Math.round(img.height * scale)); const ctx = canvas.getContext('2d'); ctx.drawImage(img,0,0,canvas.width,canvas.height); callback(canvas.toDataURL('image/jpeg',0.88)); }; img.src = reader.result; }; reader.readAsDataURL(file); };
+        const readProfileImage = (file, maxSize, callback) => {
+          if (!file || !file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
+          const reader = new FileReader();
+          reader.onerror = () => toast('The image could not be read.', 'error');
+          reader.onload = () => {
+            const img = new Image();
+            img.onerror = () => toast('The image could not be loaded.', 'error');
+            img.onload = () => {
+              const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
+              const width = Math.max(1, Math.round(img.width * scale));
+              const height = Math.max(1, Math.round(img.height * scale));
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d', { alpha:false });
+              ctx.drawImage(img, 0, 0, width, height);
+              let quality = 0.82;
+              let output = canvas.toDataURL('image/jpeg', quality);
+              while (output.length > 900000 && quality > 0.45) {
+                quality -= 0.07;
+                output = canvas.toDataURL('image/jpeg', quality);
+              }
+              callback(output);
+            };
+            img.src = reader.result;
+          };
+          reader.readAsDataURL(file);
+        };
         avatarInput.addEventListener('change', () => readProfileImage(avatarInput.files[0], 512, value => { nextAvatarData = value; setAvatarPreview(value); }));
-        coverInput.addEventListener('change', () => readProfileImage(coverInput.files[0], 1600, value => { nextCoverData = value; setCoverPreview(value); }));
+        coverInput.addEventListener('change', () => readProfileImage(coverInput.files[0], 1400, value => { nextCoverData = value; setCoverPreview(value); }));
         avatarXInput.addEventListener('input', () => { nextAvatarX = Number(avatarXInput.value); updatePositionUI(); });
         avatarYInput.addEventListener('input', () => { nextAvatarY = Number(avatarYInput.value); updatePositionUI(); });
         coverXInput.addEventListener('input', () => { nextCoverX = Number(coverXInput.value); updatePositionUI(); });
@@ -1841,9 +1824,7 @@
       Object.keys(adminProfileSounds).forEach(key => {
         profilesCache[key] = Object.assign({}, profilesCache[key] || {}, { profileSoundData: adminProfileSounds[key] });
       });
-      renderAdminImageUsers();
-      renderAdminImagePreview();
-    });
+            });
     db.ref('users').on('value', snap => {
       const next = {};
       snap.forEach(child => {
@@ -1858,8 +1839,7 @@
         }
       });
       usersCache = next;
-      renderAdminImageUsers();
-    });
+        });
   }
   function onComposerChanged(){
     autoGrow();
@@ -2330,6 +2310,14 @@
     document.addEventListener('keydown', onKey);
     document.body.appendChild(overlay);
   }
+  const customizationOpenProfile = document.getElementById('customization-open-profile');
+  if (customizationOpenProfile) {
+    customizationOpenProfile.addEventListener('click', e => {
+      e.preventDefault();
+      if (currentUserId != null) navigate(profilePathFor(currentUserId));
+    });
+  }
+
   function updateAdminStats(){
     if (adminStatMessages) adminStatMessages.textContent = totalMessageCount;
     if (adminStatMedia) adminStatMedia.textContent = totalMediaCount;
@@ -3182,23 +3170,40 @@
   let adminImageHandlersReady = false;
   let adminImageSearchQuery = '';
   let selectedAdminImageUserKey = null;
-  let adminProfileSounds = {};
-  const MAX_PROFILE_SOUND_BYTES = 10 * 1024 * 1024;
 
   function getAdminImageUserDisplayName(user){
     const key = user && (user.usernameLower || String(user.username || '').toLowerCase());
     const profile = key ? profilesCache[key] : null;
-    return (profile && profile.displayName) || (user && user.username) || 'Unknown user';
+    return (profile && profile.displayName) || (user && user.username) || currentUsername || 'Unknown user';
   }
 
+  function getOwnCustomizationKey(){
+    return currentKey || '';
+  }
 
   function renderAdminImagePreview(){
-    if (!selectedAdminImageUserKey) return;
-    const user = Object.values(usersCache).find(u => u.usernameLower === selectedAdminImageUserKey);
-    if (!user) return;
-    const sound = adminProfileSounds[selectedAdminImageUserKey] || null;
-    adminSoundStatus.textContent = sound ? 'Custom sound' : 'No sound';
-    adminSoundName.textContent = sound ? (sound.name || 'Custom profile sound') : 'No custom profile sound';
+    const ownKey = getOwnCustomizationKey();
+    if (!ownKey) return;
+
+    selectedAdminImageUserKey = ownKey;
+
+    const profile = profilesCache[ownKey] || {};
+    const sound = profile.profileSoundData || adminProfileSounds[ownKey] || null;
+
+    if (adminImageSelectedName) {
+      adminImageSelectedName.textContent = profile.displayName || currentUsername || 'Your profile';
+    }
+    if (adminImageSelectedHandle) {
+      adminImageSelectedHandle.textContent = '@' + (currentUsername || ownKey);
+    }
+
+    if (adminSoundStatus) {
+      adminSoundStatus.textContent = sound ? 'Custom sound' : 'No sound';
+    }
+    if (adminSoundName) {
+      adminSoundName.textContent = sound ? (sound.name || 'Custom profile sound') : 'No custom profile sound';
+    }
+
     if (sound && sound.dataUrl) {
       adminSoundPreview.hidden = false;
       adminSoundPreview.src = sound.dataUrl;
@@ -3207,72 +3212,120 @@
       adminSoundPreview.removeAttribute('src');
       adminSoundPreview.hidden = true;
     }
+
     adminSoundRemoveBtn.style.display = sound ? 'inline-flex' : 'none';
   }
+
   function renderAdminImageUsers(){
-    if (!adminImageUserList) return;
-    const users = Object.values(usersCache).sort((a,b) => getAdminImageUserDisplayName(a).localeCompare(getAdminImageUserDisplayName(b)));
-    const filtered = users.filter(user => {
-      if (!adminImageSearchQuery) return true;
-      const name = getAdminImageUserDisplayName(user).toLowerCase();
-      return name.includes(adminImageSearchQuery) || user.usernameLower.includes(adminImageSearchQuery);
-    });
-    adminImageUserList.innerHTML = filtered.length ? filtered.map(user => {
-      const key = user.usernameLower;
-      const selected = key === selectedAdminImageUserKey ? ' selected' : '';
-      const hasSound = !!adminProfileSounds[key];
-      return '<div class="admin-image-user-row' + selected + '" data-user-key="' + escapeHTML(key) + '">' +
-        '<div class="mini-avatar" data-avatar-key="' + escapeHTML(key) + '" data-avatar-name="' + escapeHTML(user.username) + '"></div>' +
-        '<div class="admin-image-user-info"><span class="admin-image-user-name">' + escapeHTML(getAdminImageUserDisplayName(user)) + '</span><span class="admin-image-user-handle">@' + escapeHTML(user.username) + '</span></div>' +
+    const ownKey = getOwnCustomizationKey();
+    if (!ownKey || !adminImageUserList) return;
+
+    selectedAdminImageUserKey = ownKey;
+
+    const profile = profilesCache[ownKey] || {};
+    const displayName = profile.displayName || currentUsername || ownKey;
+    const hasSound = !!(profile.profileSoundData || adminProfileSounds[ownKey]);
+
+    adminImageUserList.innerHTML =
+      '<div class="admin-image-user-row selected" data-user-key="' + escapeHTML(ownKey) + '">' +
+        '<div class="mini-avatar" data-avatar-key="' + escapeHTML(ownKey) + '" data-avatar-name="' + escapeHTML(currentUsername || ownKey) + '"></div>' +
+        '<div class="admin-image-user-info">' +
+          '<span class="admin-image-user-name">' + escapeHTML(displayName) + '</span>' +
+          '<span class="admin-image-user-handle">@' + escapeHTML(currentUsername || ownKey) + '</span>' +
+        '</div>' +
         '<span class="admin-image-user-status">' + (hasSound ? 'Custom sound' : 'No sound') + '</span>' +
       '</div>';
-    }).join('') : '<div class="list-empty">No users match that search.</div>';
-    adminImageUserList.querySelectorAll('.admin-image-user-row').forEach(row => {
-      row.addEventListener('click', () => {
-        selectedAdminImageUserKey = row.dataset.userKey;
-        renderAdminImageUsers();
-        adminImageEditorCard.hidden = false;
-        renderAdminImagePreview();
-      });
-    });
+
+    const ownRow = adminImageUserList.querySelector('.admin-image-user-row');
+    ownRow?.addEventListener('click', () => {
+      selectedAdminImageUserKey = ownKey;
+      adminImageEditorCard.hidden = false;
+        });
+
     refreshAllAvatars();
   }
 
   function initAdminImageHandlers(){
     if (adminImageHandlersReady) return;
     adminImageHandlersReady = true;
+
     adminSoundUploadBtn?.addEventListener('click', () => {
-      if (!selectedAdminImageUserKey) { toast('Select a user first.', 'error'); return; }
+      const ownKey = getOwnCustomizationKey();
+
+      if (!ownKey) {
+        toast('You must be signed in to customize your profile.', 'error');
+        return;
+      }
+
+      selectedAdminImageUserKey = ownKey;
       adminSoundFile.click();
     });
 
     adminSoundFile?.addEventListener('change', async e => {
       const file = e.target.files[0];
       e.target.value = '';
-      if (!file || !selectedAdminImageUserKey) return;
-      if (!file.type.startsWith('audio/')) { toast('Please choose an audio file.', 'error'); return; }
-      if (file.size > MAX_PROFILE_SOUND_BYTES) { toast('Profile sounds must be under 10 MB.', 'error'); return; }
+
+      const ownKey = getOwnCustomizationKey();
+
+      if (!file || !ownKey) return;
+
+      if (selectedAdminImageUserKey !== ownKey) {
+        selectedAdminImageUserKey = ownKey;
+      }
+
+      if (!file.type.startsWith('audio/')) {
+        toast('Please choose an audio file.', 'error');
+        return;
+      }
+
+      if (file.size > MAX_PROFILE_SOUND_BYTES) {
+        toast('Profile sounds must be under 10 MB.', 'error');
+        return;
+      }
+
       try {
         const dataUrl = await blobToDataURL(file);
-        const soundData = { dataUrl: dataUrl, name: file.name, type: file.type, updatedAt: Date.now() };
-        await db.ref('adminProfileSounds/' + selectedAdminImageUserKey).set(soundData);
-        await db.ref('profiles/' + selectedAdminImageUserKey + '/profileSoundData').set(soundData);
-        profilesCache[selectedAdminImageUserKey] = Object.assign({}, profilesCache[selectedAdminImageUserKey] || {}, { profileSoundData: soundData });
-        renderAdminImagePreview();
-        toast('Profile sound saved.');
+        const soundData = {
+          dataUrl: dataUrl,
+          name: file.name,
+          type: file.type,
+          updatedAt: Date.now()
+        };
+
+        await db.ref('profiles/' + ownKey + '/profileSoundData').set(soundData);
+
+        profilesCache[ownKey] = Object.assign(
+          {},
+          profilesCache[ownKey] || {},
+          { profileSoundData: soundData }
+        );
+
+        adminProfileSounds[ownKey] = soundData;
+        selectedAdminImageUserKey = ownKey;
+
+                    toast('Profile sound saved.');
       } catch (err) {
         toast('That sound could not be saved.', 'error');
       }
     });
 
     adminSoundRemoveBtn?.addEventListener('click', async () => {
-      if (!selectedAdminImageUserKey) return;
+      const ownKey = getOwnCustomizationKey();
+
+      if (!ownKey) return;
+
+      selectedAdminImageUserKey = ownKey;
+
       try {
-        await db.ref('adminProfileSounds/' + selectedAdminImageUserKey).remove();
-        await db.ref('profiles/' + selectedAdminImageUserKey + '/profileSoundData').remove();
-        if (profilesCache[selectedAdminImageUserKey]) delete profilesCache[selectedAdminImageUserKey].profileSoundData;
-        renderAdminImagePreview();
-        toast('Profile sound removed.');
+        await db.ref('profiles/' + ownKey + '/profileSoundData').remove();
+
+        if (profilesCache[ownKey]) {
+          delete profilesCache[ownKey].profileSoundData;
+        }
+
+        delete adminProfileSounds[ownKey];
+
+                    toast('Profile sound removed.');
       } catch (err) {
         toast('The profile sound could not be removed.', 'error');
       }
@@ -3280,14 +3333,24 @@
   }
 
   function populateAdminImagesPanel(){
-    if (adminImageUserSearch) adminImageUserSearch.value = adminImageSearchQuery;
-    initAdminImageHandlers();
-    renderAdminImageUsers();
-    if (selectedAdminImageUserKey) {
-      adminImageEditorCard.hidden = false;
-      renderAdminImagePreview();
+    const ownKey = getOwnCustomizationKey();
+    if (!ownKey) return;
+
+    selectedAdminImageUserKey = ownKey;
+
+    if (adminImageUserSearch) {
+      adminImageUserSearch.value = '';
+      adminImageUserSearch.disabled = true;
+      adminImageUserSearch.placeholder = 'Only your profile can be customized';
     }
-  }
+
+    initAdminImageHandlers();
+
+    if (adminImageEditorCard) {
+      adminImageEditorCard.hidden = false;
+    }
+
+      }
 
   let adminHandlersReady = false;
   function initAdminHandlers(){
