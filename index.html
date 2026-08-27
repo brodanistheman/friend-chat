@@ -554,6 +554,24 @@
   .admin-user-row .status-dot{border-color:var(--surface);}
   .admin-status-label{margin-left:auto;font-size:0.76rem;color:var(--text-3);font-weight:600;}
 
+  .admin-images-shell{max-width:760px;}
+  .admin-image-user-list{display:flex;flex-direction:column;gap:6px;}
+  .admin-image-user-row{display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:background .15s ease,border-color .15s ease;}
+  .admin-image-user-row:hover{background:var(--surface-hover);border-color:var(--border-strong);}
+  .admin-image-user-row.selected{background:var(--accent-soft);border-color:var(--accent);}
+  .admin-image-user-row .mini-avatar{width:34px;height:34px;}
+  .admin-image-user-info{min-width:0;display:flex;flex-direction:column;gap:2px;flex:1;}
+  .admin-image-user-name{font-size:.84rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .admin-image-user-handle{font-size:.72rem;color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .admin-image-user-status{font-size:.7rem;color:var(--text-3);font-weight:700;}
+  .admin-image-selected-head{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .admin-image-selected-head h2{margin-bottom:4px;}
+  .admin-image-selected-avatar{width:52px;height:52px;font-size:.8rem;}
+  .admin-image-preview-wrap{display:flex;align-items:center;gap:18px;margin-top:16px;padding:14px;background:var(--inset);border:1px solid var(--border);border-radius:12px;}
+  .admin-image-preview{width:92px;height:92px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex:none;background-size:cover;background-position:center;font-size:1.5rem;font-weight:800;color:var(--on-accent);}
+  .admin-image-preview img{width:100%;height:100%;object-fit:cover;}
+  .admin-image-preview-title{font-size:.84rem;font-weight:750;margin-bottom:5px;}
+  .admin-image-editor-card[hidden]{display:none;}
   @media (max-width:860px){
     #sidebar{position:fixed;top:0;bottom:0;left:0;z-index:40;transform:translateX(-100%);transition:transform .22s ease;box-shadow:20px 0 50px -20px rgba(0,0,0,0.6);}
     #sidebar.open{transform:translateX(0);}
@@ -739,6 +757,10 @@
         <a href="/admin" data-route="/admin" class="side-nav-item" data-view="admin" id="nav-admin-link" style="display:none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
           Console
+        </a>
+        <a href="/admin/images" data-route="/admin/images" class="side-nav-item" data-view="admin-images" id="nav-admin-images-link" style="display:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-4.5-4.5L8 19"/></svg>
+          User images
         </a>
       </nav>
 
@@ -1074,6 +1096,47 @@
         </div>
       </section>
 
+      <section id="panel-admin-images" class="panel">
+        <div class="panel-scroll">
+          <div class="page-shell admin-images-shell">
+            <div class="page-head">
+              <h1>User images</h1>
+              <p>Choose a user and set the custom image shown for them in the People signed in list.</p>
+            </div>
+
+            <section class="settings-card">
+              <h2>Users</h2>
+              <div class="stacked-field">
+                <input type="text" id="admin-image-user-search" class="field" placeholder="Search users">
+              </div>
+              <div id="admin-image-user-list" class="admin-image-user-list"></div>
+            </section>
+
+            <section class="settings-card admin-image-editor-card" id="admin-image-editor-card" hidden>
+              <div class="admin-image-selected-head">
+                <div>
+                  <h2 id="admin-image-selected-name">Select a user</h2>
+                  <p id="admin-image-selected-handle" class="settings-help">Choose a user from the list above.</p>
+                </div>
+                <div class="mini-avatar admin-image-selected-avatar" id="admin-image-selected-avatar"></div>
+              </div>
+              <div class="admin-image-preview-wrap">
+                <div class="admin-image-preview" id="admin-image-preview"></div>
+                <div>
+                  <div class="admin-image-preview-title">People signed in image</div>
+                  <div class="settings-help">This overrides the normal profile image or generated initials only in the People signed in entries.</div>
+                </div>
+              </div>
+              <input type="file" id="admin-image-file" accept="image/*" hidden>
+              <div class="profile-editor-actions">
+                <button type="button" class="btn-outline" id="admin-image-upload-btn">Choose image</button>
+                <button type="button" class="btn-outline-danger" id="admin-image-remove-btn">Remove custom image</button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 
@@ -1117,6 +1180,8 @@
   function isPrivileged(){ return isFounder; }
 
   let profilesCache = {};
+  let usersCache = {};
+  let adminAvatarOverrides = {};
   let liveCalls = {};
   let lastOnlineCount = 1;
   let presenceCache = {};
@@ -1146,6 +1211,7 @@
   const panelChat = document.getElementById('panel-chat');
   const panelSettings = document.getElementById('panel-settings');
   const panelAdmin = document.getElementById('panel-admin');
+  const panelAdminImages = document.getElementById('panel-admin-images');
 
   const authTabs = document.querySelectorAll('.auth-tab');
   const authSections = document.querySelectorAll('.auth-section');
@@ -1170,6 +1236,7 @@
   const onlineList = document.getElementById('online-list');
   const onlineCountBadge = document.getElementById('online-count-badge');
   const navAdminLink = document.getElementById('nav-admin-link');
+  const navAdminImagesLink = document.getElementById('nav-admin-images-link');
 
   const selfAvatar = document.getElementById('self-avatar');
   const selfName = document.getElementById('self-name');
@@ -1257,6 +1324,16 @@
   const adminOnlineList = document.getElementById('admin-online-list');
   const adminUserSearch = document.getElementById('admin-user-search');
   const adminClearBtn = document.getElementById('admin-clear-btn');
+  const adminImageUserSearch = document.getElementById('admin-image-user-search');
+  const adminImageUserList = document.getElementById('admin-image-user-list');
+  const adminImageEditorCard = document.getElementById('admin-image-editor-card');
+  const adminImageSelectedName = document.getElementById('admin-image-selected-name');
+  const adminImageSelectedHandle = document.getElementById('admin-image-selected-handle');
+  const adminImageSelectedAvatar = document.getElementById('admin-image-selected-avatar');
+  const adminImagePreview = document.getElementById('admin-image-preview');
+  const adminImageFile = document.getElementById('admin-image-file');
+  const adminImageUploadBtn = document.getElementById('admin-image-upload-btn');
+  const adminImageRemoveBtn = document.getElementById('admin-image-remove-btn');
   function escapeHTML(str){
     return String(str).replace(/[&<>'"]/g, t => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[t] || t));
   }
@@ -1451,6 +1528,7 @@
     if (profileMatch) return { view: 'profile', id: profileMatch[1] };
     if (pathname === '/settings' || pathname === '/settings/') return { view: 'settings' };
     if (pathname === '/admin' || pathname === '/admin/') return { view: 'admin' };
+    if (pathname === '/admin/images' || pathname === '/admin/images/') return { view: 'admin-images' };
     return { view: 'chat' };
   }
 
@@ -1473,11 +1551,13 @@
     panelChat.classList.toggle('active', panelName === 'chat');
     panelSettings.classList.toggle('active', panelName === 'settings');
     panelAdmin.classList.toggle('active', panelName === 'admin');
+    panelAdminImages.classList.toggle('active', panelName === 'admin-images');
     document.querySelectorAll('.side-nav-item').forEach(el => el.classList.toggle('active', el.dataset.view === panelName));
     sidebar.classList.remove('open');
     drawerOverlay.classList.remove('open');
     if (panelName === 'settings') populateSettingsPanel();
     if (panelName === 'admin') populateAdminPanel();
+    if (panelName === 'admin-images') populateAdminImagesPanel();
     if (panelName === 'chat') { messageInput.focus(); chatBox.scrollTop = chatBox.scrollHeight; }
   }
 
@@ -1493,8 +1573,8 @@
       showStandalone('auth');
       return;
     }
-    if (route.view === 'admin' && !isFounder) {
-      toast('The console is only available to the workspace administrator.', 'error');
+    if ((route.view === 'admin' || route.view === 'admin-images') && !isFounder) {
+      toast('Administrator access is required for that page.', 'error');
       navigate('/');
       return;
     }
@@ -1616,7 +1696,12 @@
     const key = el.dataset.avatarKey;
     const name = el.dataset.avatarName || key || '';
     const profile = profilesCache[key];
-    if (profile && profile.avatarData) {
+    const isPeopleEntry = !!el.closest('.user-row, .admin-user-row');
+    const customImage = isPeopleEntry ? adminAvatarOverrides[key] : null;
+    if (customImage) {
+      el.style.cssText += `background-image:url('${customImage}');background-size:cover;background-position:center;`;
+      el.textContent = '';
+    } else if (profile && profile.avatarData) {
       el.style.cssText += `background-image:url('${profile.avatarData}');background-size:cover;background-position:center;`;
       el.textContent = '';
     } else {
@@ -1942,6 +2027,7 @@
     selfPillLink.setAttribute('href', profilePathFor(currentUserId));
     selfPillLink.setAttribute('data-route', profilePathFor(currentUserId));
     navAdminLink.style.display = isFounder ? 'flex' : 'none';
+    if (navAdminImagesLink) navAdminImagesLink.style.display = isFounder ? 'flex' : 'none';
 
     if (!listenersStarted) {
       listenersStarted = true;
@@ -2066,6 +2152,28 @@
       refreshAllAvatars();
       renderOnlineRows();
       if (currentKey) loadPrefsFromProfile(profilesCache[currentKey]);
+    });
+    db.ref('adminAvatarOverrides').on('value', snap => {
+      adminAvatarOverrides = snap.val() || {};
+      refreshAllAvatars();
+      if (isFounder) renderAdminImageUsers();
+      renderOnlineRows();
+    });
+    db.ref('users').on('value', snap => {
+      const next = {};
+      snap.forEach(child => {
+        const v = child.val() || {};
+        if (v.usernameLower || v.username) {
+          next[String(child.key)] = {
+            id: child.key,
+            username: v.username || v.usernameLower || '',
+            usernameLower: v.usernameLower || String(v.username || '').toLowerCase(),
+            createdAt: v.createdAt || null
+          };
+        }
+      });
+      usersCache = next;
+      if (isFounder) renderAdminImageUsers();
     });
   }
   function onComposerChanged(){
@@ -3529,6 +3637,114 @@
     settingsCurrentPassword.value = ''; settingsNewPassword.value = ''; settingsConfirmPassword.value = ''; settingsDeletePassword.value = '';
     loadPrefsFromProfile(profile);
   }
+  let adminImageHandlersReady = false;
+  let adminImageSearchQuery = '';
+  let selectedAdminImageUserKey = null;
+
+  function getAdminImageUserDisplayName(user){
+    const key = user && (user.usernameLower || String(user.username || '').toLowerCase());
+    const profile = key ? profilesCache[key] : null;
+    return (profile && profile.displayName) || (user && user.username) || 'Unknown user';
+  }
+
+  function renderAdminImagePreview(){
+    if (!selectedAdminImageUserKey) return;
+    const user = Object.values(usersCache).find(u => u.usernameLower === selectedAdminImageUserKey);
+    if (!user) return;
+    const name = getAdminImageUserDisplayName(user);
+    const custom = adminAvatarOverrides[selectedAdminImageUserKey] || null;
+    adminImageSelectedName.textContent = name;
+    adminImageSelectedHandle.textContent = '@' + user.username;
+    adminImageSelectedAvatar.dataset.avatarKey = selectedAdminImageUserKey;
+    adminImageSelectedAvatar.dataset.avatarName = user.username;
+    adminImagePreview.style.backgroundImage = custom ? `url('${custom}')` : '';
+    adminImagePreview.style.background = custom ? '' : avatarStyle(user.username);
+    adminImagePreview.innerHTML = custom ? '' : initials(user.username);
+    if (custom) {
+      const img = document.createElement('img');
+      img.src = custom;
+      img.alt = '';
+      adminImagePreview.appendChild(img);
+    }
+    applyAvatarVisual(adminImageSelectedAvatar);
+    adminImageRemoveBtn.style.display = custom ? 'inline-flex' : 'none';
+  }
+
+  function renderAdminImageUsers(){
+    if (!adminImageUserList || !isFounder) return;
+    const users = Object.values(usersCache).sort((a,b) => getAdminImageUserDisplayName(a).localeCompare(getAdminImageUserDisplayName(b)));
+    const filtered = users.filter(user => {
+      if (!adminImageSearchQuery) return true;
+      const name = getAdminImageUserDisplayName(user).toLowerCase();
+      return name.includes(adminImageSearchQuery) || user.usernameLower.includes(adminImageSearchQuery);
+    });
+    adminImageUserList.innerHTML = filtered.length ? filtered.map(user => {
+      const key = user.usernameLower;
+      const selected = key === selectedAdminImageUserKey ? ' selected' : '';
+      const custom = !!adminAvatarOverrides[key];
+      return '<div class="admin-image-user-row' + selected + '" data-user-key="' + escapeHTML(key) + '">' +
+        '<div class="mini-avatar" data-avatar-key="' + escapeHTML(key) + '" data-avatar-name="' + escapeHTML(user.username) + '"></div>' +
+        '<div class="admin-image-user-info"><span class="admin-image-user-name">' + escapeHTML(getAdminImageUserDisplayName(user)) + '</span><span class="admin-image-user-handle">@' + escapeHTML(user.username) + '</span></div>' +
+        '<span class="admin-image-user-status">' + (custom ? 'Custom image' : 'Default') + '</span>' +
+      '</div>';
+    }).join('') : '<div class="list-empty">No users match that search.</div>';
+    adminImageUserList.querySelectorAll('.admin-image-user-row').forEach(row => {
+      row.addEventListener('click', () => {
+        selectedAdminImageUserKey = row.dataset.userKey;
+        renderAdminImageUsers();
+        adminImageEditorCard.hidden = false;
+        renderAdminImagePreview();
+      });
+    });
+    refreshAllAvatars();
+  }
+
+  function initAdminImageHandlers(){
+    if (adminImageHandlersReady) return;
+    adminImageHandlersReady = true;
+    adminImageUserSearch?.addEventListener('input', () => {
+      adminImageSearchQuery = adminImageUserSearch.value.trim().toLowerCase();
+      renderAdminImageUsers();
+    });
+    adminImageUploadBtn?.addEventListener('click', () => {
+      if (!selectedAdminImageUserKey) { toast('Select a user first.', 'error'); return; }
+      adminImageFile.click();
+    });
+    adminImageFile?.addEventListener('change', async e => {
+      const file = e.target.files[0];
+      e.target.value = '';
+      if (!file || !selectedAdminImageUserKey) return;
+      if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
+      try {
+        const dataUrl = await compressImage(file, 512, 0.82, false);
+        await db.ref('adminAvatarOverrides/' + selectedAdminImageUserKey).set(dataUrl);
+        toast('Custom People signed in image saved.');
+      } catch (err) {
+        toast('That image could not be saved.', 'error');
+      }
+    });
+    adminImageRemoveBtn?.addEventListener('click', async () => {
+      if (!selectedAdminImageUserKey) return;
+      try {
+        await db.ref('adminAvatarOverrides/' + selectedAdminImageUserKey).remove();
+        toast('Custom image removed.');
+      } catch (err) {
+        toast('The custom image could not be removed.', 'error');
+      }
+    });
+  }
+
+  function populateAdminImagesPanel(){
+    if (!isFounder) return;
+    if (adminImageUserSearch) adminImageUserSearch.value = adminImageSearchQuery;
+    initAdminImageHandlers();
+    renderAdminImageUsers();
+    if (selectedAdminImageUserKey) {
+      adminImageEditorCard.hidden = false;
+      renderAdminImagePreview();
+    }
+  }
+
   let adminHandlersReady = false;
   function initAdminHandlers(){
     if (adminHandlersReady) return;
