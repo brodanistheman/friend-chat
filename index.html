@@ -920,22 +920,13 @@
           <div class="page-shell admin-images-shell">
             <div class="page-head">
               <h1>User-row customization</h1>
-              <p>Choose any account and set the background image shown behind that user in People signed in.</p>
+              <p>Set the banner image behind your own entry in People signed in. You can only customize your own user row.</p>
             </div>
-
-            <section class="settings-card">
-              <h2>Users</h2>
-              <div class="stacked-field">
-                <input type="text" id="admin-image-user-search" class="field" placeholder="Search users">
-              </div>
-              <div id="admin-image-user-list" class="admin-image-user-list"></div>
-            </section>
-
-            <section class="settings-card admin-image-editor-card" id="admin-image-editor-card" hidden>
+            <section class="settings-card admin-image-editor-card" id="admin-image-editor-card">
               <div class="admin-image-selected-head">
                 <div>
-                  <h2 id="admin-image-selected-name">Select a user</h2>
-                  <p class="settings-help" id="admin-image-selected-handle">Choose a user above.</p>
+                  <h2 id="admin-image-selected-name">Your user row</h2>
+                  <p class="settings-help" id="admin-image-selected-handle">Your banner image is shown behind your entry in People signed in.</p>
                 </div>
                 <div class="mini-avatar admin-image-selected-avatar" id="admin-image-selected-avatar"></div>
               </div>
@@ -943,15 +934,12 @@
                 <div id="admin-user-row-bg-preview" class="admin-user-row-bg-preview"></div>
                 <div>
                   <input id="admin-user-row-bg-file" type="file" accept="image/*" hidden>
-                  <button type="button" class="profile-editor-upload" id="admin-user-row-bg-upload">Choose background image</button>
+                  <button type="button" class="profile-editor-upload" id="admin-user-row-bg-upload">Choose banner image</button>
                   <button type="button" class="profile-editor-remove" id="admin-user-row-bg-remove">Remove</button>
-                  <div class="profile-editor-help">This changes only the background behind the selected user's row in People signed in. It does not change their profile picture.</div>
+                  <div class="profile-editor-help">This changes only the background behind your user row in People signed in. It does not change your profile picture or profile banner.</div>
                 </div>
               </div>
             </section>
-          </div>
-        </div>
-      </section>
           </div>
         </div>
       </section>
@@ -1111,8 +1099,6 @@
   const adminOnlineList = document.getElementById('admin-online-list');
   const adminUserSearch = document.getElementById('admin-user-search');
   const adminClearBtn = document.getElementById('admin-clear-btn');
-  const adminImageUserSearch = document.getElementById('admin-image-user-search');
-  const adminImageUserList = document.getElementById('admin-image-user-list');
   const adminImageEditorCard = document.getElementById('admin-image-editor-card');
   const adminImageSelectedName = document.getElementById('admin-image-selected-name');
   const adminImageSelectedHandle = document.getElementById('admin-image-selected-handle');
@@ -1155,6 +1141,17 @@
   }
   function twemojiIn(el){
     if (window.twemoji) { try { window.twemoji.parse(el, { folder: 'svg', ext: '.svg' }); } catch(e){} }
+  }
+  function initTwemoji(){
+    if (!window.twemoji || window.__auroraTwemojiReady) return;
+    window.__auroraTwemojiReady = true;
+    twemojiIn(document.body);
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE) twemojiIn(node);
+      }));
+    });
+    observer.observe(document.body, { childList:true, subtree:true });
   }
   function setButtonLoading(labelEl, loading, idleText){
     labelEl.innerHTML = loading ? '<span class="spinner-lg"></span>' : idleText;
@@ -1760,7 +1757,7 @@
     selfPillLink.setAttribute('href', profilePathFor(currentUserId));
     selfPillLink.setAttribute('data-route', profilePathFor(currentUserId));
     navAdminLink.style.display = isFounder ? 'flex' : 'none';
-    if (navAdminImagesLink) navAdminImagesLink.style.display = isFounder ? 'flex' : 'none';
+    if (navAdminImagesLink) navAdminImagesLink.style.display = 'flex';
 
     if (!listenersStarted) {
       listenersStarted = true;
@@ -3224,14 +3221,8 @@
     settingsCurrentPassword.value = ''; settingsNewPassword.value = ''; settingsConfirmPassword.value = ''; settingsDeletePassword.value = '';
   }
   let adminImageHandlersReady = false;
-  let adminImageSearchQuery = '';
-  let selectedAdminImageUserKey = null;
 
-  function getAdminImageUserDisplayName(user){
-    const key = user && (user.usernameLower || String(user.username || '').toLowerCase());
-    const profile = key ? profilesCache[key] : null;
-    return (profile && profile.displayName) || (user && user.username) || key || 'Unknown user';
-  }
+  function getOwnCustomizationKey(){ return currentKey || ''; }
 
   function getUserRowBackground(key){
     const profile = profilesCache[key] || {};
@@ -3239,19 +3230,15 @@
   }
 
   function renderAdminImagePreview(){
-    const key = selectedAdminImageUserKey;
+    const key = getOwnCustomizationKey();
     if (!key) return;
-    const user = usersCache[key];
-    if (!user) return;
     const profile = profilesCache[key] || {};
-    const displayName = getAdminImageUserDisplayName(user);
     const bg = getUserRowBackground(key);
-
-    if (adminImageSelectedName) adminImageSelectedName.textContent = displayName;
-    if (adminImageSelectedHandle) adminImageSelectedHandle.textContent = '@' + (user.username || key);
+    if (adminImageSelectedName) adminImageSelectedName.textContent = profile.displayName || currentUsername || 'Your user row';
+    if (adminImageSelectedHandle) adminImageSelectedHandle.textContent = '@' + (currentUsername || key);
     if (adminImageSelectedAvatar) {
       adminImageSelectedAvatar.dataset.avatarKey = key;
-      adminImageSelectedAvatar.dataset.avatarName = user.username || key;
+      adminImageSelectedAvatar.dataset.avatarName = currentUsername || key;
       applyAvatarVisual(adminImageSelectedAvatar);
     }
     if (adminUserRowBgPreview) {
@@ -3263,105 +3250,50 @@
       } else {
         adminUserRowBgPreview.classList.add('empty');
         adminUserRowBgPreview.style.backgroundImage = 'none';
-        adminUserRowBgPreview.textContent = 'No custom row background';
+        adminUserRowBgPreview.textContent = 'No custom banner image';
       }
     }
     if (adminUserRowBgRemove) adminUserRowBgRemove.style.display = bg ? 'inline-flex' : 'none';
-    if (adminImageEditorCard) adminImageEditorCard.hidden = false;
-  }
-
-  function renderAdminImageUsers(){
-    if (!adminImageUserList || !isFounder) return;
-    const users = Object.values(usersCache).sort((a,b) => String(a.username || '').localeCompare(String(b.username || '')));
-    const q = adminImageSearchQuery.trim().toLowerCase();
-    const filtered = users.filter(user => {
-      const key = String(user.usernameLower || user.username || '').toLowerCase();
-      const name = getAdminImageUserDisplayName(user).toLowerCase();
-      return !q || key.includes(q) || name.includes(q);
-    });
-
-    adminImageUserList.innerHTML = filtered.map(user => {
-      const key = String(user.usernameLower || user.username || '').toLowerCase();
-      const selected = key === selectedAdminImageUserKey ? ' selected' : '';
-      const bg = getUserRowBackground(key);
-      return '<div class="admin-image-user-row' + selected + '" data-user-key="' + escapeHTML(key) + '">' +
-        '<div class="mini-avatar" data-avatar-key="' + escapeHTML(key) + '" data-avatar-name="' + escapeHTML(user.username || key) + '"></div>' +
-        '<div class="admin-image-user-info">' +
-          '<span class="admin-image-user-name">' + escapeHTML(getAdminImageUserDisplayName(user)) + '</span>' +
-          '<span class="admin-image-user-handle">@' + escapeHTML(user.username || key) + '</span>' +
-        '</div>' +
-        '<span class="admin-image-user-status">' + (bg ? 'Custom background' : 'No background') + '</span>' +
-      '</div>';
-    }).join('') || '<div class="list-empty">No users match that search.</div>';
-
-    adminImageUserList.querySelectorAll('.admin-image-user-row').forEach(row => {
-      row.addEventListener('click', () => {
-        selectedAdminImageUserKey = row.dataset.userKey;
-        renderAdminImageUsers();
-        renderAdminImagePreview();
-      });
-    });
-    refreshAllAvatars();
   }
 
   function initAdminImageHandlers(){
     if (adminImageHandlersReady) return;
     adminImageHandlersReady = true;
-
-    adminImageUserSearch?.addEventListener('input', () => {
-      adminImageSearchQuery = adminImageUserSearch.value.trim().toLowerCase();
-      renderAdminImageUsers();
-    });
-
     adminUserRowBgUpload?.addEventListener('click', () => {
-      if (!isFounder || !selectedAdminImageUserKey) return;
+      if (!getOwnCustomizationKey()) { toast('You must be signed in to customize your user row.', 'error'); return; }
       adminUserRowBgFile?.click();
     });
-
     adminUserRowBgFile?.addEventListener('change', async e => {
       const file = e.target.files?.[0];
       e.target.value = '';
-      const key = selectedAdminImageUserKey;
-      if (!file || !key || !isFounder) return;
+      const key = getOwnCustomizationKey();
+      if (!file || !key) return;
       if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
       try {
         const dataUrl = await compressImage(file, 1400, 0.82, false);
         const bgData = { dataUrl, positionX: 50, positionY: 50, updatedAt: Date.now() };
         await db.ref('profiles/' + key + '/userRowBackgroundData').set(bgData);
         profilesCache[key] = Object.assign({}, profilesCache[key] || {}, { userRowBackgroundData: bgData });
-        renderAdminImageUsers();
         renderAdminImagePreview();
         renderOnlineRows();
-        toast('User-row background saved.');
-      } catch (err) {
-        toast('That background image could not be saved.', 'error');
-      }
+        toast('User-row banner saved.');
+      } catch (err) { toast('That banner image could not be saved.', 'error'); }
     });
-
     adminUserRowBgRemove?.addEventListener('click', async () => {
-      const key = selectedAdminImageUserKey;
-      if (!key || !isFounder) return;
+      const key = getOwnCustomizationKey();
+      if (!key) return;
       try {
         await db.ref('profiles/' + key + '/userRowBackgroundData').remove();
         if (profilesCache[key]) delete profilesCache[key].userRowBackgroundData;
-        renderAdminImageUsers();
         renderAdminImagePreview();
         renderOnlineRows();
-        toast('User-row background removed.');
-      } catch (err) {
-        toast('The user-row background could not be removed.', 'error');
-      }
+        toast('User-row banner removed.');
+      } catch (err) { toast('The user-row banner could not be removed.', 'error'); }
     });
   }
 
   function populateAdminImagesPanel(){
-    if (!isFounder) return;
     initAdminImageHandlers();
-    if (!selectedAdminImageUserKey || !usersCache[selectedAdminImageUserKey]) {
-      const first = Object.values(usersCache).sort((a,b) => String(a.username || '').localeCompare(String(b.username || '')))[0];
-      selectedAdminImageUserKey = first ? String(first.usernameLower || first.username).toLowerCase() : null;
-    }
-    renderAdminImageUsers();
     renderAdminImagePreview();
   }
 
@@ -3380,6 +3312,7 @@
     renderOnlineRows();
     updateAdminStats();
   }
+  initTwemoji();
   renderRoute();
 </script>
 </body>
