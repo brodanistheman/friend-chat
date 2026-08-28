@@ -520,21 +520,16 @@
   .admin-status-label{margin-left:auto;font-size:0.76rem;color:var(--text-3);font-weight:600;}
 
   .admin-images-shell{max-width:760px;}
-  .admin-image-user-list{display:flex;flex-direction:column;gap:6px;} .admin-image-user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:16px;} .admin-image-user-grid .admin-image-user-row{min-width:0;position:relative;text-align:left;display:flex;width:100%;} .admin-user-row-bg-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.24;pointer-events:none;border-radius:var(--radius-sm);z-index:0;} .admin-image-user-row > *:not(.admin-user-row-bg-thumb){position:relative;z-index:1;}
-  .admin-image-user-row{display:flex;align-items:center;gap:10px;padding:9px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:background .15s ease,border-color .15s ease;}
-  .admin-image-user-row:hover{background:var(--surface-hover);border-color:var(--border-strong);}
-  .admin-image-user-row.selected{background:var(--accent-soft);border-color:var(--accent);}
-  .admin-image-user-row .mini-avatar{width:34px;height:34px;}
-  .admin-image-user-info{min-width:0;display:flex;flex-direction:column;gap:2px;flex:1;}
-  .admin-image-user-name{font-size:.84rem;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .admin-image-user-handle{font-size:.72rem;color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .admin-image-user-status{font-size:.7rem;color:var(--text-3);font-weight:700;}
-  .admin-image-selected-head{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+    .admin-image-selected-head{display:flex;align-items:center;justify-content:space-between;gap:16px;}
   .admin-image-selected-head h2{margin-bottom:4px;}
   .admin-image-selected-avatar{width:52px;height:52px;font-size:.8rem;}
   .admin-image-editor-card[hidden]{display:none;}
-  .admin-user-row-bg-preview{width:190px;height:72px;border-radius:9px;background:#171b24 center/cover no-repeat;flex:none;border:1px solid #2b303b;}
-  .admin-user-row-bg-preview.empty{display:grid;place-items:center;color:var(--text-3);font-size:.7rem;font-weight:700;text-align:center;padding:8px;}
+  .admin-user-row-bg-preview{width:223px;height:40px;border-radius:9px;background:#171b24 center/cover no-repeat;flex:none;border:1px solid #2b303b;cursor:grab;touch-action:none;user-select:none;position:relative;overflow:hidden;}
+  .admin-user-row-bg-preview:after{content:"Drag to position";position:absolute;inset:0;display:grid;place-items:center;background:rgba(5,7,11,.38);color:#fff;font-size:.68rem;font-weight:750;opacity:0;transition:opacity .15s ease;pointer-events:none;}
+  .admin-user-row-bg-preview:hover:after,.admin-user-row-bg-preview.dragging:after{opacity:1;}
+  .admin-user-row-bg-preview.dragging{cursor:grabbing;}
+  .admin-user-row-bg-preview.empty{display:grid;place-items:center;color:var(--text-3);font-size:.7rem;font-weight:700;text-align:center;padding:8px;cursor:default;}
+  .admin-user-row-bg-preview.empty:after{display:none;}
   @media (max-width:860px){
     #sidebar{position:fixed;top:0;bottom:0;left:0;z-index:40;transform:translateX(-100%);transition:transform .22s ease;box-shadow:20px 0 50px -20px rgba(0,0,0,0.6);}
     #sidebar.open{transform:translateX(0);}
@@ -922,30 +917,20 @@
               <h1>User-row customization</h1>
               <p>Customize the banner image behind your own entry in People signed in.</p>
             </div>
-            <section class="settings-card">
+            <section class="settings-card admin-image-editor-card" id="admin-image-editor-card">
               <div class="admin-image-selected-head">
                 <div>
-                  <h2>Your user-row</h2>
-                  <p class="settings-help">Customize the banner image behind your own entry in People signed in.</p>
+                  <h2 id="admin-image-selected-name">Your user-row banner</h2>
+                  <p class="settings-help" id="admin-image-selected-handle">Customize the background behind your own entry in People signed in.</p>
                 </div>
               </div>
-              <div id="admin-image-user-list" class="admin-image-user-grid"></div>
-            </section>
-            <section class="settings-card admin-image-editor-card" id="admin-image-editor-card" hidden>
-              <div class="admin-image-selected-head">
-                <div>
-                  <h2 id="admin-image-selected-name">Selected user</h2>
-                  <p class="settings-help" id="admin-image-selected-handle">User-row banner</p>
-                </div>
-                <div class="mini-avatar admin-image-selected-avatar" id="admin-image-selected-avatar"></div>
-              </div>
-              <div class="profile-upload-row" style="margin-top:16px;">
-                <div id="admin-user-row-bg-preview" class="admin-user-row-bg-preview"></div>
+              <div class="profile-upload-row" style="margin-top:16px;align-items:flex-start;">
+                <div id="admin-user-row-bg-preview" class="admin-user-row-bg-preview empty">No custom banner image</div>
                 <div>
                   <input id="admin-user-row-bg-file" type="file" accept="image/*" hidden>
                   <button type="button" class="profile-editor-upload" id="admin-user-row-bg-upload">Choose banner image</button>
                   <button type="button" class="profile-editor-remove" id="admin-user-row-bg-remove">Remove</button>
-                  <div class="profile-editor-help">This changes only the background behind this user's entry in People signed in. It does not change their profile picture or profile banner.</div>
+                  <div class="profile-editor-help">Drag directly on the preview to adjust the image horizontally or vertically. No sliders.</div>
                 </div>
               </div>
             </section>
@@ -3222,30 +3207,28 @@
 
   function getSelectedCustomizationKey(){ return selectedAdminImageUserKey || ''; }
 
+  let userRowDragState = null;
+
+  function clampPosition(value){ return Math.max(0, Math.min(100, Number(value) || 0)); }
+
   function renderAdminImagePreview(){
-    const key = getSelectedCustomizationKey();
-    if (!key) { if (adminImageEditorCard) adminImageEditorCard.hidden = true; return; }
+    const key = getOwnCustomizationKey();
+    if (!key) return;
     const profile = profilesCache[key] || {};
-    const user = usersCache[key] || null;
-    const username = user?.username || key;
+    const username = usersCache[key]?.username || currentUsername || key;
     const bg = profile.userRowBackgroundData;
-    if (adminImageEditorCard) adminImageEditorCard.hidden = false;
-    if (adminImageSelectedName) adminImageSelectedName.textContent = profile.displayName || username;
-    if (adminImageSelectedHandle) adminImageSelectedHandle.textContent = '@' + username + ' · user-row banner';
-    if (adminImageSelectedAvatar) {
-      adminImageSelectedAvatar.dataset.avatarKey = key;
-      adminImageSelectedAvatar.dataset.avatarName = username;
-      applyAvatarVisual(adminImageSelectedAvatar);
-    }
+    if (adminImageSelectedName) adminImageSelectedName.textContent = 'Your user-row banner';
+    if (adminImageSelectedHandle) adminImageSelectedHandle.textContent = '@' + username + ' · People signed in';
     if (adminUserRowBgPreview) {
       if (bg?.dataUrl) {
         adminUserRowBgPreview.classList.remove('empty');
         adminUserRowBgPreview.style.backgroundImage = `url("${bg.dataUrl}")`;
-        adminUserRowBgPreview.style.backgroundPosition = (Number.isFinite(Number(bg.positionX)) ? Number(bg.positionX) : 50) + '% ' + (Number.isFinite(Number(bg.positionY)) ? Number(bg.positionY) : 50) + '%';
+        adminUserRowBgPreview.style.backgroundPosition = clampPosition(bg.positionX ?? 50) + '% ' + clampPosition(bg.positionY ?? 50) + '%';
         adminUserRowBgPreview.textContent = '';
       } else {
         adminUserRowBgPreview.classList.add('empty');
         adminUserRowBgPreview.style.backgroundImage = 'none';
+        adminUserRowBgPreview.style.backgroundPosition = '50% 50%';
         adminUserRowBgPreview.textContent = 'No custom banner image';
       }
     }
@@ -3253,37 +3236,66 @@
   }
 
   function renderAdminImageUsers(){
-    if (!adminImageUserList) return;
     const key = getOwnCustomizationKey();
+    selectedAdminImageUserKey = key;
     if (!key) {
-      adminImageUserList.innerHTML = '<div class="list-empty">Sign in to customize your user-row.</div>';
       if (adminImageEditorCard) adminImageEditorCard.hidden = true;
       return;
     }
-    const user = usersCache[key] || { username: currentUsername, usernameLower: key };
-    const profile = profilesCache[key] || {};
-    const bg = profile.userRowBackgroundData?.dataUrl;
-    selectedAdminImageUserKey = key;
-    adminImageUserList.innerHTML =
-      '<button type="button" class="admin-image-user-row selected" data-user-key="' + escapeHTML(key) + '">' +
-        (bg ? '<img class="admin-user-row-bg-thumb" src="' + escapeHTML(bg) + '" alt="">' : '') +
-        '<div class="mini-avatar" data-avatar-key="' + escapeHTML(key) + '" data-avatar-name="' + escapeHTML(user.username || currentUsername) + '"></div>' +
-        '<div class="admin-image-user-info"><span class="admin-image-user-name">' + escapeHTML(profile.displayName || user.username || currentUsername) + '</span><span class="admin-image-user-handle">@' + escapeHTML(user.username || currentUsername) + '</span></div>' +
-        '<span class="admin-image-user-status">' + (bg ? 'Banner set' : 'No banner') + '</span>' +
-      '</button>';
-    const row = adminImageUserList.querySelector('.admin-image-user-row');
-    row?.addEventListener('click', () => {
-      selectedAdminImageUserKey = key;
-      renderAdminImageUsers();
-      renderAdminImagePreview();
-    });
-    refreshAllAvatars();
+    if (adminImageEditorCard) adminImageEditorCard.hidden = false;
+    initAdminImageHandlers();
     renderAdminImagePreview();
+  }
+
+  async function saveUserRowPosition(x, y){
+    const key = getOwnCustomizationKey();
+    const existing = profilesCache[key]?.userRowBackgroundData;
+    if (!key || !existing?.dataUrl) return;
+    const bgData = Object.assign({}, existing, { positionX: clampPosition(x), positionY: clampPosition(y), updatedAt: Date.now() });
+    try {
+      await db.ref('profiles/' + key + '/userRowBackgroundData').set(bgData);
+      profilesCache[key] = Object.assign({}, profilesCache[key] || {}, { userRowBackgroundData: bgData });
+      renderAdminImagePreview();
+      renderOnlineRows();
+    } catch (err) { toast('The banner position could not be saved.', 'error'); }
+  }
+
+  function initUserRowPositionDrag(){
+    if (!adminUserRowBgPreview || adminUserRowBgPreview.dataset.dragReady) return;
+    adminUserRowBgPreview.dataset.dragReady = '1';
+    adminUserRowBgPreview.addEventListener('pointerdown', e => {
+      const key = getOwnCustomizationKey();
+      const bg = profilesCache[key]?.userRowBackgroundData;
+      if (!key || !bg?.dataUrl) return;
+      adminUserRowBgPreview.setPointerCapture?.(e.pointerId);
+      adminUserRowBgPreview.classList.add('dragging');
+      userRowDragState = { pointerId:e.pointerId, startX:e.clientX, startY:e.clientY, x:clampPosition(bg.positionX ?? 50), y:clampPosition(bg.positionY ?? 50) };
+      e.preventDefault();
+    });
+    adminUserRowBgPreview.addEventListener('pointermove', e => {
+      if (!userRowDragState || userRowDragState.pointerId !== e.pointerId) return;
+      const dx = e.clientX - userRowDragState.startX;
+      const dy = e.clientY - userRowDragState.startY;
+      const x = clampPosition(userRowDragState.x + (dx / Math.max(1, adminUserRowBgPreview.clientWidth)) * 100);
+      const y = clampPosition(userRowDragState.y + (dy / Math.max(1, adminUserRowBgPreview.clientHeight)) * 100);
+      adminUserRowBgPreview.style.backgroundPosition = x + '% ' + y + '%';
+      userRowDragState.liveX = x; userRowDragState.liveY = y;
+      e.preventDefault();
+    });
+    const finishDrag = async e => {
+      if (!userRowDragState || userRowDragState.pointerId !== e.pointerId) return;
+      const state = userRowDragState; userRowDragState = null;
+      adminUserRowBgPreview.classList.remove('dragging');
+      await saveUserRowPosition(state.liveX ?? state.x, state.liveY ?? state.y);
+    };
+    adminUserRowBgPreview.addEventListener('pointerup', finishDrag);
+    adminUserRowBgPreview.addEventListener('pointercancel', finishDrag);
   }
 
   function initAdminImageHandlers(){
     if (adminImageHandlersReady) return;
     adminImageHandlersReady = true;
+    initUserRowPositionDrag();
     adminUserRowBgUpload?.addEventListener('click', () => {
       const key = getOwnCustomizationKey();
       if (!key) { toast('You must be signed in to customize your user-row.', 'error'); return; }
@@ -3297,10 +3309,10 @@
       if (!file.type.startsWith('image/')) { toast('Please choose an image file.', 'error'); return; }
       try {
         const dataUrl = await compressImage(file, 1400, 0.82, false);
-        const bgData = { dataUrl, positionX: 50, positionY: 50, updatedAt: Date.now() };
+        const bgData = { dataUrl, positionX:50, positionY:50, updatedAt:Date.now() };
         await db.ref('profiles/' + key + '/userRowBackgroundData').set(bgData);
-        profilesCache[key] = Object.assign({}, profilesCache[key] || {}, { userRowBackgroundData: bgData });
-        renderAdminImageUsers(); renderAdminImagePreview(); renderOnlineRows();
+        profilesCache[key] = Object.assign({}, profilesCache[key] || {}, { userRowBackgroundData:bgData });
+        renderAdminImagePreview(); renderOnlineRows();
         toast('Your user-row banner was saved.');
       } catch (err) { toast('That banner image could not be saved.', 'error'); }
     });
@@ -3310,7 +3322,7 @@
       try {
         await db.ref('profiles/' + key + '/userRowBackgroundData').remove();
         if (profilesCache[key]) delete profilesCache[key].userRowBackgroundData;
-        renderAdminImageUsers(); renderAdminImagePreview(); renderOnlineRows();
+        renderAdminImagePreview(); renderOnlineRows();
         toast('Your user-row banner was removed.');
       } catch (err) { toast('The user-row banner could not be removed.', 'error'); }
     });
@@ -3319,7 +3331,6 @@
   function populateAdminImagesPanel(){
     const ownKey = getOwnCustomizationKey();
     if (!ownKey) {
-      if (adminImageUserList) adminImageUserList.innerHTML = '<div class="list-empty">Sign in to customize your user-row.</div>';
       if (adminImageEditorCard) adminImageEditorCard.hidden = true;
       return;
     }
