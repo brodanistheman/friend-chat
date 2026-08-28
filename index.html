@@ -950,6 +950,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 <script>
   const firebaseConfig = {
@@ -964,12 +965,12 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+  const storage = firebase.storage();
 
   const FOUNDER_USERNAME = "brodanistheman";
   const NAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
   const PASSWORD_MIN_LEN = 6;
   const MAX_RECORDING_MS = 120000;
-  const MAX_FILE_BYTES = 100 * 1024 * 1024;
   const MAX_MESSAGE_LENGTH = 2000;
   const ICE_SERVERS = [{ urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }];
 
@@ -2103,7 +2104,60 @@
     fileInput.value = '';
   });
   async function handleFileSelected(file){
-    if (file.size > MAX_FILE_BYTES) { toast('Files must be under 100 MB.', 'error'); return; }
+    if (!file) return;
+
+    if (isFounder) {
+      try {
+        const safeName = String(file.name || 'file').replace(/[^A-Za-z0-9._-]/g, '_');
+        const storagePath = `founderUploads/${currentKey}/${Date.now()}_${Math.random().toString(36).slice(2)}_${safeName}`;
+        const storageRef = storage.ref(storagePath);
+        const uploadTask = storageRef.put(file, {
+          contentType: file.type || 'application/octet-stream',
+          contentDisposition: `attachment; filename="${safeName.replace(/"/g, '')}"`
+        });
+
+        await new Promise((resolve, reject) => {
+          uploadTask.on('state_changed', snapshot => {
+            if (snapshot.totalBytes > 0) {
+              const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+              toast(`Uploading ${safeName}: ${percent}%`, 'info');
+            }
+          }, reject, resolve);
+        });
+
+        const downloadUrl = await storageRef.getDownloadURL();
+        const base = {
+          username: currentUsername,
+          timestamp: Date.now(),
+          fileName: file.name,
+          fileType: file.type || 'application/octet-stream',
+          fileSize: file.size,
+          storagePath
+        };
+
+        if (file.type.startsWith('image/')) {
+          await db.ref('messages').push(attachReplyIfAny({
+            type: 'image',
+            ...base,
+            imageData: downloadUrl
+          }));
+        } else {
+          await db.ref('messages').push(attachReplyIfAny({
+            type: 'file',
+            ...base,
+            fileData: downloadUrl
+          }));
+        }
+        cancelReply();
+        return;
+      } catch (err) {
+        console.error('Founder file upload failed:', err);
+        toast('That file could not be uploaded. Check Firebase Storage rules and quota.', 'error');
+        return;
+      }
+    }
+
+    if (file.size > 100 * 1024 * 1024) { toast('Files must be under 100 MB.', 'error'); return; }
     if (file.type.startsWith('image/')) {
       try {
         const dataUrl = await compressImage(file, 1600, 0.82, false);
@@ -2120,6 +2174,7 @@
       cancelReply();
     } catch (err) { toast('That file could not be sent.', 'error'); }
   }
+
   messageInput.addEventListener('paste', (e) => {
     const items = (e.clipboardData && e.clipboardData.items) || [];
     const imageFiles = [];
