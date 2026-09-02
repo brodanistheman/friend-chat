@@ -941,7 +941,7 @@ body{background:var(--bg);letter-spacing:-.006em}
                     <span class="media-picker-icon" aria-hidden="true">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>
                     </span>
-                    <span><b>Upload file</b><small>Any file type, up to 50 MB</small></span>
+                    <span><b>Upload file</b><small>Any file type, up to 10 MB</small></span>
                   </button>
                 </div>
               </div>
@@ -1083,7 +1083,6 @@ body{background:var(--bg);letter-spacing:-.006em}
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 <script>
   const firebaseConfig = {
@@ -1098,7 +1097,12 @@ body{background:var(--bg);letter-spacing:-.006em}
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  const storage = firebase.storage();
+  // Free file storage is handled by Cloudinary instead of Firebase Storage.
+  // Create a free Cloudinary account and an unsigned upload preset, then replace
+  // these two values with your own Cloudinary settings.
+  const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";
+  const CLOUDINARY_UPLOAD_PRESET = "YOUR_UNSIGNED_UPLOAD_PRESET";
+  const CLOUDINARY_UPLOAD_URL = () => `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
 
   const FOUNDER_USERNAME = "brodanistheman";
   const NAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
@@ -2244,16 +2248,21 @@ body{background:var(--bg);letter-spacing:-.006em}
       return;
     }
 
-    const MAX_FILE_SIZE = 50 * 1024 * 1024;
+    // Cloudinary's free plan currently allows up to 10 MB for raw files.
+    // Keeping one universal limit avoids pretending that Firebase Storage is available.
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
-      toast('Files must be 50 MB or smaller.', 'error');
+      toast('Files must be 10 MB or smaller on the free upload service.', 'error');
+      return;
+    }
+
+    if (CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME' || CLOUDINARY_UPLOAD_PRESET === 'YOUR_UNSIGNED_UPLOAD_PRESET') {
+      toast('Set your free Cloudinary cloud name and unsigned upload preset first.', 'error');
       return;
     }
 
     const safeName = String(file.name || 'file').replace(/[^A-Za-z0-9._-]/g, '_');
     const fileType = file.type || 'application/octet-stream';
-    const storagePath = `chatUploads/${currentKey}/${Date.now()}_${Math.random().toString(36).slice(2)}_${safeName}`;
-    const storageRef = storage.ref(storagePath);
     const status = document.getElementById('upload-status');
     const title = document.getElementById('upload-title');
     const meta = document.getElementById('upload-meta');
@@ -2267,15 +2276,7 @@ body{background:var(--bg);letter-spacing:-.006em}
       if (status) status.classList.remove('open');
       if (bar) bar.style.width = '0%';
       attachBtn.disabled = false;
-    };
-
-    const armIdleTimeout = () => {
-      if (uploadIdleTimer) clearTimeout(uploadIdleTimer);
-      uploadIdleTimer = setTimeout(() => {
-        if (!activeUploadTask) return;
-        activeUploadTask.cancel();
-        toast('Upload stopped because no progress was received. Check your connection or Firebase Storage configuration.', 'error');
-      }, 45000);
+      activeUploadTask = null;
     };
 
     try {
@@ -2285,59 +2286,99 @@ body{background:var(--bg);letter-spacing:-.006em}
       if (meta) meta.textContent = 'Starting upload';
       if (bar) bar.style.width = '0%';
 
-      activeUploadTask = storageRef.put(file, {
-        contentType: fileType,
-        contentDisposition: `attachment; filename="${safeName.replace(/"/g, '')}"`,
-        customMetadata: {
-          uploadedBy: currentKey,
-          originalName: file.name
-        }
-      });
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+      formData.append('folder', `aurora/${currentKey}`);
+      formData.append('context', `uploaded_by=${currentKey}|original_name=${String(file.name).replace(/[|=]/g, '_')}`);
 
-      armIdleTimeout();
-      await new Promise((resolve, reject) => {
-        activeUploadTask.on('state_changed', snapshot => {
+      const xhr = new XMLHttpRequest();
+      activeUploadTask = {
+        cancel: () => xhr.abort()
+      };
+
+      let idleTimer = null;
+      const armIdleTimeout = () => {
+        if (uploadIdleTimer) clearTimeout(uploadIdleTimer);
+        uploadIdleTimer = setTimeout(() => xhr.abort(), 45000);
+      };
+
+      const result = await new Promise((resolve, reject) => {
+        xhr.open('POST', CLOUDINARY_UPLOAD_URL(), true);
+        xhr.upload.addEventListener('loadstart', armIdleTimeout);
+        xhr.upload.addEventListener('progress', e => {
           armIdleTimeout();
-          const total = snapshot.totalBytes || file.size || 1;
-          const percent = Math.min(100, Math.round((snapshot.bytesTransferred / total) * 100));
-          if (status) status.classList.add('open');
+          if (!e.lengthComputable) {
+            if (meta) meta.textContent = formatBytes(e.loaded) + ' uploaded';
+            return;
+          }
+          const percent = Math.min(100, Math.round((e.loaded / e.total) * 100));
           if (title) title.textContent = 'Uploading ' + file.name;
-          if (meta) meta.textContent = `${formatBytes(snapshot.bytesTransferred)} of ${formatBytes(total)} · ${percent}%`;
+          if (meta) meta.textContent = `${formatBytes(e.loaded)} of ${formatBytes(e.total)} · ${percent}%`;
           if (bar) bar.style.width = percent + '%';
-        }, reject, resolve);
+        });
+        xhr.upload.addEventListener('load', () => {
+          if (bar) bar.style.width = '100%';
+          if (meta) meta.textContent = 'Processing file';
+        });
+        xhr.addEventListener('load', () => {
+          if (uploadIdleTimer) { clearTimeout(uploadIdleTimer); uploadIdleTimer = null; }
+          let data = null;
+          try { data = JSON.parse(xhr.responseText || '{}'); } catch (e) {}
+          if (xhr.status >= 200 && xhr.status < 300 && data && data.secure_url) {
+            resolve(data);
+          } else {
+            const message = data?.error?.message || `Upload service returned HTTP ${xhr.status}`;
+            reject(new Error(message));
+          }
+        });
+        xhr.addEventListener('error', () => {
+          if (uploadIdleTimer) { clearTimeout(uploadIdleTimer); uploadIdleTimer = null; }
+          reject(new Error('The upload connection failed.'));
+        });
+        xhr.addEventListener('abort', () => {
+          if (uploadIdleTimer) { clearTimeout(uploadIdleTimer); uploadIdleTimer = null; }
+          const error = new Error('Upload cancelled.');
+          error.code = 'upload/canceled';
+          reject(error);
+        });
+        xhr.addEventListener('timeout', () => {
+          if (uploadIdleTimer) { clearTimeout(uploadIdleTimer); uploadIdleTimer = null; }
+          reject(new Error('The upload timed out.'));
+        });
+        xhr.timeout = 0;
+        xhr.send(formData);
       });
 
-      const downloadUrl = await storageRef.getDownloadURL();
+      const downloadUrl = result.secure_url;
+      const resourceType = result.resource_type || 'raw';
+      const publicId = result.public_id || '';
       const base = {
         username: currentUsername,
         timestamp: Date.now(),
         fileName: file.name,
         fileType,
         fileSize: file.size,
-        storagePath
+        storagePath: `cloudinary/${publicId}`
       };
+
       const payload = fileType.startsWith('image/')
         ? attachReplyIfAny({ type: 'image', ...base, imageData: downloadUrl })
-        : attachReplyIfAny({ type: 'file', ...base, fileData: downloadUrl });
+        : attachReplyIfAny({ type: 'file', ...base, fileData: downloadUrl, resourceType });
 
       await db.ref('messages').push(payload);
       if (bar) bar.style.width = '100%';
-      activeUploadTask = null;
       clearUploadUi();
       cancelReply();
       toast(`${file.name} uploaded.`, 'info');
     } catch (err) {
       const code = err && err.code ? String(err.code) : '';
-      activeUploadTask = null;
       clearUploadUi();
       console.error('File upload failed:', err);
-      if (code === 'storage/canceled') return;
-      if (code === 'storage/unauthorized') {
-        toast('Upload blocked by Firebase Storage rules. Allow uploads for this app or add Firebase Authentication.', 'error');
-      } else if (code === 'storage/quota-exceeded') {
-        toast('Firebase Storage quota has been exceeded.', 'error');
+      if (code === 'upload/canceled') {
+        toast('Upload cancelled.');
       } else {
-        toast(`Upload failed${code ? ' (' + code + ')' : ''}.`, 'error');
+        toast(`Upload failed: ${err?.message || 'Check your Cloudinary settings.'}`, 'error');
       }
     }
   }
@@ -3601,9 +3642,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   setTimeout(()=>{try{loadDraft()}catch(e){}},300);
   chatForm?.addEventListener('submit',()=>{try{localStorage.removeItem('aurora:message-draft:'+currentKey)}catch(e){}});
 
-  uploadCancel?.addEventListener('click',()=>{if(activeUploadTask){activeUploadTask.cancel();activeUploadTask=null;if(uploadIdleTimer){clearTimeout(uploadIdleTimer);uploadIdleTimer=null}uploadStatus.classList.remove('open');if(uploadProgress)uploadProgress.style.width='0%';attachBtn.disabled=false;toast('Upload cancelled.')}});
-  // Replace the upload handler with progress UI and retain Firebase Storage behavior.
-  fileInput?.addEventListener('change',()=>{},true);
+  uploadCancel?.addEventListener('click',()=>{if(activeUploadTask){activeUploadTask.cancel();if(uploadIdleTimer){clearTimeout(uploadIdleTimer);uploadIdleTimer=null}activeUploadTask=null;uploadStatus.classList.remove('open');if(uploadProgress)uploadProgress.style.width='0%';attachBtn.disabled=false;toast('Upload cancelled.')}});
 
   function initPreferences(){
     const compact=document.getElementById('pref-compact');
