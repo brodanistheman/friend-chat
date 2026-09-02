@@ -1097,12 +1097,8 @@ body{background:var(--bg);letter-spacing:-.006em}
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  // Free file storage is handled by Cloudinary instead of Firebase Storage.
-  // Create a free Cloudinary account and an unsigned upload preset, then replace
-  // these two values with your own Cloudinary settings.
-  const CLOUDINARY_CLOUD_NAME = "YOUR_CLOUD_NAME";
-  const CLOUDINARY_UPLOAD_PRESET = "YOUR_UNSIGNED_UPLOAD_PRESET";
-  const CLOUDINARY_UPLOAD_URL = () => `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+  // File uploads use Firebase Realtime Database so Aurora does not require
+  // Firebase Storage billing or a third party upload account.
 
   const FOUNDER_USERNAME = "brodanistheman";
   const NAME_PATTERN = /^[A-Za-z0-9_]{3,20}$/;
@@ -2248,16 +2244,12 @@ body{background:var(--bg);letter-spacing:-.006em}
       return;
     }
 
-    // Cloudinary's free plan currently allows up to 10 MB for raw files.
-    // Keeping one universal limit avoids pretending that Firebase Storage is available.
-    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    // Realtime Database has request and record size limits. Data URLs also add
+    // roughly one third overhead, so keep the free no billing upload limit
+    // conservative enough to avoid creating oversized database writes.
+    const MAX_FILE_SIZE = 6 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
-      toast('Files must be 10 MB or smaller on the free upload service.', 'error');
-      return;
-    }
-
-    if (CLOUDINARY_CLOUD_NAME === 'YOUR_CLOUD_NAME' || CLOUDINARY_UPLOAD_PRESET === 'YOUR_UNSIGNED_UPLOAD_PRESET') {
-      toast('Set your free Cloudinary cloud name and unsigned upload preset first.', 'error');
+      toast('Files must be 6 MB or smaller on the free upload system.', 'error');
       return;
     }
 
@@ -2282,92 +2274,76 @@ body{background:var(--bg);letter-spacing:-.006em}
     try {
       attachBtn.disabled = true;
       if (status) status.classList.add('open');
-      if (title) title.textContent = 'Uploading ' + file.name;
-      if (meta) meta.textContent = 'Starting upload';
+      if (title) title.textContent = 'Reading ' + file.name;
+      if (meta) meta.textContent = 'Preparing file';
       if (bar) bar.style.width = '0%';
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-      formData.append('folder', `aurora/${currentKey}`);
-      formData.append('context', `uploaded_by=${currentKey}|original_name=${String(file.name).replace(/[|=]/g, '_')}`);
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        let lastProgress = Date.now();
 
-      const xhr = new XMLHttpRequest();
-      activeUploadTask = {
-        cancel: () => xhr.abort()
-      };
+        const armTimeout = () => {
+          if (uploadIdleTimer) clearTimeout(uploadIdleTimer);
+          uploadIdleTimer = setTimeout(() => {
+            try { reader.abort(); } catch (e) {}
+          }, 45000);
+        };
 
-      let idleTimer = null;
-      const armIdleTimeout = () => {
-        if (uploadIdleTimer) clearTimeout(uploadIdleTimer);
-        uploadIdleTimer = setTimeout(() => xhr.abort(), 45000);
-      };
+        activeUploadTask = {
+          cancel: () => reader.abort()
+        };
 
-      const result = await new Promise((resolve, reject) => {
-        xhr.open('POST', CLOUDINARY_UPLOAD_URL(), true);
-        xhr.upload.addEventListener('loadstart', armIdleTimeout);
-        xhr.upload.addEventListener('progress', e => {
-          armIdleTimeout();
-          if (!e.lengthComputable) {
-            if (meta) meta.textContent = formatBytes(e.loaded) + ' uploaded';
+        reader.addEventListener('loadstart', armTimeout);
+        reader.addEventListener('progress', event => {
+          lastProgress = Date.now();
+          armTimeout();
+          if (!event.lengthComputable) {
+            if (meta) meta.textContent = formatBytes(event.loaded) + ' read';
             return;
           }
-          const percent = Math.min(100, Math.round((e.loaded / e.total) * 100));
-          if (title) title.textContent = 'Uploading ' + file.name;
-          if (meta) meta.textContent = `${formatBytes(e.loaded)} of ${formatBytes(e.total)} · ${percent}%`;
+          const percent = Math.min(100, Math.round((event.loaded / event.total) * 100));
+          if (title) title.textContent = 'Preparing ' + file.name;
+          if (meta) meta.textContent = `${formatBytes(event.loaded)} of ${formatBytes(event.total)} · ${percent}%`;
           if (bar) bar.style.width = percent + '%';
         });
-        xhr.upload.addEventListener('load', () => {
-          if (bar) bar.style.width = '100%';
-          if (meta) meta.textContent = 'Processing file';
-        });
-        xhr.addEventListener('load', () => {
+        reader.addEventListener('load', () => {
           if (uploadIdleTimer) { clearTimeout(uploadIdleTimer); uploadIdleTimer = null; }
-          let data = null;
-          try { data = JSON.parse(xhr.responseText || '{}'); } catch (e) {}
-          if (xhr.status >= 200 && xhr.status < 300 && data && data.secure_url) {
-            resolve(data);
-          } else {
-            const message = data?.error?.message || `Upload service returned HTTP ${xhr.status}`;
-            reject(new Error(message));
-          }
+          resolve(String(reader.result || ''));
         });
-        xhr.addEventListener('error', () => {
+        reader.addEventListener('error', () => {
           if (uploadIdleTimer) { clearTimeout(uploadIdleTimer); uploadIdleTimer = null; }
-          reject(new Error('The upload connection failed.'));
+          reject(new Error('The browser could not read this file.'));
         });
-        xhr.addEventListener('abort', () => {
+        reader.addEventListener('abort', () => {
           if (uploadIdleTimer) { clearTimeout(uploadIdleTimer); uploadIdleTimer = null; }
           const error = new Error('Upload cancelled.');
           error.code = 'upload/canceled';
           reject(error);
         });
-        xhr.addEventListener('timeout', () => {
-          if (uploadIdleTimer) { clearTimeout(uploadIdleTimer); uploadIdleTimer = null; }
-          reject(new Error('The upload timed out.'));
-        });
-        xhr.timeout = 0;
-        xhr.send(formData);
+
+        reader.readAsDataURL(file);
       });
 
-      const downloadUrl = result.secure_url;
-      const resourceType = result.resource_type || 'raw';
-      const publicId = result.public_id || '';
+      if (!dataUrl) throw new Error('The file could not be converted for storage.');
+
+      if (title) title.textContent = 'Saving ' + file.name;
+      if (meta) meta.textContent = 'Saving to Aurora';
+      if (bar) bar.style.width = '100%';
+
       const base = {
         username: currentUsername,
         timestamp: Date.now(),
         fileName: file.name,
         fileType,
         fileSize: file.size,
-        storagePath: `cloudinary/${publicId}`
+        storagePath: `database/${currentKey}/${Date.now()}_${safeName}`
       };
 
       const payload = fileType.startsWith('image/')
-        ? attachReplyIfAny({ type: 'image', ...base, imageData: downloadUrl })
-        : attachReplyIfAny({ type: 'file', ...base, fileData: downloadUrl, resourceType });
+        ? attachReplyIfAny({ type: 'image', ...base, imageData: dataUrl })
+        : attachReplyIfAny({ type: 'file', ...base, fileData: dataUrl });
 
       await db.ref('messages').push(payload);
-      if (bar) bar.style.width = '100%';
       clearUploadUi();
       cancelReply();
       toast(`${file.name} uploaded.`, 'info');
@@ -2377,8 +2353,10 @@ body{background:var(--bg);letter-spacing:-.006em}
       console.error('File upload failed:', err);
       if (code === 'upload/canceled') {
         toast('Upload cancelled.');
+      } else if (String(err?.message || '').toLowerCase().includes('permission')) {
+        toast('Upload failed because Firebase Database rules rejected the file.', 'error');
       } else {
-        toast(`Upload failed: ${err?.message || 'Check your Cloudinary settings.'}`, 'error');
+        toast(`Upload failed: ${err?.message || 'The file could not be saved.'}`, 'error');
       }
     }
   }
