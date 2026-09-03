@@ -539,6 +539,7 @@
     .msg-group{max-width:90%;}
   }
 
+  .friend-add-row{display:flex;gap:8px}.friend-add-row .field{flex:1}.friend-list{display:flex;flex-direction:column;gap:7px}.friend-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--inset);border:1px solid var(--border);border-radius:10px}.friend-row-main{min-width:0;flex:1}.friend-row-name{font-size:.82rem;font-weight:750}.friend-row-handle{font-size:.68rem;color:var(--text-3);margin-top:2px}.friend-row-actions{display:flex;gap:6px;flex-wrap:wrap}.friend-action{border:1px solid var(--border-strong);background:transparent;color:var(--text-1);border-radius:8px;padding:7px 10px;font:700 .7rem inherit;cursor:pointer}.friend-action:hover{background:var(--surface-hover)}.friend-action.danger{color:var(--danger);border-color:rgba(229,72,77,.35)}.friend-empty{padding:14px 4px;color:var(--text-3);font-size:.78rem}.friend-result{margin-top:10px}.friend-result .friend-row{background:var(--surface)}
   .board-panel{display:none;flex-direction:column;height:100%;width:100%;}
   .board-panel.active{display:flex;}
   .board-scroll{flex:1;overflow-y:auto;padding:32px 24px 60px;}
@@ -870,6 +871,10 @@ body{background:var(--bg);letter-spacing:-.006em}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Chat
         </a>
+        <a href="/friends" data-route="/friends" class="side-nav-item" data-view="friends">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Friends
+        </a>
         <a href="/settings" data-route="/settings" class="side-nav-item" data-view="settings">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           Settings
@@ -1134,6 +1139,28 @@ body{background:var(--bg);letter-spacing:-.006em}
         </div>
       </section>
 
+      <section id="panel-friends" class="panel">
+        <header class="panel-header">
+          <button id="friends-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <div class="header-title"><h1>Friends</h1></div>
+        </header>
+        <div class="panel-scroll">
+          <div class="page-shell friends-shell">
+            <div class="page-head"><h1>Friends</h1><p>Manage your friends, incoming requests, and blocked people.</p></div>
+            <section class="settings-card">
+              <h2>Add a friend</h2>
+              <div class="friend-add-row"><input id="friend-search-input" class="field" type="text" maxlength="20" placeholder="Enter a username"><button id="friend-add-btn" class="btn btn-primary" type="button">Add friend</button></div>
+              <div id="friend-search-result"></div>
+            </section>
+            <section class="settings-card"><h2>Friend requests</h2><div id="friend-requests-list" class="friend-list"></div></section>
+            <section class="settings-card"><h2>Your friends</h2><div id="friends-list" class="friend-list"></div></section>
+            <section class="settings-card"><h2>Blocked</h2><div id="blocked-list" class="friend-list"></div></section>
+          </div>
+        </div>
+      </section>
+
       <section id="panel-admin" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -1253,6 +1280,13 @@ body{background:var(--bg);letter-spacing:-.006em}
   const panelAdmin = document.getElementById('panel-admin');
   const panelRoadmap = document.getElementById('panel-roadmap');
   const panelAnnouncements = document.getElementById('panel-announcements');
+  const panelFriends = document.getElementById('panel-friends');
+  const friendSearchInput = document.getElementById('friend-search-input');
+  const friendAddBtn = document.getElementById('friend-add-btn');
+  const friendSearchResult = document.getElementById('friend-search-result');
+  const friendRequestsList = document.getElementById('friend-requests-list');
+  const friendsList = document.getElementById('friends-list');
+  const blockedList = document.getElementById('blocked-list');
   const roadmapPosts = document.getElementById('roadmap-posts');
   const announcementPosts = document.getElementById('announcement-posts');
   const roadmapCreate = document.getElementById('roadmap-create');
@@ -1459,6 +1493,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (pathname === '/settings' || pathname === '/settings/') return { view: 'settings' };
     if (pathname === '/roadmap' || pathname === '/roadmap/') return { view: 'roadmap' };
     if (pathname === '/announcements' || pathname === '/announcements/') return { view: 'announcements' };
+    if (pathname === '/friends' || pathname === '/friends/') return { view: 'friends' };
     if (pathname === '/admin' || pathname === '/admin/') return { view: 'admin' };
         return { view: 'chat' };
   }
@@ -1482,6 +1517,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     panelSettings.classList.toggle('active', panelName === 'settings');
     panelRoadmap.classList.toggle('active', panelName === 'roadmap');
     panelAnnouncements.classList.toggle('active', panelName === 'announcements');
+    panelFriends.classList.toggle('active', panelName === 'friends');
     panelAdmin.classList.toggle('active', panelName === 'admin');
     document.querySelectorAll('.side-nav-item').forEach(el => el.classList.toggle('active', el.dataset.view === panelName));
     sidebar.classList.remove('open');
@@ -1489,6 +1525,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (panelName === 'settings') populateSettingsPanel();
     if (panelName === 'roadmap') populateBoardPanel('roadmap');
     if (panelName === 'announcements') populateBoardPanel('announcements');
+    if (panelName === 'friends') populateFriendsPanel();
     if (panelName === 'admin') populateAdminPanel();
     if (panelName === 'chat') { messageInput.focus(); chatBox.scrollTop = chatBox.scrollHeight; }
   }
@@ -2055,6 +2092,7 @@ body{background:var(--bg);letter-spacing:-.006em}
 
     keys.forEach(key => {
       const v = presenceCache[key];
+      if (key !== currentKey && (isBlockedKey(key))) return;
       const status = v.status === 'away' ? 'away' : 'online';
       const name = getDisplayName(key, v.display);
       const path = profilePathFor(v.id);
@@ -2290,6 +2328,9 @@ body{background:var(--bg);letter-spacing:-.006em}
       return;
     }
     recentSentLog.push(Date.now());
+
+    const targetMention = text.match(/@([A-Za-z0-9_]{3,20})/);
+    if (targetMention && (isBlockedKey(targetMention[1].toLowerCase()) || socialState.blocked[currentKey]?.[targetMention[1].toLowerCase()])) { toast('You cannot interact with a blocked user.', 'error'); return; }
 
     const tenorUrl = findTenorUrl(text);
     if (tenorUrl) {
@@ -2822,6 +2863,7 @@ body{background:var(--bg);letter-spacing:-.006em}
 
   async function openProfileForUsername(username){
     const key = String(username || '').toLowerCase();
+    if(key!==currentKey && (isBlockedKey(key))){ toast('You have blocked this user.','error'); return; }
     if (presenceCache[key] && presenceCache[key].id) { navigate(profilePathFor(presenceCache[key].id)); return; }
     try {
       const snap = await db.ref('users').orderByChild('usernameLower').equalTo(key).limitToFirst(1).once('value');
@@ -2837,7 +2879,9 @@ body{background:var(--bg);letter-spacing:-.006em}
     const emptyState = chatBox.querySelector('.empty-state');
     if (emptyState) emptyState.remove();
 
-    const isOwn = msg.username.toLowerCase() === currentUsername.toLowerCase();
+    const msgKey = msg.username.toLowerCase();
+    if(msgKey !== currentKey && (isBlockedKey(msgKey) || socialState.blocked[currentKey]?.[msgKey])) return;
+    const isOwn = msgKey === currentUsername.toLowerCase();
     const lastGroup = chatBox.lastElementChild;
     const canGroup = lastGroup &&
       lastGroup.dataset.userkey === msg.username.toLowerCase() &&
@@ -3599,6 +3643,38 @@ body{background:var(--bg);letter-spacing:-.006em}
 
   const boardCache = { roadmap: {}, announcements: {} };
   const boardListenersReady = { roadmap: false, announcements: false };
+  const socialState = { friends:{}, incoming:{}, outgoing:{}, blocked:{} };
+  let socialListenersReady = false;
+  function socialPairKey(a,b){ return [String(a).toLowerCase(),String(b).toLowerCase()].sort().join('__'); }
+  function socialUserByKey(key){ const p=profilesCache[key]||{}; const u=Object.values(usersCache).find(x=>String(x.usernameLower).toLowerCase()===key); return {key, id:u?.id||null, username:u?.username||key, display:p.displayName||u?.username||key}; }
+  function isBlockedKey(key){ return !!socialState.blocked[key]; }
+  function isFriendKey(key){ return !!socialState.friends[socialPairKey(currentKey,key)]; }
+  function socialCanInteract(key){ return key && key!==currentKey && !isBlockedKey(key) && !socialState.blocked[currentKey]; }
+  function renderFriendLists(){
+    const incoming=Object.entries(socialState.incoming||{}).filter(([k,v])=>v&&v.fromKey).map(([k,v])=>({key:k,...v}));
+    friendRequestsList.innerHTML=incoming.length?incoming.map(v=>{const u=socialUserByKey(v.fromKey);return '<div class="friend-row"><div class="mini-avatar" data-avatar-key="'+escapeHTML(u.key)+'" data-avatar-name="'+escapeHTML(u.username)+'"></div><div class="friend-row-main"><div class="friend-row-name">'+escapeHTML(u.display)+'</div><div class="friend-row-handle">@'+escapeHTML(u.username)+'</div></div><div class="friend-row-actions"><button class="friend-action" data-social="accept" data-key="'+escapeHTML(v.key)+'">Accept</button><button class="friend-action danger" data-social="decline" data-key="'+escapeHTML(v.key)+'">Decline</button></div></div>'}).join(''):'<div class="friend-empty">No pending friend requests.</div>';
+    const friends=Object.entries(socialState.friends||{}).filter(([pair,v])=>v&&pair.includes('__')).map(([pair,v])=>{const parts=pair.split('__');const key=parts[0]===currentKey?parts[1]:parts[0];return {pair,key};}).filter(x=>x.key&&x.key!==currentKey);
+    friendsList.innerHTML=friends.length?friends.map(v=>{const u=socialUserByKey(v.key);return '<div class="friend-row"><div class="mini-avatar" data-avatar-key="'+escapeHTML(u.key)+'" data-avatar-name="'+escapeHTML(u.username)+'"></div><div class="friend-row-main"><div class="friend-row-name">'+escapeHTML(u.display)+'</div><div class="friend-row-handle">@'+escapeHTML(u.username)+'</div></div><div class="friend-row-actions"><button class="friend-action" data-social="profile" data-key="'+escapeHTML(v.key)+'">Profile</button><button class="friend-action danger" data-social="unfriend" data-key="'+escapeHTML(v.key)+'">Unfriend</button><button class="friend-action danger" data-social="block" data-key="'+escapeHTML(v.key)+'">Block</button></div></div>'}).join(''):'<div class="friend-empty">You have no friends yet.</div>';
+    const blocked=Object.entries(socialState.blocked||{}).map(([key])=>key).filter(k=>k!==currentKey);
+    blockedList.innerHTML=blocked.length?blocked.map(key=>{const u=socialUserByKey(key);return '<div class="friend-row"><div class="mini-avatar" data-avatar-key="'+escapeHTML(u.key)+'" data-avatar-name="'+escapeHTML(u.username)+'"></div><div class="friend-row-main"><div class="friend-row-name">'+escapeHTML(u.display)+'</div><div class="friend-row-handle">@'+escapeHTML(u.username)+'</div></div><div class="friend-row-actions"><button class="friend-action" data-social="unblock" data-key="'+escapeHTML(key)+'">Unblock</button></div></div>'}).join(''):'<div class="friend-empty">You have not blocked anyone.</div>';
+    refreshAllAvatars();
+  }
+  function listenForSocial(){
+    if(socialListenersReady)return; socialListenersReady=true;
+    db.ref('social/friends/'+currentKey).on('value',snap=>{socialState.friends=snap.val()||{};renderFriendLists();});
+    db.ref('social/requests/incoming/'+currentKey).on('value',snap=>{socialState.incoming=snap.val()||{};renderFriendLists();});
+    db.ref('social/requests/outgoing/'+currentKey).on('value',snap=>{socialState.outgoing=snap.val()||{};});
+    db.ref('social/blocks/'+currentKey).on('value',snap=>{socialState.blocked=snap.val()||{};renderFriendLists();});
+  }
+  async function findUserKey(username){ const key=String(username||'').trim().toLowerCase(); if(!key||key===currentKey)return null; const snap=await db.ref('usernames/'+key).once('value'); return snap.exists()?key:null; }
+  async function sendFriendRequest(key){ if(!socialCanInteract(key)){toast('You cannot add this person.','error');return;} if(isFriendKey(key)){toast('You are already friends.','error');return;} if(socialState.outgoing[key]){toast('A friend request is already pending.','error');return;} if(socialState.incoming[key]){toast('This person has already sent you a request.','error');return;} const id=socialPairKey(currentKey,key); const updates={}; updates['social/requests/outgoing/'+currentKey+'/'+key]={toKey:key,createdAt:Date.now()}; updates['social/requests/incoming/'+key+'/'+currentKey]={fromKey:currentKey,createdAt:Date.now()}; await db.ref().update(updates); toast('Friend request sent.'); }
+  async function acceptFriendRequest(fromKey){ if(isBlockedKey(fromKey)||isBlockedKey(currentKey))return; const pair=socialPairKey(currentKey,fromKey); const updates={}; updates['social/friends/'+currentKey+'/'+pair]={userA:pair.split('__')[0],userB:pair.split('__')[1],createdAt:Date.now()}; updates['social/friends/'+fromKey+'/'+pair]={userA:pair.split('__')[0],userB:pair.split('__')[1],createdAt:Date.now()}; updates['social/requests/incoming/'+currentKey+'/'+fromKey]=null; updates['social/requests/outgoing/'+fromKey+'/'+currentKey]=null; await db.ref().update(updates); toast('Friend request accepted.'); }
+  async function declineFriendRequest(fromKey){ const updates={}; updates['social/requests/incoming/'+currentKey+'/'+fromKey]=null; updates['social/requests/outgoing/'+fromKey+'/'+currentKey]=null; await db.ref().update(updates); }
+  async function unfriend(key){ const pair=socialPairKey(currentKey,key); if(!confirm('Unfriend @'+key+'?'))return; const updates={}; updates['social/friends/'+currentKey+'/'+pair]=null; updates['social/friends/'+key+'/'+pair]=null; await db.ref().update(updates); toast('Friend removed.'); }
+  async function blockUser(key){ if(!key||key===currentKey)return; if(!confirm('Block @'+key+'? They will no longer be able to interact with you.'))return; const pair=socialPairKey(currentKey,key); const updates={}; updates['social/blocks/'+currentKey+'/'+key]={createdAt:Date.now()}; updates['social/friends/'+currentKey+'/'+pair]=null; updates['social/friends/'+key+'/'+pair]=null; updates['social/requests/incoming/'+currentKey+'/'+key]=null; updates['social/requests/outgoing/'+currentKey+'/'+key]=null; updates['social/requests/incoming/'+key+'/'+currentKey]=null; updates['social/requests/outgoing/'+key+'/'+currentKey]=null; await db.ref().update(updates); toast('User blocked.'); }
+  async function unblockUser(key){ await db.ref('social/blocks/'+currentKey+'/'+key).remove(); toast('User unblocked.'); }
+  function populateFriendsPanel(){ listenForSocial(); renderFriendLists(); }
+
 
   function boardFormatDate(ts){
     if (!ts) return 'Unknown date';
@@ -3931,6 +4007,7 @@ body{background:var(--bg);letter-spacing:-.006em}
         row.className='profile-action-row';
         if(!own){
           const username=usersCache[id]?.username || '';
+          const key=String(username).toLowerCase();
           const msg=document.createElement('button');
           msg.className='profile-action primary';
           msg.type='button';
@@ -3949,6 +4026,17 @@ body{background:var(--bg);letter-spacing:-.006em}
           link.textContent='Copy profile link';
           link.addEventListener('click',()=>{navigator.clipboard?.writeText(location.href);toast('Profile link copied.')});
           row.appendChild(link);
+          if(socialCanInteract(key)){
+            const socialBtn=document.createElement('button'); socialBtn.className='profile-action'; socialBtn.type='button';
+            if(isFriendKey(key)){ socialBtn.textContent='Unfriend'; socialBtn.addEventListener('click',()=>unfriend(key)); }
+            else if(socialState.outgoing[key]){ socialBtn.textContent='Request sent'; socialBtn.disabled=true; }
+            else if(socialState.incoming[key]){ socialBtn.textContent='Accept request'; socialBtn.addEventListener('click',()=>acceptFriendRequest(key)); }
+            else { socialBtn.textContent='Add friend'; socialBtn.addEventListener('click',()=>sendFriendRequest(key)); }
+            row.appendChild(socialBtn);
+            const blockBtn=document.createElement('button'); blockBtn.className='profile-action'; blockBtn.type='button'; blockBtn.textContent='Block'; blockBtn.addEventListener('click',()=>blockUser(key)); row.appendChild(blockBtn);
+          } else if(isBlockedKey(key)){
+            const unblockBtn=document.createElement('button'); unblockBtn.className='profile-action'; unblockBtn.type='button'; unblockBtn.textContent='Unblock'; unblockBtn.addEventListener('click',()=>unblockUser(key)); row.appendChild(unblockBtn);
+          }
         }
         actions.appendChild(row);
       }
