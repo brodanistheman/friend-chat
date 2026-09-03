@@ -515,6 +515,7 @@
   .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;display:flex;flex-direction:column;gap:4px;}
   .stat-value{font-size:1.7rem;font-weight:800;font-variant-numeric:tabular-nums;}
   .stat-label{font-size:0.78rem;color:var(--text-2);font-weight:500;}
+  .mod-search-row{display:flex;gap:8px;align-items:center}.mod-search-row .field{flex:1}.mod-selected{margin-top:12px;border:1px solid var(--border);border-radius:12px;background:var(--inset);padding:14px}.mod-selected-head{display:flex;align-items:center;gap:10px}.mod-selected-avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);font-size:.72rem;font-weight:800;flex:none}.mod-selected-main{min-width:0;flex:1}.mod-selected-name{font-weight:800;font-size:.85rem}.mod-selected-id{font-size:.67rem;color:var(--text-3);margin-top:2px}.mod-statuses{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}.mod-status{display:inline-flex;align-items:center;padding:4px 7px;border-radius:999px;font-size:.64rem;font-weight:800;background:var(--surface);border:1px solid var(--border);color:var(--text-2)}.mod-status.danger{color:#ff9b9f;border-color:rgba(229,72,77,.35)}.mod-status.warn{color:#f3c47a;border-color:rgba(243,196,122,.3)}.mod-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mod-fields .full{grid-column:1/-1}.mod-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.mod-action{border:1px solid var(--border);background:var(--surface);color:var(--text-1);border-radius:8px;padding:8px 10px;font-size:.72rem;font-weight:750;cursor:pointer}.mod-action:hover{background:var(--surface-hover)}.mod-action.danger{border-color:rgba(229,72,77,.4);color:#ff9b9f}.mod-action.warn{border-color:rgba(243,196,122,.35);color:#f3c47a}.mod-action:disabled{opacity:.45;cursor:not-allowed}.mod-log{margin-top:12px;border-top:1px solid var(--border);padding-top:10px}.mod-log-title{font-size:.7rem;font-weight:800;color:var(--text-2);margin-bottom:6px}.mod-log-item{font-size:.68rem;color:var(--text-3);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)}.mod-log-item:last-child{border-bottom:0}.mod-account-row{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:9px;cursor:pointer;border:1px solid transparent}.mod-account-row:hover,.mod-account-row.selected{background:var(--surface-hover);border-color:var(--border)}.mod-account-row-main{min-width:0;flex:1}.mod-account-row-name{font-size:.78rem;font-weight:750}.mod-account-row-meta{font-size:.65rem;color:var(--text-3);margin-top:2px}.mod-account-row-status{font-size:.62rem;color:var(--text-3)}
   .admin-user-list{display:flex;flex-direction:column;gap:2px;}
   .origin-row{border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden;}
   .origin-head{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;background:transparent;border:0;color:var(--text-1);text-align:left;cursor:pointer;font:inherit;}
@@ -1137,9 +1138,22 @@ body{background:var(--bg);letter-spacing:-.006em}
             <section class="settings-card">
               <h2>People</h2>
               <div class="stacked-field">
-                <input type="text" id="admin-user-search" class="field" placeholder="Search people signed in">
+                <input type="text" id="admin-user-search" class="field" placeholder="Search all accounts">
               </div>
               <div id="admin-online-list" class="admin-user-list"></div>
+            </section>
+
+            <section class="settings-card">
+              <h2>User moderation</h2>
+              <p class="settings-help">Select an account to apply moderation actions. Timeouts and suspensions can expire automatically; bans and mutes remain until removed.</p>
+              <div class="mod-search-row"><input type="text" id="mod-user-search" class="field" placeholder="Search username or account ID"><button type="button" class="mod-action" id="mod-clear-selection">Clear</button></div>
+              <div id="mod-user-list" class="admin-user-list" style="margin-top:8px"></div>
+              <div id="mod-selected" class="mod-selected" hidden></div>
+            </section>
+
+            <section class="settings-card">
+              <h2>Moderation log</h2>
+              <div id="mod-log" class="mod-log"></div>
             </section>
 
             <section class="settings-card danger-card">
@@ -1213,6 +1227,10 @@ body{background:var(--bg);letter-spacing:-.006em}
   let totalMessageCount = 0;
   let totalMediaCount = 0;
   let adminSearchQuery = '';
+  let moderationCache = {};
+  let selectedModerationUserId = null;
+  let moderationListenersReady = false;
+  let currentModerationState = {};
   let messageCache = {}; // key -> raw message object, needed to redraw on edits
   let mediaInputAccept = '*/*';
   let activeUploadTask = null;
@@ -1329,6 +1347,11 @@ body{background:var(--bg);letter-spacing:-.006em}
   const adminOnlineList = document.getElementById('admin-online-list');
   const adminUserSearch = document.getElementById('admin-user-search');
   const adminClearBtn = document.getElementById('admin-clear-btn');
+  const modUserSearch = document.getElementById('mod-user-search');
+  const modUserList = document.getElementById('mod-user-list');
+  const modSelected = document.getElementById('mod-selected');
+  const modClearSelection = document.getElementById('mod-clear-selection');
+  const modLog = document.getElementById('mod-log');
   const adminImageEditorCard = document.getElementById('admin-image-editor-card');
   const adminImageUserList = document.getElementById('admin-image-user-list');
   const adminImageSelectedName = document.getElementById('admin-image-selected-name');
@@ -2009,6 +2032,10 @@ body{background:var(--bg);letter-spacing:-.006em}
 
       currentUsername = user.username; currentKey = lower; currentUserId = id; currentCreatedAt = user.createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
+      const moderationSnap = await db.ref('moderation/'+id).once('value');
+      const moderation = moderationSnap.val() || {};
+      if (moderation.banned) { loginHint.className='hint bad'; loginHint.textContent='This account has been banned.'; setButtonLoading(loginBtnLabel,false,'Log in'); loginBtn.disabled=false; return; }
+      if (moderation.suspendUntil && Number(moderation.suspendUntil) > Date.now()) { loginHint.className='hint bad'; loginHint.textContent='This account is suspended until '+new Date(moderation.suspendUntil).toLocaleString()+'.'; setButtonLoading(loginBtnLabel,false,'Log in'); loginBtn.disabled=false; return; }
       db.ref('accountOrigins/'+id).once('value').then(snap=>{if(!snap.exists()) recordAccountOrigin(id, user.createdAt)}).catch(()=>{});
       await claimPresenceAndEnter();
     } catch (err) {
@@ -2071,7 +2098,9 @@ body{background:var(--bg);letter-spacing:-.006em}
       initSettingsHandlers();
       initAdminHandlers();
       listenForAccountOrigins();
+      listenForModeration();
     }
+    getCurrentModerationState().then(updateComposerModerationState);
 
     const target = pendingRoute || '/';
     pendingRoute = null;
@@ -2093,6 +2122,139 @@ body{background:var(--bg);letter-spacing:-.006em}
   menuBtn.addEventListener('click', () => { sidebar.classList.add('open'); drawerOverlay.classList.add('open'); });
   drawerOverlay.addEventListener('click', () => { sidebar.classList.remove('open'); drawerOverlay.classList.remove('open'); });
   let prefHandlersReady = false;
+  function moderationExpiryLabel(ts){
+    if(!ts)return '';
+    const remaining=Math.max(0,Number(ts)-Date.now());
+    if(!remaining)return 'Expired';
+    const mins=Math.ceil(remaining/60000);
+    if(mins<60)return mins+'m remaining';
+    const hrs=Math.ceil(mins/60);
+    if(hrs<48)return hrs+'h remaining';
+    return Math.ceil(hrs/24)+'d remaining';
+  }
+  function moderationStateFor(id){
+    const raw=moderationCache[String(id)]||{};
+    const state={...raw};
+    if(state.timeoutUntil && Number(state.timeoutUntil)<=Date.now())state.timeoutUntil=null;
+    if(state.suspendUntil && Number(state.suspendUntil)<=Date.now())state.suspendUntil=null;
+    return state;
+  }
+  function renderModerationUsers(){
+    if(!modUserList||!isFounder)return;
+    const q=String(modUserSearch?.value||'').trim().toLowerCase();
+    const accounts=Object.entries(usersCache||{}).map(([id,u])=>({id:String(id),...u})).filter(u=>{
+      const name=String(u.username||'').toLowerCase();
+      return !q || name.includes(q) || String(u.id).includes(q);
+    }).sort((a,b)=>String(a.username||'').localeCompare(String(b.username||'')));
+    modUserList.innerHTML=accounts.length?accounts.map(u=>{
+      const st=moderationStateFor(u.id);
+      const flags=[];
+      if(st.banned)flags.push('Banned');
+      if(st.suspendUntil)flags.push('Suspended '+moderationExpiryLabel(st.suspendUntil));
+      if(st.timeoutUntil)flags.push('Timed out '+moderationExpiryLabel(st.timeoutUntil));
+      if(st.muted)flags.push('Muted');
+      const selected=String(selectedModerationUserId)===String(u.id);
+      return '<div class="mod-account-row'+(selected?' selected':'')+'" data-mod-user-id="'+escapeHTML(u.id)+'"><div class="mini-avatar" data-avatar-key="'+escapeHTML(u.usernameLower||String(u.username||'').toLowerCase())+'" data-avatar-name="'+escapeHTML(u.username||'')+'"></div><div class="mod-account-row-main"><div class="mod-account-row-name">@'+escapeHTML(u.username||'Unknown')+'</div><div class="mod-account-row-meta">ID '+escapeHTML(u.id)+'</div></div><span class="mod-account-row-status">'+escapeHTML(flags.join(' • ')||'Normal')+'</span></div>';
+    }).join(''):'<div class="list-empty">No accounts match your search.</div>';
+    modUserList.querySelectorAll('[data-mod-user-id]').forEach(row=>row.addEventListener('click',()=>selectModerationUser(row.dataset.modUserId)));
+    refreshAllAvatars();
+  }
+  function selectModerationUser(id){
+    if(!isFounder)return;
+    const user=usersCache[String(id)];
+    if(!user){toast('That account could not be found.','error');return;}
+    selectedModerationUserId=String(id);
+    renderModerationUsers();
+    renderModerationSelected();
+  }
+  function renderModerationSelected(){
+    if(!modSelected)return;
+    const id=selectedModerationUserId;
+    const user=id?usersCache[id]:null;
+    if(!user){modSelected.hidden=true;modSelected.innerHTML='';return;}
+    const st=moderationStateFor(id);
+    const status=[];
+    if(st.banned)status.push('<span class="mod-status danger">Banned</span>');
+    if(st.suspendUntil)status.push('<span class="mod-status danger">Suspended · '+escapeHTML(moderationExpiryLabel(st.suspendUntil))+'</span>');
+    if(st.timeoutUntil)status.push('<span class="mod-status warn">Timeout · '+escapeHTML(moderationExpiryLabel(st.timeoutUntil))+'</span>');
+    if(st.muted)status.push('<span class="mod-status warn">Muted</span>');
+    if(st.warnCount)status.push('<span class="mod-status warn">Warnings · '+escapeHTML(st.warnCount)+'</span>');
+    const canAct=String(user.usernameLower||user.username||'').toLowerCase()!==FOUNDER_USERNAME;
+    modSelected.hidden=false;
+    modSelected.innerHTML='<div class="mod-selected-head"><div class="mod-selected-avatar">'+escapeHTML(safeInitials(user.username||'U'))+'</div><div class="mod-selected-main"><div class="mod-selected-name">@'+escapeHTML(user.username||'Unknown')+'</div><div class="mod-selected-id">Account ID '+escapeHTML(id)+'</div></div></div><div class="mod-statuses">'+(status.join('')||'<span class="mod-status">No active restrictions</span>')+'</div><div class="mod-fields"><input class="field" id="mod-duration" type="number" min="1" max="43200" value="10" placeholder="Minutes"><input class="field" id="mod-reason" maxlength="200" placeholder="Reason"><div class="full" style="font-size:.65rem;color:var(--text-3)">Duration applies to timeout and suspension. Use 1–43200 minutes.</div></div><div class="mod-actions"><button class="mod-action warn" data-mod-action="timeout" '+(!canAct?'disabled':'')+'>Timeout</button><button class="mod-action warn" data-mod-action="mute" '+(!canAct?'disabled':'')+'>Mute</button><button class="mod-action danger" data-mod-action="suspend" '+(!canAct?'disabled':'')+'>Suspend</button><button class="mod-action danger" data-mod-action="ban" '+(!canAct?'disabled':'')+'>Ban permanently</button><button class="mod-action" data-mod-action="unmute" '+(!canAct?'disabled':'')+'>Unmute</button><button class="mod-action" data-mod-action="untimeout" '+(!canAct?'disabled':'')+'>Remove timeout</button><button class="mod-action" data-mod-action="unsuspend" '+(!canAct?'disabled':'')+'>Unsuspend</button><button class="mod-action" data-mod-action="unban" '+(!canAct?'disabled':'')+'>Unban</button><button class="mod-action warn" data-mod-action="warn" '+(!canAct?'disabled':'')+'>Issue warning</button><button class="mod-action" data-mod-action="clear-warnings" '+(!canAct?'disabled':'')+'>Clear warnings</button><button class="mod-action" data-mod-action="kick" '+(!canAct?'disabled':'')+'>Disconnect</button><button class="mod-action danger" data-mod-action="delete-messages" '+(!canAct?'disabled':'')+'>Delete messages</button></div><div style="margin-top:9px"><a class="btn-outline" href="'+profilePathFor(id)+'" data-route="'+profilePathFor(id)+'">View profile</a></div>';
+    modSelected.querySelectorAll('[data-mod-action]').forEach(btn=>btn.addEventListener('click',()=>runModerationAction(btn.dataset.modAction,id)));
+  }
+  async function writeModerationLog(targetId,action,reason,details){
+    try{await db.ref('moderationLogs').push({targetId:String(targetId),targetUsername:String(usersCache[String(targetId)]?.username||''),action,reason:reason||'',details:details||'',moderatorId:String(currentUserId),moderator:currentUsername,createdAt:Date.now()});}catch(e){console.warn('Moderation log write failed',e);}
+  }
+  async function runModerationAction(action,targetId){
+    if(!isFounder||String(targetId)===String(currentUserId)){toast('That moderation action is not allowed.','error');return;}
+    const user=usersCache[String(targetId)];
+    if(!user)return;
+    const reason=(document.getElementById('mod-reason')?.value||'').trim();
+    const duration=Math.min(43200,Math.max(1,Number(document.getElementById('mod-duration')?.value||10)));
+    const ref=db.ref('moderation/'+targetId);
+    const current=moderationStateFor(targetId);
+    const now=Date.now();
+    let patch={updatedAt:now,updatedBy:currentUsername};
+    let logAction=action;
+    if(action==='timeout')patch.timeoutUntil=now+duration*60000;
+    else if(action==='suspend')patch.suspendUntil=now+duration*60000;
+    else if(action==='ban')patch={...patch,banned:true,bannedAt:now,bannedBy:currentUsername,banReason:reason||''};
+    else if(action==='mute')patch={...patch,muted:true,mutedAt:now,mutedBy:currentUsername,muteReason:reason||''};
+    else if(action==='unmute')patch={...patch,muted:false,unmutedAt:now,unmutedBy:currentUsername};
+    else if(action==='untimeout')patch={...patch,timeoutUntil:null};
+    else if(action==='unsuspend')patch={...patch,suspendUntil:null};
+    else if(action==='unban')patch={...patch,banned:false,unbannedAt:now,unbannedBy:currentUsername};
+    else if(action==='warn')patch={...patch,warnCount:Number(current.warnCount||0)+1,lastWarningAt:now,lastWarningReason:reason||''};
+    else if(action==='clear-warnings')patch={...patch,warnCount:0,lastWarningAt:null,lastWarningReason:null};
+    else if(action==='kick'){await db.ref('presence/'+String(user.usernameLower||user.username).toLowerCase()).remove();await writeModerationLog(targetId,'disconnect',reason);toast('@'+user.username+' was disconnected.');return;}
+    else if(action==='delete-messages'){
+      const snap=await db.ref('messages').once('value');const updates={};snap.forEach(child=>{const v=child.val()||{};if(String(v.username||'').toLowerCase()===String(user.username||'').toLowerCase())updates['messages/'+child.key]=null;});if(Object.keys(updates).length)await db.ref().update(updates);await writeModerationLog(targetId,action,reason,String(Object.keys(updates).length)+' messages deleted');toast('Deleted '+Object.keys(updates).length+' messages from @'+user.username+'.');return;
+    }
+    try{
+      await ref.update(patch);
+      await writeModerationLog(targetId,logAction,reason,action==='timeout'||action==='suspend'?duration+' minutes':'');
+      toast('Moderation action applied to @'+user.username+'.');
+      renderModerationSelected();renderModerationUsers();
+    }catch(e){toast('Moderation action failed. Check your Firebase rules for /moderation.','error');}
+  }
+  function listenForModeration(){
+    if(!currentUserId)return;
+    const mineRef=db.ref('moderation/'+currentUserId);
+    mineRef.on('value',snap=>{
+      currentModerationState=snap.val()||{};
+      const mine=moderationStateFor(currentUserId);
+      if(mine.banned){toast('Your account has been banned.','error');setTimeout(cleanupAndLeave,250);}
+      else if(mine.suspendUntil){toast('Your account is suspended until '+new Date(mine.suspendUntil).toLocaleString()+'.','error');setTimeout(cleanupAndLeave,250);}
+      else updateComposerModerationState();
+    });
+    if(isFounder&&!moderationListenersReady){
+      moderationListenersReady=true;
+      db.ref('moderation').on('value',snap=>{moderationCache=snap.val()||{};renderModerationUsers();renderModerationSelected();});
+      db.ref('moderationLogs').limitToLast(50).on('value',snap=>{
+        if(!modLog)return;
+        const items=[];snap.forEach(c=>items.push({id:c.key,...(c.val()||{})}));
+        items.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+        modLog.innerHTML=items.length?items.slice(0,50).map(x=>'<div class="mod-log-item"><strong>'+escapeHTML(x.action||'action')+'</strong> · @'+escapeHTML(x.targetUsername||'unknown')+' · '+escapeHTML(x.reason||'No reason')+' · '+escapeHTML(boardFormatDate(x.createdAt))+'</div>').join(''):'<div class="list-empty">No moderation actions yet.</div>';
+      });
+    }
+  }
+  function updateComposerModerationState(){
+    const st=moderationStateFor(currentUserId);
+    const restricted=Boolean(st.banned||st.suspendUntil||st.timeoutUntil||st.muted);
+    if(messageInput)messageInput.disabled=restricted;
+    if(sendBtn)sendBtn.disabled=restricted||messageInput.value.trim()==='';
+    if(attachBtn)attachBtn.disabled=restricted;
+    if(micBtn)micBtn.disabled=restricted;
+    if(restricted){const reason=st.banned?'Banned':st.suspendUntil?'Suspended':st.timeoutUntil?'Timed out':'Muted';messageInput.placeholder=reason+' — messaging is unavailable';}
+    else messageInput.placeholder='Message';
+  }
+  async function getCurrentModerationState(){
+    if(!currentUserId)return {};
+    try{const snap=await db.ref('moderation/'+currentUserId).once('value');currentModerationState=snap.val()||{};return moderationStateFor(currentUserId);}catch(e){return {};}
+  }
+
   function renderOnlineRows(){
     const rows = [];
     const adminRows = [];
@@ -2144,6 +2306,8 @@ body{background:var(--bg);letter-spacing:-.006em}
       renderOnlineRows();
     });
   }
+  if (modUserSearch) modUserSearch.addEventListener('input', renderModerationUsers);
+  if (modClearSelection) modClearSelection.addEventListener('click', () => { selectedModerationUserId=null; renderModerationUsers(); renderModerationSelected(); });
 
   function listenForPresence(){
     db.ref('presence').on('value', snap => {
@@ -2305,8 +2469,13 @@ body{background:var(--bg);letter-spacing:-.006em}
     }
   }
 
-  chatForm.addEventListener('submit', (e) => {
+  chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const moderation = await getCurrentModerationState();
+    if (moderation.banned) { toast('Your account is banned.','error'); return; }
+    if (moderation.suspendUntil && Number(moderation.suspendUntil) > Date.now()) { toast('Your account is suspended.','error'); return; }
+    if (moderation.timeoutUntil && Number(moderation.timeoutUntil) > Date.now()) { toast('You are timed out for '+moderationExpiryLabel(moderation.timeoutUntil)+'.','error'); return; }
+    if (moderation.muted) { toast('You are muted and cannot send messages.','error'); return; }
     let text = messageInput.value.trim();
     if (text === '') return;
     if (text.length > MAX_MESSAGE_LENGTH) {
@@ -2433,6 +2602,8 @@ body{background:var(--bg);letter-spacing:-.006em}
       toast('You must be signed in to upload files.', 'error');
       return;
     }
+    const moderation = await getCurrentModerationState();
+    if (moderation.banned || moderation.suspendUntil || moderation.timeoutUntil || moderation.muted) { toast('You are currently restricted from sending files.', 'error'); return; }
     if (activeUploadTask) {
       toast('Another file is already uploading.', 'error');
       return;
@@ -3203,6 +3374,8 @@ body{background:var(--bg);letter-spacing:-.006em}
   recSendBtn.addEventListener('click', () => stopRecording(true));
 
   async function startRecording(){
+    const moderation = await getCurrentModerationState();
+    if (moderation.banned || moderation.suspendUntil || moderation.timeoutUntil || moderation.muted) { toast('You are currently restricted from sending voice messages.', 'error'); return; }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
       toast('Voice messages are not supported in this browser.', 'error'); return;
     }
@@ -3726,6 +3899,9 @@ body{background:var(--bg);letter-spacing:-.006em}
     renderOnlineRows();
     updateAdminStats();
     listenForAccountOrigins();
+    listenForModeration();
+    renderModerationUsers();
+    renderModerationSelected();
   }
 
   const boardCache = { roadmap: {}, announcements: {} };
