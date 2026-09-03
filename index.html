@@ -263,7 +263,7 @@
   .user-row-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .list-empty{font-size:0.82rem;color:var(--text-3);padding:6px 8px;}
 
-  .sidebar-footer{padding:12px;border-top:1px solid var(--border);flex-shrink:0;}
+  .sidebar-footer{height:71px;min-height:71px;padding:12px;border-top:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;}
   .self-pill{
     display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-full);
     padding:5px 14px 5px 5px;font-size:0.82rem;font-weight:600;text-decoration:none;color:var(--text-1);
@@ -442,6 +442,17 @@
   .char-counter.limit{color:var(--danger);}
 
   .emoji-autocomplete{position:absolute;left:0;bottom:calc(100% + 8px);width:220px;background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:var(--radius-md);box-shadow:0 20px 50px -18px rgba(0,0,0,.7);overflow:hidden;z-index:15;display:none;max-height:240px;overflow-y:auto;}
+  .emoji-picker{position:absolute;right:0;bottom:calc(100% + 10px);width:min(390px,calc(100vw - 32px));max-height:390px;background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:16px;box-shadow:0 24px 60px -20px rgba(0,0,0,.75);z-index:30;display:none;overflow:hidden;}
+  .emoji-picker.open{display:flex;flex-direction:column;}
+  .emoji-picker-head{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--border);}
+  .emoji-picker-search{flex:1;min-width:0;height:36px;padding:8px 11px;border-radius:9px;background:var(--inset);border:1px solid var(--border);color:var(--text-1);outline:none;font:inherit;font-size:.82rem;}
+  .emoji-picker-search:focus{border-color:var(--border-strong);}
+  .emoji-picker-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;padding:10px;overflow-y:auto;}
+  .emoji-picker-item{border:0;background:transparent;border-radius:8px;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.45rem;cursor:pointer;}
+  .emoji-picker-item:hover{background:var(--surface-hover);}
+  #emoji-btn{flex-shrink:0;}
+  @media(max-width:560px){.emoji-picker{width:calc(100vw - 24px);right:-4px;max-height:330px}.emoji-picker-grid{grid-template-columns:repeat(8,1fr);}.emoji-picker-item{font-size:1.3rem;}}
+
   .ac-row{display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;font-size:0.85rem;}
   .ac-row.active,.ac-row:hover{background:var(--surface-hover);}
   .ac-emoji{font-size:1.05rem;}
@@ -654,7 +665,7 @@ body{background:var(--bg);letter-spacing:-.006em}
 .sidebar-heading{padding:0 9px 11px;font-size:.67rem;letter-spacing:.08em}
 .user-row{min-height:42px;margin-bottom:4px;padding:6px 10px 6px 6px;border-radius:11px;background:#11151B;border-color:#1E242E}
 .user-row:hover{background:#171C24;border-color:#2A313D;transform:none}
-.self-pill{border-radius:11px;background:#11151B;border-color:#202631;padding:6px 12px 6px 6px}
+.self-pill{width:100%;height:42px;border-radius:11px;background:#11151B;border-color:#202631;padding:6px 12px 6px 6px}
 #main{background:#080A0F}
 .panel-header{height:68px;padding:0 22px;background:rgba(8,10,15,.94);border-bottom:1px solid #1D222C;backdrop-filter:blur(16px);z-index:10}
 .header-title h1{font-size:.98rem;letter-spacing:-.02em}.chat-header-hint{font-size:.64rem;color:#555D6A;font-weight:650;margin-left:4px}
@@ -923,6 +934,7 @@ body{background:var(--bg);letter-spacing:-.006em}
                   <path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>
                 </svg>
               </button>
+              <button id="emoji-btn" class="icon-btn" type="button" title="Emoji" aria-label="Emoji">😊</button>
               <div id="recording-ui">
                 <span class="rec-dot"></span>
                 <span id="rec-timer">0:00</span>
@@ -942,6 +954,10 @@ body{background:var(--bg);letter-spacing:-.006em}
               </div>
               <div class="input-wrap">
                 <div id="emoji-autocomplete" class="emoji-autocomplete"></div>
+                <div id="emoji-picker" class="emoji-picker" aria-hidden="true">
+                  <div class="emoji-picker-head"><input id="emoji-picker-search" class="emoji-picker-search" type="search" placeholder="Search emojis" autocomplete="off"><button type="button" id="emoji-picker-close" class="icon-btn" title="Close emoji picker" aria-label="Close emoji picker">×</button></div>
+                  <div id="emoji-picker-grid" class="emoji-picker-grid"></div>
+                </div>
                 <textarea id="message-input" class="field" placeholder="Message" rows="1" maxlength="2000"></textarea>
               </div>
               <button id="send-btn" class="btn btn-primary btn-round" type="submit" disabled title="Send message">
@@ -1286,6 +1302,12 @@ body{background:var(--bg);letter-spacing:-.006em}
   const recCancelBtn = document.getElementById('rec-cancel');
   const recSendBtn = document.getElementById('rec-send');
   const emojiAutocomplete = document.getElementById('emoji-autocomplete');
+  const emojiBtn = document.getElementById('emoji-btn');
+  const emojiPicker = document.getElementById('emoji-picker');
+  const emojiPickerGrid = document.getElementById('emoji-picker-grid');
+  const emojiPickerSearch = document.getElementById('emoji-picker-search');
+  const emojiPickerClose = document.getElementById('emoji-picker-close');
+
 
   const toastStack = document.getElementById('toast-stack');
 
@@ -1682,38 +1704,45 @@ body{background:var(--bg);letter-spacing:-.006em}
     });
   }
   const EMOJI_GROUPS = [
-    { label: 'Smileys', items: [
-      ['smile','😄'],['laughing','😆'],['joy','😂'],['rofl','🤣'],['grin','😁'],['wink','😉'],['blush','😊'],
-      ['heart_eyes','😍'],['kissing_heart','😘'],['yum','😋'],['sunglasses','😎'],['thinking','🤔'],
-      ['neutral_face','😐'],['unamused','😒'],['disappointed','😞'],['worried','😟'],['cry','😢'],['sob','😭'],
-      ['angry','😠'],['rage','😡'],['scream','😱'],['flushed','😳'],['sweat_smile','😅'],['tired_face','😫'],
-      ['sleepy','😴'],['star_struck','🤩'],['partying_face','🥳'],['smirk','😏'],['skull','💀'],['clown','🤡']
-    ]},
-    { label: 'Gestures and people', items: [
-      ['thumbsup','👍'],['thumbsdown','👎'],['clap','👏'],['pray','🙏'],['wave','👋'],['muscle','💪'],
-      ['ok_hand','👌'],['point_up','☝️'],['point_down','👇'],['v','✌️'],['crossed_fingers','🤞'],
-      ['raised_hands','🙌'],['handshake','🤝'],['eyes','👀'],['brain','🧠'],['facepalm','🤦'],['salute','🫡']
-    ]},
-    { label: 'Hearts and symbols', items: [
-      ['heart','❤️'],['orange_heart','🧡'],['yellow_heart','💛'],['green_heart','💚'],['blue_heart','💙'],
-      ['purple_heart','💜'],['black_heart','🖤'],['broken_heart','💔'],['sparkling_heart','💖'],
-      ['white_check_mark','✅'],['x','❌'],['warning','⚠️'],['fire','🔥'],['sparkles','✨'],['tada','🎉'],['100','💯']
-    ]},
-    { label: 'Nature and food', items: [
-      ['dog','🐶'],['cat','🐱'],['fox','🦊'],['bear','🐻'],['panda','🐼'],['koala','🐨'],['tiger','🐯'],
-      ['lion','🦁'],['unicorn','🦄'],['monkey','🐵'],['pizza','🍕'],['hamburger','🍔'],['fries','🍟'],
-      ['taco','🌮'],['popcorn','🍿'],['coffee','☕'],['beer','🍺'],['cake','🎂']
-    ]},
-    { label: 'Objects and travel', items: [
-      ['rocket','🚀'],['star','⭐'],['sun','☀️'],['moon','🌙'],['rainbow','🌈'],['zap','⚡'],['gift','🎁'],
-      ['bulb','💡'],['bell','🔔'],['key','🔑'],['lock','🔒'],['phone','📱'],['computer','💻'],['camera','📷'],
-      ['musical_note','🎵'],['trophy','🏆'],['crown','👑'],['shield','🛡️']
-    ]}
+    { label: 'Smileys', items: Array.from('😀 😃 😄 😁 😆 😅 😂 🤣 😊 😇 🙂 🙃 😉 😌 😍 🥰 😘 😗 😙 😚 😋 😛 😝 😜 🤪 🤨 🧐 🤓 😎 🤩 🥳 😏 😒 😞 😔 😟 😕 🙁 ☹️ 😣 😖 😫 😩 🥺 😢 😭 😤 😠 😡 🤬 🤯 😳 🥵 🥶 😱 😨 😰 😥 😓 🤗 🤔 🫣 🤭 🫢 🫡 🤫 🫠 🤥 😶 🫥 😐 😑 😬 🙄 😯 😦 😧 😮 😲 🥱 😴 🤤 😪 😵 🤐 🥴 🤢 🤮 🤧 😷 🤒 🤕 🤑 🤠 😈 👿 👹 👺 🤡 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾'.split(' ').map((x,i)=>['emoji_'+i,x])) },
+    { label: 'People', items: Array.from('👋 🤚 🖐️ ✋ 🖖 🫱 🫲 🫳 🫴 👌 🤌 🤏 ✌️ 🤞 🫰 🤟 🤘 🤙 👈 👉 👆 🖕 👇 ☝️ ✍️ 👏 🙌 🫶 👐 🤲 🙏 💅 🤳 💪 🦾 🦿 🦵 🦶 👂 👃 🧠 🫀 🫁 🦷 🦴 👀 👁️ 👅 👄 💋'.split(' ').map((x,i)=>['people_'+i,x])) },
+    { label: 'Hearts and Symbols', items: Array.from('❤️ 🧡 💛 💚 💙 💜 🖤 🩶 🤍 🤎 💔 ❤️‍🔥 ❤️‍🩹 💕 💞 💓 💗 💖 💘 💝 💟 ❣️ 💌 💯 💢 💥 💫 💦 💨 🕳️ 💣 💬 👁️‍🗨️ 🗨️ 🗯️ 💭 💤 ✨ ⭐ 🌟 💫 🔥 ⚡ ☀️ ☁️ ❄️ ☃️ 🌈 ☮️ ✝️ ☪️ 🕉️ ☯️ ⚛️ ☢️ ☣️ ♾️ 💲 ©️ ®️ ™️ #️⃣ *️⃣ 0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟'.split(' ').map((x,i)=>['symbols_'+i,x])) },
+    { label: 'Animals', items: Array.from('🐶 🐱 🐭 🐹 🐰 🦊 🐻 🐼 🐨 🐯 🦁 🐮 🐷 🐸 🐵 🙈 🙉 🙊 🐒 🐔 🐧 🐦 🐤 🐣 🦆 🦅 🦉 🦇 🐺 🐗 🐴 🦄 🐝 🐛 🦋 🐌 🐞 🐜 🪰 🪱 🐢 🐍 🦎 🦖 🦕 🐙 🦑 🦀 🦞 🦐 🐠 🐟 🐡 🐬 🦈 🐳 🐋 🐊 🐆 🐅 🦓 🦍 🦧 🐘 🦏 🦛 🐪 🐫 🦒 🦘 🦬 🐃 🐂 🐄 🐎 🐖 🐏 🐑 🦙 🐐 🦌 🐕 🐩 🐈 🐓 🦃 🕊️ 🐇 🦝 🦨 🦡 🦫 🦦 🦥 🦔 🐾'.split(' ').map((x,i)=>['animal_'+i,x])) },
+    { label: 'Nature', items: Array.from('🌵 🎄 🌲 🌳 🌴 🌱 🌿 ☘️ 🍀 🎍 🪴 🎋 🍃 🍂 🍁 🍄 🪨 🌾 💐 🌷 🌹 🥀 🌺 🌸 🌼 🌻 🌞 🌝 🌛 🌜 🌚 🌕 🌖 🌗 🌘 🌙 🌑 🌒 🌓 🌔 🌎 🌍 🌏 💫 ⭐ 🌟 ☄️ 💥 🔥 🌪️ 🌈 ☀️ 🌤️ ⛅ 🌥️ 🌦️ 🌧️ ⛈️ 🌩️ 🌨️ 🌬️ 💨 💧 💦 ☔'.split(' ').map((x,i)=>['nature_'+i,x])) },
+    { label: 'Food', items: Array.from('🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍈 🍒 🍑 🥭 🍍 🥥 🥝 🍅 🥑 🥦 🥬 🥒 🌶️ 🫑 🌽 🥕 🧄 🧅 🥔 🍠 🫘 🥐 🥯 🍞 🥖 🥨 🧀 🥚 🍳 🧈 🥞 🧇 🥓 🥩 🍗 🍖 🌭 🍔 🍟 🍕 🫓 🥪 🥙 🧆 🌮 🌯 🫔 🥗 🥘 🫕 🍝 🍜 🍲 🍛 🍣 🍱 🥟 🦪 🍤 🍙 🍚 🍘 🍥 🥠 🥮 🍢 🍡 🍧 🍨 🍦 🥧 🧁 🍰 🎂 🍮 🍭 🍬 🍫 🍿 🍩 🍪 🌰 🥜 ☕ 🍵 🧃 🥤 🧋 🥛 🍼 🥣'.split(' ').map((x,i)=>['food_'+i,x])) },
+    { label: 'Activities', items: Array.from('⚽ 🏀 🏈 ⚾ 🥎 🎾 🏐 🏉 🥏 🎱 🪀 🏓 🏸 🏒 🏑 🥍 🏏 ⛳ 🏹 🎣 🤿 🥊 🥋 🎽 🛹 🛷 ⛸️ 🥌 🎿 ⛷️ 🏂 🪂 🏋️ 🤼 🤸 ⛹️ 🤺 🤾 🏌️ 🏇 🧘 🏄 🏊 🤽 🚣 🧗 🚵 🚴 🏆 🥇 🥈 🥉 🏅 🎖️ 🏵️ 🎗️ 🎫 🎟️ 🎪 🤹 🎭 🎨 🎬 🎤 🎧 🎼 🎹 🥁 🎷 🎺 🎸 🪕 🎻'.split(' ').map((x,i)=>['activity_'+i,x])) },
+    { label: 'Travel and Places', items: Array.from('🚗 🚕 🚙 🚌 🚎 🏎️ 🚓 🚑 🚒 🚐 🛻 🚚 🚛 🚜 🛵 🏍️ 🚲 🛴 🚨 🚔 🚍 🚘 🚖 ✈️ 🛫 🛬 🛩️ 💺 🛰️ 🚀 🛸 🚁 🛶 ⛵ 🚤 🛥️ 🛳️ 🚢 ⚓ 🗺️ 🗿 🗽 🗼 🏰 🏯 🏟️ 🎡 🎢 🎠 ⛲ 🏖️ 🏝️ 🏜️ 🏕️ ⛰️ 🏔️ 🗻 🌋 🏠 🏡 🏢 🏥 🏦 🏨 🏪 🏫 🏬 🏭 🏯'.split(' ').map((x,i)=>['travel_'+i,x])) },
+    { label: 'Objects', items: Array.from('⌚ 📱 💻 ⌨️ 🖥️ 🖨️ 🖱️ 💽 💾 💿 📀 📷 📸 📹 🎥 📞 ☎️ 📺 📻 🎙️ 🎚️ 🎛️ 🧭 ⏱️ ⏰ ⌛ ⏳ 🔋 🔌 💡 🔦 🕯️ 🧯 🛒 💰 💳 💎 ⚖️ 🔧 🔨 ⚒️ 🛠️ ⛏️ 🔩 ⚙️ 🔫 🪓 🪚 🔪 🗡️ ⚔️ 🛡️ 🔐 🔒 🔓 🔑 🗝️ 🚪 🛏️ 🛋️ 🚿 🛁 🧴 🧹 🧺 🧻 🧼 🪥 🧽 🪣 📚 📖 📝 ✏️ 🖊️ 🖋️ 📎 🔗 📌 📍 📐 ✂️ 📦 🎁 🎈 🎀 🧸 🪆'.split(' ').map((x,i)=>['object_'+i,x])) },
+    { label: 'Flags', items: Array.from('🏁 🚩 🎌 🏴 🏳️ 🏳️‍🌈 🏳️‍⚧️ 🏴‍☠️'.split(' ').map((x,i)=>['flag_'+i,x])) }
   ];
+  EMOJI_GROUPS.forEach(group => { group.items = group.items.filter((x,i,a)=>x[1] && a.findIndex(y=>y[1]===x[1])===i); });
   const EMOJI_ALIASES = { '+1':'👍', '-1':'👎', 'thumbup':'👍', 'thumbdown':'👎', 'grinning':'😄', 'smiley':'😄' };
   const EMOJI_MAP = {}; const ALL_EMOJIS = [];
   EMOJI_GROUPS.forEach(group => group.items.forEach(([code, char]) => { EMOJI_MAP[code] = char; ALL_EMOJIS.push({ code, char }); }));
   Object.keys(EMOJI_ALIASES).forEach(code => { EMOJI_MAP[code] = EMOJI_ALIASES[code]; });
+  const EMOJI_PICKER_ITEMS = EMOJI_GROUPS.flatMap(group => group.items);
+  function renderEmojiPicker(filter=''){
+    const q=String(filter||'').trim().toLowerCase();
+    const items=q ? EMOJI_PICKER_ITEMS.filter(([code,char])=>code.toLowerCase().includes(q)) : EMOJI_PICKER_ITEMS;
+    emojiPickerGrid.innerHTML=items.map(([code,char])=>`<button type="button" class="emoji-picker-item" data-emoji="${char}" title=":${code}:" aria-label=":${code}:">${char}</button>`).join('');
+    twemojiIn(emojiPickerGrid);
+  }
+  function toggleEmojiPicker(force){
+    const open=typeof force==='boolean'?force:!emojiPicker.classList.contains('open');
+    emojiPicker.classList.toggle('open',open); emojiPicker.setAttribute('aria-hidden',String(!open));
+    if(open){ renderEmojiPicker(emojiPickerSearch.value); setTimeout(()=>emojiPickerSearch.focus(),0); }
+  }
+  emojiBtn?.addEventListener('click',e=>{e.stopPropagation();toggleEmojiPicker();});
+  emojiPickerClose?.addEventListener('click',()=>toggleEmojiPicker(false));
+  emojiPickerSearch?.addEventListener('input',()=>renderEmojiPicker(emojiPickerSearch.value));
+  emojiPickerGrid?.addEventListener('click',e=>{
+    const b=e.target.closest('.emoji-picker-item'); if(!b)return;
+    const start=messageInput.selectionStart ?? messageInput.value.length, end=messageInput.selectionEnd ?? start;
+    messageInput.value=messageInput.value.slice(0,start)+b.dataset.emoji+messageInput.value.slice(end);
+    const pos=start+b.dataset.emoji.length; messageInput.setSelectionRange(pos,pos); messageInput.dispatchEvent(new Event('input',{bubbles:true})); messageInput.focus();
+  });
+  document.addEventListener('click',e=>{ if(emojiPicker.classList.contains('open') && !emojiPicker.contains(e.target) && e.target!==emojiBtn) toggleEmojiPicker(false); });
+
 
   function replaceAllShortcodes(text){
     return text.replace(/:([a-z0-9_+\-]+):/gi, (m, code) => EMOJI_MAP[code.toLowerCase()] || m);
