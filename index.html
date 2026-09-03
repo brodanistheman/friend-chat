@@ -1428,7 +1428,30 @@ body{background:var(--bg);letter-spacing:-.006em}
     return computed === user.hash;
   }
 
-  async function collectAccountOriginMeta(){let ip='';try{const r=await fetch('https://api64.ipify.org?format=json',{cache:'no-store'});if(r.ok){const j=await r.json();ip=String(j.ip||'')}}catch(e){}const raw=[navigator.userAgent,navigator.platform,navigator.language,screen.width+'x'+screen.height,screen.colorDepth,navigator.hardwareConcurrency||'',Intl.DateTimeFormat().resolvedOptions().timeZone||''].join('|');const deviceKey=await sha256Hex(raw);return {ip,deviceKey,userAgent:navigator.userAgent,createdAt:Date.now()};}
+  async function collectAccountOriginMeta(){
+    let ip='';
+    try{
+      const response=await Promise.race([
+        fetch('https://api64.ipify.org?format=json',{cache:'no-store'}),
+        new Promise((_,reject)=>setTimeout(()=>reject(new Error('IP lookup timeout')),4000))
+      ]);
+      if(response && response.ok){
+        const data=await response.json();
+        ip=String(data.ip||'');
+      }
+    }catch(e){}
+    const raw=[
+      navigator.userAgent,
+      navigator.platform,
+      navigator.language,
+      screen.width+'x'+screen.height,
+      screen.colorDepth,
+      navigator.hardwareConcurrency||'',
+      Intl.DateTimeFormat().resolvedOptions().timeZone||''
+    ].join('|');
+    const deviceKey=await sha256Hex(raw);
+    return {ip,deviceKey,userAgent:navigator.userAgent,createdAt:Date.now(),recorded:true};
+  }
   async function recordAccountOrigin(userId, accountCreatedAt){
     try{
       const meta=await collectAccountOriginMeta();
@@ -1441,17 +1464,37 @@ body{background:var(--bg);letter-spacing:-.006em}
     }
   }
   async function ensureAccountOriginEntries(users){
-    if(!isFounder || !users) return;
-    await Promise.all(Object.entries(users).map(async ([id,u])=>{
-      try{
-        await db.ref('accountOrigins/'+id).transaction(cur => cur === null ? {
-          ip:'', deviceKey:'', userAgent:'',
-          createdAt: u.createdAt || Date.now(),
-          accountCreatedAt: u.createdAt || null,
-          recorded:false
-        } : undefined);
-      }catch(e){ console.warn('Unable to create account origin entry', id, e); }
-    }));
+    if(!isFounder || !users) return false;
+    try{
+      const originSnap=await db.ref('accountOrigins').once('value');
+      const existing=originSnap.val()||{};
+      const updates={};
+      Object.entries(users).forEach(([id,u])=>{
+        if(!Object.prototype.hasOwnProperty.call(existing,id)){
+          updates[id]={
+            ip:'',
+            deviceKey:'',
+            userAgent:'',
+            createdAt:u.createdAt||Date.now(),
+            accountCreatedAt:u.createdAt||null,
+            recorded:false
+          };
+        }
+      });
+      if(Object.keys(updates).length){
+        await db.ref('accountOrigins').update(updates);
+        const refreshed=await db.ref('accountOrigins').once('value');
+        accountOriginCache=refreshed.val()||{};
+      }else{
+        accountOriginCache=existing;
+      }
+      renderAdminOrigins();
+      return true;
+    }catch(e){
+      console.warn('Unable to backfill account origin entries:',e);
+      renderAdminOrigins('Origin records could not be written. Check your Firebase rules for /accountOrigins.');
+      return false;
+    }
   }
 
   function profilePathFor(id){ return '/users/' + id + '/profile'; }
@@ -2139,7 +2182,6 @@ body{background:var(--bg);letter-spacing:-.006em}
         renderAdminImageUsers();
         renderAdminImagePreview();
         renderAdminOrigins();
-        ensureAccountOriginEntries(usersCache).then(() => renderAdminOrigins());
       }
         });
   }
@@ -2747,82 +2789,129 @@ body{background:var(--bg);letter-spacing:-.006em}
 
   const adminOriginList=document.getElementById('admin-origin-list');
   let accountOriginCache={};
+  let accountOriginListenerReady=false;
+  let accountOriginUsersListenerReady=false;
+
   function originGroupKey(meta){return String(meta?.ip||'')+'|'+String(meta?.deviceKey||'');}
-  function renderAdminOrigins(){
+
+  function renderAdminOrigins(statusMessage){
     if(!adminOriginList||!isFounder)return;
-    const accounts=Object.entries(usersCache||{}).map(([id,u])=>({id,...u,meta:accountOriginCache[id]||{}}));
+
+    const accounts=Object.entries(usersCache||{})
+      .map(([id,u])=>({id,...u,meta:accountOriginCache[id]||{}}))
+      .sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+
+    if(!accounts.length){
+      adminOriginList.innerHTML='<div class="list-empty">No accounts found.</div>';
+      return;
+    }
+
     const groups={};
     accounts.forEach(a=>{
-      const hasOrigin=Boolean(a.meta && (a.meta.ip||a.meta.deviceKey) && a.meta.recorded !== false);
-      if(hasOrigin) {
-        const key=originGroupKey(a.meta);
+      const meta=a.meta||{};
+      const hasOrigin=Boolean(meta.ip||meta.deviceKey);
+      if(hasOrigin){
+        const key=originGroupKey(meta);
         (groups[key] ||= []).push(a);
       }
     });
-    accounts.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
-    adminOriginList.innerHTML=accounts.length?accounts.map(a=>{
-      const hasOrigin=Boolean(a.meta && (a.meta.ip||a.meta.deviceKey) && a.meta.recorded !== false);
-      const key=originGroupKey(a.meta);
-      const related=hasOrigin ? (groups[key]||[]).filter(other=>String(other.id)!==String(a.id)) : [];
-      const originLabel=a.meta.ip?'IP '+a.meta.ip:'IP unavailable';
-      const deviceLabel=a.meta.deviceKey?'Device '+a.meta.deviceKey.slice(0,10):'Device unavailable';
-      const relatedHtml=related.length?related.map(other=>'<a class="origin-account" href="'+profilePathFor(other.id)+'" data-route="'+profilePathFor(other.id)+'"><span>@'+escapeHTML(other.username||('User '+other.id))+'</span><span class="origin-account-id">ID '+escapeHTML(other.id)+'</span></a>').join(''):'<div class="list-empty">No other accounts share this recorded origin.</div>';
-      return '<div class="origin-row"><button type="button" class="origin-head"><div class="origin-head-avatar">'+escapeHTML(safeInitials(a.username||'U'))+'</div><div class="origin-head-main"><div class="origin-head-name">@'+escapeHTML(a.username||('User '+a.id))+' <span class="origin-id-inline">ID '+escapeHTML(a.id)+'</span></div><div class="origin-head-meta">'+escapeHTML(hasOrigin?originLabel+' • '+deviceLabel:'Origin data unavailable')+'</div></div><span class="origin-chevron">›</span></button><div class="origin-details"><div class="origin-related-title">Accounts from the same origin</div>'+relatedHtml+'</div></div>';
-    }).join(''):'<div class="list-empty">No accounts found.</div>';
+
+    adminOriginList.innerHTML=(statusMessage?'<div class="list-empty" style="margin-bottom:8px;">'+escapeHTML(statusMessage)+'</div>':'')+
+      accounts.map(a=>{
+        const meta=a.meta||{};
+        const hasOrigin=Boolean(meta.ip||meta.deviceKey);
+        const key=originGroupKey(meta);
+        const related=hasOrigin?(groups[key]||[]).filter(other=>String(other.id)!==String(a.id)):[];
+        const originLabel=meta.ip?'IP '+meta.ip:'IP unavailable';
+        const deviceLabel=meta.deviceKey?'Device '+meta.deviceKey.slice(0,10):'Device unavailable';
+        const relatedHtml=related.length
+          ?related.map(other=>'<a class="origin-account" href="'+profilePathFor(other.id)+'" data-route="'+profilePathFor(other.id)+'"><span>@'+escapeHTML(other.username||('User '+other.id))+'</span><span class="origin-account-id">ID '+escapeHTML(other.id)+'</span></a>').join('')
+          :'<div class="list-empty">No other accounts share this recorded origin.</div>';
+        const stateLabel=hasOrigin?(originLabel+' • '+deviceLabel):'Entry created • origin metadata unavailable';
+        return '<div class="origin-row">'+
+          '<button type="button" class="origin-head">'+
+            '<div class="origin-head-avatar">'+escapeHTML(safeInitials(a.username||'U'))+'</div>'+ 
+            '<div class="origin-head-main">'+
+              '<div class="origin-head-name">@'+escapeHTML(a.username||('User '+a.id))+' <span class="origin-id-inline">ID '+escapeHTML(a.id)+'</span></div>'+ 
+              '<div class="origin-head-meta">'+escapeHTML(stateLabel)+'</div>'+ 
+            '</div>'+ 
+            '<span class="origin-chevron">›</span>'+ 
+          '</button>'+ 
+          '<div class="origin-details"><div class="origin-related-title">Accounts from the same origin</div>'+relatedHtml+'</div>'+ 
+        '</div>';
+      }).join('');
+
     adminOriginList.querySelectorAll('.origin-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
   }
 
-  let accountOriginUsersListenerReady = false;
-  function listenForAccountOrigins(){
-    if (!adminOriginList || accountOriginUsersListenerReady) return;
-    accountOriginUsersListenerReady = true;
-
-    // The tracker is driven by the users collection itself. Every account in
-    // the platform therefore gets an entry, even if origin metadata is absent.
-    db.ref('users').on('value', snap => {
-      const next = {};
-      snap.forEach(child => {
-        const u = child.val() || {};
-        const username = String(u.username || u.usernameLower || '').trim();
-        if (!username) return;
-        next[String(child.key)] = {
-          id: String(child.key),
+  async function loadAdminOrigins(){
+    if(!adminOriginList||!isFounder)return;
+    try{
+      const [usersSnap,originSnap]=await Promise.all([
+        db.ref('users').once('value'),
+        db.ref('accountOrigins').once('value')
+      ]);
+      const nextUsers={};
+      usersSnap.forEach(child=>{
+        const u=child.val()||{};
+        const username=String(u.username||u.usernameLower||'').trim();
+        if(!username)return;
+        nextUsers[String(child.key)]={
+          id:String(child.key),
           username,
-          usernameLower: String(u.usernameLower || username).toLowerCase(),
-          createdAt: u.createdAt || null
+          usernameLower:String(u.usernameLower||username).toLowerCase(),
+          createdAt:u.createdAt||null
         };
       });
-      usersCache = next;
+      usersCache=nextUsers;
+      accountOriginCache=originSnap.val()||{};
       renderAdminOrigins();
+      await ensureAccountOriginEntries(nextUsers);
+    }catch(e){
+      console.warn('Unable to load account origin tracker:',e);
+      renderAdminOrigins('Unable to load origin records. Check your Firebase database permissions.');
+    }
+  }
 
-      // Create a durable tracker record for every account that does not have
-      // one yet. Failure to write metadata must never prevent the account from
-      // appearing in the tracker UI.
-      const missing = {};
-      Object.entries(next).forEach(([id, u]) => {
-        if (!accountOriginCache[id]) {
-          missing[id] = {
-            ip: '',
-            deviceKey: '',
-            userAgent: '',
-            createdAt: u.createdAt || Date.now(),
-            accountCreatedAt: u.createdAt || null,
-            recorded: false
-          };
-        }
+  function listenForAccountOrigins(){
+    if(!adminOriginList||!isFounder)return;
+
+    if(!accountOriginListenerReady){
+      accountOriginListenerReady=true;
+      db.ref('accountOrigins').on('value',snap=>{
+        accountOriginCache=snap.val()||{};
+        renderAdminOrigins();
+      },err=>{
+        console.warn('Account origin listener failed:',err);
+        renderAdminOrigins('Unable to read /accountOrigins. Check your Firebase rules.');
       });
-      if (Object.keys(missing).length) {
-        db.ref('accountOrigins').update(missing).then(() => {
-          // Re-read so the UI reflects the newly created entries immediately.
-          return db.ref('accountOrigins').once('value');
-        }).then(originSnap => {
-          accountOriginCache = originSnap.val() || {};
-          renderAdminOrigins();
-        }).catch(err => {
-          console.warn('Unable to create account origin records:', err);
+    }
+
+    if(!accountOriginUsersListenerReady){
+      accountOriginUsersListenerReady=true;
+      db.ref('users').on('value',snap=>{
+        const next={};
+        snap.forEach(child=>{
+          const u=child.val()||{};
+          const username=String(u.username||u.usernameLower||'').trim();
+          if(!username)return;
+          next[String(child.key)]={
+            id:String(child.key),
+            username,
+            usernameLower:String(u.usernameLower||username).toLowerCase(),
+            createdAt:u.createdAt||null
+          };
         });
-      }
-    });
+        usersCache=next;
+        renderAdminOrigins();
+        ensureAccountOriginEntries(next);
+      },err=>{
+        console.warn('Users listener for account origin tracker failed:',err);
+        renderAdminOrigins('Unable to read account users. Check your Firebase rules for /users.');
+      });
+    }
+
+    loadAdminOrigins();
   }
 
   function updateAdminStats(){
@@ -3636,6 +3725,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     adminSearchQuery = '';
     renderOnlineRows();
     updateAdminStats();
+    listenForAccountOrigins();
   }
 
   const boardCache = { roadmap: {}, announcements: {} };
