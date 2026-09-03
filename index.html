@@ -538,6 +538,46 @@
     #composer{gap:4px;}
     .msg-group{max-width:90%;}
   }
+
+  .board-panel{display:none;flex-direction:column;height:100%;width:100%;}
+  .board-panel.active{display:flex;}
+  .board-scroll{flex:1;overflow-y:auto;padding:32px 24px 60px;}
+  .board-scroll::-webkit-scrollbar{width:6px;}
+  .board-scroll::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
+  .board-shell{width:min(900px,100%);margin:0 auto;}
+  .board-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:24px;}
+  .board-head h1{font-size:1.55rem;font-weight:800;letter-spacing:-.025em;margin-bottom:6px;}
+  .board-head p{font-size:.88rem;color:var(--text-2);line-height:1.55;}
+  .board-create{display:none;flex-direction:column;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:18px;}
+  .board-create.show{display:flex;}
+  .board-create-head{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .board-create-title{font-size:.95rem;font-weight:800;}
+  .board-form-row{display:grid;grid-template-columns:1fr 170px;gap:10px;}
+  .board-textarea{width:100%;min-height:120px;resize:vertical;background:var(--inset);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text-1);font:inherit;font-size:.9rem;line-height:1.55;padding:12px 14px;outline:none;}
+  .board-textarea:focus,.board-create .field:focus{border-color:var(--border-strong);}
+  .board-create-actions{display:flex;justify-content:flex-end;gap:8px;}
+  .board-posts{display:flex;flex-direction:column;gap:14px;}
+  .board-empty{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:44px 24px;text-align:center;color:var(--text-3);font-size:.86rem;}
+  .board-post{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;}
+  .board-post-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px;}
+  .board-post-title{font-size:1.05rem;font-weight:800;line-height:1.35;}
+  .board-post-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px;font-size:.72rem;color:var(--text-3);font-weight:600;}
+  .board-post-author{color:var(--accent-hover);}
+  .board-post-content{font-size:.9rem;color:var(--text-1);line-height:1.75;white-space:pre-wrap;word-break:break-word;}
+  .board-post-actions{display:none;align-items:center;gap:6px;flex-shrink:0;}
+  .board-post-actions.show{display:flex;}
+  .board-action{border:1px solid var(--border-strong);background:transparent;color:var(--text-2);border-radius:8px;padding:7px 10px;font:inherit;font-size:.72rem;font-weight:700;cursor:pointer;}
+  .board-action:hover{background:var(--surface-hover);color:var(--text-1);}
+  .board-action.delete:hover{color:var(--danger);border-color:rgba(229,72,77,.4);background:var(--danger-soft);}
+  .board-badge{display:inline-flex;align-items:center;border:1px solid rgba(76,111,255,.28);background:var(--accent-soft);color:var(--accent-hover);border-radius:999px;padding:3px 8px;font-size:.64rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;}
+  @media(max-width:700px){
+    .board-scroll{padding:24px 14px 40px;}
+    .board-head{display:block;}
+    .board-head .btn-primary{margin-top:14px;}
+    .board-form-row{grid-template-columns:1fr;}
+    .board-post{padding:18px;}
+  }
+
   @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;}}
 
   body.compact-mode #chat-box{gap:6px;padding-top:14px;}
@@ -834,14 +874,18 @@ body{background:var(--bg);letter-spacing:-.006em}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           Settings
         </a>
+        <a href="/roadmap" data-route="/roadmap" class="side-nav-item" data-view="roadmap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5"/><path d="M5 5h11l-2.5 4L16 13H5"/><path d="M5 19h14"/></svg>
+          Roadmap
+        </a>
+        <a href="/announcements" data-route="/announcements" class="side-nav-item" data-view="announcements">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h2l7 4V5l-7 4H5a2 2 0 0 0-2 2Z"/><path d="M17 9a5 5 0 0 1 0 6"/><path d="M19 6.5a9 9 0 0 1 0 11"/></svg>
+          Announcements
+        </a>
         <a href="/admin" data-route="/admin" class="side-nav-item" data-view="admin" id="nav-admin-link" style="display:none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
           Console
         </a>
-        <a href="/admin/images" data-route="/admin/images" class="side-nav-item" data-view="admin-images" id="nav-admin-images-link">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8.5" cy="9" r="1.5"/><path d="m21 15-4.5-4.5L8 19"/></svg>
-          Customization
-        </a
       </nav>
 
       <div class="sidebar-scroll">
@@ -1029,6 +1073,67 @@ body{background:var(--bg);letter-spacing:-.006em}
         </div>
       </section>
 
+      <section id="panel-roadmap" class="board-panel">
+        <header class="panel-header">
+          <button id="roadmap-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <div class="header-title"><h1>Roadmap</h1></div>
+        </header>
+        <div class="board-scroll">
+          <div class="board-shell">
+            <div class="board-head">
+              <div>
+                <h1>Roadmap</h1>
+                <p>Track upcoming Aurora changes, features, improvements, and longer term plans.</p>
+              </div>
+              <button id="roadmap-create-toggle" class="btn btn-primary" type="button">New roadmap update</button>
+            </div>
+            <div id="roadmap-create" class="board-create">
+              <div class="board-create-head"><span class="board-create-title">Publish roadmap update</span><button id="roadmap-cancel" class="icon-btn" type="button" title="Close">×</button></div>
+              <div class="board-form-row">
+                <input id="roadmap-title-input" class="field" type="text" maxlength="120" placeholder="Update title">
+                <select id="roadmap-status-input" class="field">
+                  <option value="planned">Planned</option>
+                  <option value="in-progress">In progress</option>
+                  <option value="completed">Completed</option>
+                </select>
+              </div>
+              <textarea id="roadmap-content-input" class="board-textarea" maxlength="5000" placeholder="Describe the roadmap update"></textarea>
+              <div class="board-create-actions"><button id="roadmap-publish" class="btn btn-primary" type="button">Publish update</button></div>
+            </div>
+            <div id="roadmap-posts" class="board-posts"><div class="board-empty">No roadmap updates yet.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-announcements" class="board-panel">
+        <header class="panel-header">
+          <button id="announcements-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <div class="header-title"><h1>Announcements</h1></div>
+        </header>
+        <div class="board-scroll">
+          <div class="board-shell">
+            <div class="board-head">
+              <div>
+                <h1>Announcements</h1>
+                <p>Official updates and important information from the Aurora founder.</p>
+              </div>
+              <button id="announcement-create-toggle" class="btn btn-primary" type="button">New announcement</button>
+            </div>
+            <div id="announcement-create" class="board-create">
+              <div class="board-create-head"><span class="board-create-title">Publish announcement</span><button id="announcement-cancel" class="icon-btn" type="button" title="Close">×</button></div>
+              <input id="announcement-title-input" class="field" type="text" maxlength="120" placeholder="Announcement title">
+              <textarea id="announcement-content-input" class="board-textarea" maxlength="5000" placeholder="Write the announcement"></textarea>
+              <div class="board-create-actions"><button id="announcement-publish" class="btn btn-primary" type="button">Publish announcement</button></div>
+            </div>
+            <div id="announcement-posts" class="board-posts"><div class="board-empty">No announcements yet.</div></div>
+          </div>
+        </div>
+      </section>
+
       <section id="panel-admin" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -1146,6 +1251,23 @@ body{background:var(--bg);letter-spacing:-.006em}
   const panelChat = document.getElementById('panel-chat');
   const panelSettings = document.getElementById('panel-settings');
   const panelAdmin = document.getElementById('panel-admin');
+  const panelRoadmap = document.getElementById('panel-roadmap');
+  const panelAnnouncements = document.getElementById('panel-announcements');
+  const roadmapPosts = document.getElementById('roadmap-posts');
+  const announcementPosts = document.getElementById('announcement-posts');
+  const roadmapCreate = document.getElementById('roadmap-create');
+  const announcementCreate = document.getElementById('announcement-create');
+  const roadmapCreateToggle = document.getElementById('roadmap-create-toggle');
+  const announcementCreateToggle = document.getElementById('announcement-create-toggle');
+  const roadmapCancel = document.getElementById('roadmap-cancel');
+  const announcementCancel = document.getElementById('announcement-cancel');
+  const roadmapTitleInput = document.getElementById('roadmap-title-input');
+  const roadmapStatusInput = document.getElementById('roadmap-status-input');
+  const roadmapContentInput = document.getElementById('roadmap-content-input');
+  const announcementTitleInput = document.getElementById('announcement-title-input');
+  const announcementContentInput = document.getElementById('announcement-content-input');
+  const roadmapPublish = document.getElementById('roadmap-publish');
+  const announcementPublish = document.getElementById('announcement-publish');
 
   const authTabs = document.querySelectorAll('.auth-tab');
   const authSections = document.querySelectorAll('.auth-section');
@@ -1335,6 +1457,8 @@ body{background:var(--bg);letter-spacing:-.006em}
     const profileMatch = pathname.match(/^\/users\/(\d+)(?:\/profile)?\/?$/);
     if (profileMatch) return { view: 'profile', id: profileMatch[1] };
     if (pathname === '/settings' || pathname === '/settings/') return { view: 'settings' };
+    if (pathname === '/roadmap' || pathname === '/roadmap/') return { view: 'roadmap' };
+    if (pathname === '/announcements' || pathname === '/announcements/') return { view: 'announcements' };
     if (pathname === '/admin' || pathname === '/admin/') return { view: 'admin' };
         return { view: 'chat' };
   }
@@ -1356,11 +1480,15 @@ body{background:var(--bg);letter-spacing:-.006em}
     viewShell.classList.add('active');
     panelChat.classList.toggle('active', panelName === 'chat');
     panelSettings.classList.toggle('active', panelName === 'settings');
+    panelRoadmap.classList.toggle('active', panelName === 'roadmap');
+    panelAnnouncements.classList.toggle('active', panelName === 'announcements');
     panelAdmin.classList.toggle('active', panelName === 'admin');
     document.querySelectorAll('.side-nav-item').forEach(el => el.classList.toggle('active', el.dataset.view === panelName));
     sidebar.classList.remove('open');
     drawerOverlay.classList.remove('open');
     if (panelName === 'settings') populateSettingsPanel();
+    if (panelName === 'roadmap') populateBoardPanel('roadmap');
+    if (panelName === 'announcements') populateBoardPanel('announcements');
     if (panelName === 'admin') populateAdminPanel();
     if (panelName === 'chat') { messageInput.focus(); chatBox.scrollTop = chatBox.scrollHeight; }
   }
@@ -3468,6 +3596,163 @@ body{background:var(--bg);letter-spacing:-.006em}
     renderOnlineRows();
     updateAdminStats();
   }
+
+  const boardCache = { roadmap: {}, announcements: {} };
+  const boardListenersReady = { roadmap: false, announcements: false };
+
+  function boardFormatDate(ts){
+    if (!ts) return 'Unknown date';
+    return new Date(ts).toLocaleString(undefined,{year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'});
+  }
+
+  function boardEscape(value){
+    return escapeHTML(String(value == null ? '' : value));
+  }
+
+  function boardRender(type){
+    const holder = type === 'roadmap' ? roadmapPosts : announcementPosts;
+    if (!holder) return;
+    const items = Object.entries(boardCache[type] || {})
+      .map(([key,value]) => ({key, ...(value || {})}))
+      .filter(item => item.title || item.content)
+      .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
+
+    if (!items.length) {
+      holder.innerHTML = '<div class="board-empty">No ' + (type === 'roadmap' ? 'roadmap updates' : 'announcements') + ' yet.</div>';
+      return;
+    }
+
+    holder.innerHTML = items.map(item => {
+      const status = type === 'roadmap' && item.status ? '<span class="board-badge">' + boardEscape(String(item.status).replace('-', ' ')) + '</span>' : '';
+      const actions = isFounder
+        ? '<div class="board-post-actions show"><button class="board-action" type="button" data-board-edit="' + boardEscape(item.key) + '" data-board-type="' + type + '">Edit</button><button class="board-action delete" type="button" data-board-delete="' + boardEscape(item.key) + '" data-board-type="' + type + '">Delete</button></div>'
+        : '';
+      return '<article class="board-post">' +
+        '<div class="board-post-top"><div><div class="board-post-title">' + boardEscape(item.title || 'Untitled') + '</div>' +
+        '<div class="board-post-meta"><span class="board-post-author">@' + boardEscape(item.author || 'brodanistheman') + '</span><span>' + boardFormatDate(item.createdAt) + '</span>' + status + '</div></div>' + actions + '</div>' +
+        '<div class="board-post-content">' + boardEscape(item.content || '') + '</div></article>';
+    }).join('');
+  }
+
+  function updateBoardComposerVisibility(){
+    const show = !!isFounder;
+    if (roadmapCreateToggle) roadmapCreateToggle.style.display = show ? 'inline-flex' : 'none';
+    if (announcementCreateToggle) announcementCreateToggle.style.display = show ? 'inline-flex' : 'none';
+  }
+
+  function listenForBoard(type){
+    if (boardListenersReady[type]) return;
+    boardListenersReady[type] = true;
+    db.ref(type).on('value', snap => {
+      boardCache[type] = snap.val() || {};
+      boardRender(type);
+    });
+  }
+
+  function populateBoardPanel(type){
+    updateBoardComposerVisibility();
+    listenForBoard(type);
+    boardRender(type);
+  }
+
+  function resetBoardComposer(type){
+    if (type === 'roadmap') {
+      roadmapTitleInput.value = '';
+      roadmapStatusInput.value = 'planned';
+      roadmapContentInput.value = '';
+      roadmapCreate.classList.remove('show');
+    } else {
+      announcementTitleInput.value = '';
+      announcementContentInput.value = '';
+      announcementCreate.classList.remove('show');
+    }
+  }
+
+  function publishBoardPost(type){
+    if (!isFounder) {
+      toast('Only the founder can publish here.', 'error');
+      return;
+    }
+    const title = type === 'roadmap' ? roadmapTitleInput.value.trim() : announcementTitleInput.value.trim();
+    const content = type === 'roadmap' ? roadmapContentInput.value.trim() : announcementContentInput.value.trim();
+    if (!title) {
+      toast('Please enter a title.', 'error');
+      return;
+    }
+    if (!content) {
+      toast('Please enter some content.', 'error');
+      return;
+    }
+
+    const ref = db.ref(type).push();
+    const payload = {
+      title,
+      content,
+      author: currentUsername,
+      authorId: currentUserId,
+      createdAt: Date.now()
+    };
+    if (type === 'roadmap') payload.status = roadmapStatusInput.value;
+
+    const button = type === 'roadmap' ? roadmapPublish : announcementPublish;
+    button.disabled = true;
+    ref.set(payload).then(() => {
+      resetBoardComposer(type);
+      toast(type === 'roadmap' ? 'Roadmap update published.' : 'Announcement published.');
+    }).catch(() => {
+      toast('The post could not be published.', 'error');
+    }).finally(() => {
+      button.disabled = false;
+    });
+  }
+
+  document.addEventListener('click', e => {
+    const edit = e.target.closest('[data-board-edit]');
+    const del = e.target.closest('[data-board-delete]');
+    if (edit) {
+      if (!isFounder) return;
+      const type = edit.dataset.boardType;
+      const key = edit.dataset.boardEdit;
+      const item = boardCache[type]?.[key];
+      if (!item) return;
+      const title = prompt('Edit title:', item.title || '');
+      if (title === null) return;
+      const content = prompt('Edit content:', item.content || '');
+      if (content === null) return;
+      const updates = { title: title.trim(), content: content.trim() };
+      if (type === 'roadmap') {
+        const status = prompt('Status: planned, in progress, or completed', item.status || 'planned');
+        if (status === null) return;
+        const normalized = status.trim().toLowerCase().replace(/\s+/g,'-');
+        updates.status = ['planned','in-progress','completed'].includes(normalized) ? normalized : 'planned';
+      }
+      if (!updates.title || !updates.content) {
+        toast('Title and content are required.', 'error');
+        return;
+      }
+      db.ref(type + '/' + key).update(updates).then(() => toast('Post updated.')).catch(() => toast('The post could not be updated.', 'error'));
+    }
+    if (del) {
+      if (!isFounder) return;
+      const type = del.dataset.boardType;
+      const key = del.dataset.boardDelete;
+      if (!confirm('Delete this post? This cannot be undone.')) return;
+      db.ref(type + '/' + key).remove().then(() => toast('Post deleted.')).catch(() => toast('The post could not be deleted.', 'error'));
+    }
+  });
+
+  roadmapCreateToggle?.addEventListener('click', () => {
+    if (isFounder) roadmapCreate.classList.add('show');
+  });
+  announcementCreateToggle?.addEventListener('click', () => {
+    if (isFounder) announcementCreate.classList.add('show');
+  });
+  roadmapCancel?.addEventListener('click', () => resetBoardComposer('roadmap'));
+  announcementCancel?.addEventListener('click', () => resetBoardComposer('announcements'));
+  roadmapPublish?.addEventListener('click', () => publishBoardPost('roadmap'));
+  announcementPublish?.addEventListener('click', () => publishBoardPost('announcements'));
+  updateBoardComposerVisibility();
+
   initTwemoji();
   renderRoute();
 </script>
