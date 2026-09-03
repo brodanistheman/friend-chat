@@ -2159,7 +2159,6 @@ body{background:var(--bg);letter-spacing:-.006em}
       const selected=String(selectedModerationUserId)===String(u.id);
       return '<div class="mod-account-row'+(selected?' selected':'')+'" data-mod-user-id="'+escapeHTML(u.id)+'"><div class="mini-avatar" data-avatar-key="'+escapeHTML(u.usernameLower||String(u.username||'').toLowerCase())+'" data-avatar-name="'+escapeHTML(u.username||'')+'"></div><div class="mod-account-row-main"><div class="mod-account-row-name">@'+escapeHTML(u.username||'Unknown')+'</div><div class="mod-account-row-meta">ID '+escapeHTML(u.id)+'</div></div><span class="mod-account-row-status">'+escapeHTML(flags.join(' • ')||'Normal')+'</span></div>';
     }).join(''):'<div class="list-empty">No accounts match your search.</div>';
-    modUserList.querySelectorAll('[data-mod-user-id]').forEach(row=>row.addEventListener('click',()=>selectModerationUser(row.dataset.modUserId)));
     refreshAllAvatars();
   }
   function selectModerationUser(id){
@@ -2310,6 +2309,13 @@ body{background:var(--bg);letter-spacing:-.006em}
     });
   }
   if (modUserSearch) modUserSearch.addEventListener('input', renderModerationUsers);
+  if (modUserList) {
+    modUserList.addEventListener('click', e => {
+      const row = e.target.closest('[data-mod-user-id]');
+      if (!row || !modUserList.contains(row)) return;
+      selectModerationUser(row.dataset.modUserId);
+    });
+  }
   if (modClearSelection) modClearSelection.addEventListener('click', () => { selectedModerationUserId=null; renderModerationUsers(); renderModerationSelected(); });
 
   function listenForPresence(){
@@ -2349,6 +2355,8 @@ body{background:var(--bg);letter-spacing:-.006em}
         renderAdminImageUsers();
         renderAdminImagePreview();
         renderAdminOrigins();
+        renderModerationUsers();
+        renderModerationSelected();
       }
         });
   }
