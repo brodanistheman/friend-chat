@@ -159,7 +159,7 @@
   .profile-page-back{color:var(--text-2);text-decoration:none;font-size:.8rem;font-weight:750;padding:8px 10px;border-radius:8px;}
   .profile-page-back:hover{color:var(--text-1);background:rgba(255,255,255,.045);}
   .profile-hero{width:100%;background:#11141b;border-bottom:1px solid #242833;}
-  .profile-cover{height:330px;position:relative;background:#0b0d12;overflow:hidden;background-size:cover;background-position:center;}
+  .profile-cover{height:330px;position:relative;background:#0b0d12;overflow:hidden;} .profile-cover-image{display:block;width:100%;height:100%;object-fit:cover;object-position:center;}
   .profile-hero-inner{width:min(1240px,calc(100% - 80px));margin:0 auto;position:relative;}
   .profile-identity-row{display:flex;align-items:flex-end;gap:26px;margin-top:-76px;position:relative;z-index:2;padding:0 0 36px;}
   .profile-avatar-large{width:152px;height:152px;flex:0 0 152px;border-radius:50%;border:7px solid #11141b;display:flex;align-items:center;justify-content:center;font-size:2.7rem;font-weight:850;color:var(--on-accent);overflow:hidden;background-size:cover;background-position:center;background-color:#1b2030;box-shadow:0 0 0 1px #303542;}
@@ -505,6 +505,23 @@
   .stat-value{font-size:1.7rem;font-weight:800;font-variant-numeric:tabular-nums;}
   .stat-label{font-size:0.78rem;color:var(--text-2);font-weight:500;}
   .admin-user-list{display:flex;flex-direction:column;gap:2px;}
+  .origin-row{border:1px solid var(--border);border-radius:10px;background:var(--surface);overflow:hidden;}
+  .origin-head{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;background:transparent;border:0;color:var(--text-1);text-align:left;cursor:pointer;font:inherit;}
+  .origin-head:hover{background:var(--surface-hover);}
+  .origin-head-avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--text-1);font-size:.62rem;font-weight:800;}
+  .origin-head-main{min-width:0;flex:1;}
+  .origin-id-inline{color:var(--text-3);font-size:.66rem;font-weight:600;margin-left:5px;}
+  .origin-related-title{padding:4px 5px 7px;color:var(--text-3);font-size:.67rem;font-weight:700;}
+  .origin-head-name{font-size:.82rem;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .origin-head-meta{font-size:.68rem;color:var(--text-3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .origin-chevron{font-size:1.15rem;color:var(--text-3);transition:transform .15s ease;}
+  .origin-row.open .origin-chevron{transform:rotate(90deg);}
+  .origin-details{display:none;border-top:1px solid var(--border);padding:6px;}
+  .origin-row.open .origin-details{display:flex;flex-direction:column;gap:4px;}
+  .origin-account{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 10px;border-radius:8px;color:var(--text-1);text-decoration:none;background:var(--inset);font-size:.76rem;font-weight:650;}
+  .origin-account:hover{background:var(--surface-hover);}
+  .origin-account-id{color:var(--text-3);font-size:.68rem;font-weight:600;}
+
   .admin-user-row{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:var(--radius-sm);font-size:0.87rem;font-weight:500;color:var(--text-1);cursor:default;}
   .admin-user-row .status-dot{border-color:var(--surface);}
   .admin-status-label{margin-left:auto;font-size:0.76rem;color:var(--text-3);font-weight:600;}
@@ -665,7 +682,6 @@ body{background:var(--bg);letter-spacing:-.006em}
 #message-input:focus{border-color:#343D4D}
 #composer .icon-btn,#composer .btn-round{width:42px;height:42px;border-radius:11px}
 #send-btn{box-shadow:0 5px 18px rgba(91,120,255,.12)}
-.media-picker-option{border-radius:9px}
 .settings-card{border-radius:13px;background:#11151B;border-color:#202731;padding:21px 22px;margin-bottom:12px}
 .page-shell{max-width:720px}
 .panel-scroll{padding:34px 26px 60px}
@@ -677,7 +693,6 @@ body{background:var(--bg);letter-spacing:-.006em}
 .stat-card{border-radius:13px;padding:17px;background:#11151B;border-color:#202731}
 .stat-value{font-size:1.5rem}
 .profile-section,.profile-side-card,.profile-editor{border-radius:13px;background:#11151B;border-color:#252B36}
-.profile-cover{background-image:none}
 .profile-page-bar{height:62px;background:rgba(8,10,15,.94);border-bottom-color:#1D222C}
 .profile-edit-btn,.profile-editor-save{border-radius:9px}
 .toast{border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.32)}
@@ -711,18 +726,7 @@ body{background:var(--bg);letter-spacing:-.006em}
 @media(max-width:560px){.panel-header{height:60px}.panel-scroll{padding:25px 15px 50px}.stat-row{grid-template-columns:1fr}.media-viewer{padding:10px}.media-viewer-panel{height:92vh}}
 
 
-  /* Unified file upload menu */
-  .media-picker{width:286px;bottom:64px;left:18px;background:#101319;border:1px solid #2a303a;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,.42);overflow:hidden}
-  .media-picker-head{min-height:44px;padding:0 10px 0 14px;border-bottom:1px solid #242a33;font-size:.76rem;font-weight:750;color:var(--text-2)}
-  .media-picker-head .icon-btn{width:30px;height:30px;border-radius:8px}
-  .media-picker-actions{padding:8px}
-  .media-picker-option{width:100%;min-height:58px;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent}
-  .media-picker-option:hover{background:#171b22;border-color:#2a303a}
-  .media-picker-option b{font-size:.79rem;font-weight:750}
-  .media-picker-option small{font-size:.67rem;line-height:1.35;color:#737b89}
-  .media-picker-icon{width:36px;height:36px;border-radius:9px;background:#191f2a;border:1px solid #2b3443;color:#8fa4ff}
-  .media-picker-icon svg{width:18px;height:18px}
-  #attach-btn[disabled]{opacity:.45;cursor:not-allowed}
+  #attach-btn[disabled]{opacity:.45;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -913,21 +917,7 @@ body{background:var(--bg);letter-spacing:-.006em}
                   <path d="M5 20h14"/>
                 </svg>
               </button>
-              <div id="media-picker" class="media-picker" aria-hidden="true">
-                <div class="media-picker-head">
-                  <span>Upload</span>
-                  <button id="media-picker-close" type="button" class="icon-btn" title="Close" aria-label="Close upload menu">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
-                  </button>
-                </div>
-                <div class="media-picker-actions">
-                  <button type="button" class="media-picker-option" data-media-type="file">
-                    <span class="media-picker-icon" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="m9 15 3-3 3 3"/></svg>
-                    </span>
-                    <span><b>Upload file</b><small>Any file type, up to 10 MB</small></span>
-                  </button>
-                </div>
+
               </div>
               <button id="mic-btn" class="icon-btn" type="button" title="Record a voice message" aria-label="Record a voice message">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1292,9 +1282,6 @@ body{background:var(--bg);letter-spacing:-.006em}
 
   const attachBtn = document.getElementById('attach-btn');
   const fileInput = document.getElementById('file-input');
-  const mediaPicker = document.getElementById('media-picker');
-  const mediaPickerClose = document.getElementById('media-picker-close');
-  const mediaPickerOptions = document.querySelectorAll('.media-picker-option');
   const micBtn = document.getElementById('mic-btn');
   const composerEl = document.getElementById('composer');
   const recTimerEl = document.getElementById('rec-timer');
@@ -1535,16 +1522,16 @@ body{background:var(--bg);letter-spacing:-.006em}
       if (!prof.profileSoundData && adminProfileSounds[lower]) prof.profileSoundData = adminProfileSounds[lower];
       const displayName = prof.displayName || user.username;
       const memberDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
-      const avatarX=50, avatarY=50, coverX=50, coverY=50;
+      const avatarX=50, avatarY=50;
       const avatar = prof.avatarData ? '<img src="' + escapeHTML(prof.avatarData) + '" alt="" style="object-position:' + avatarX + '% ' + avatarY + '%;">' : initials(user.username);
       const avatarStyleValue = prof.avatarData ? '' : avatarStyle(user.username);
-      const coverStyle = prof.coverData ? 'background-image:url("' + escapeHTML(prof.coverData) + '");background-position:' + coverX + '% ' + coverY + '%;' : '';
+      const coverImage = prof.coverData ? '<img class="profile-cover-image" src="' + escapeHTML(prof.coverData) + '" alt="Profile banner">' : '';
       const bio = prof.bio ? '<p class="profile-bio">' + escapeHTML(prof.bio) + '</p>' : '<p class="profile-empty">No biography has been added to this profile yet.</p>';
       const location = prof.location ? escapeHTML(prof.location) : 'Not provided';
       const website = prof.website ? '<a href="' + escapeHTML(prof.website) + '" target="_blank" rel="noopener noreferrer">' + escapeHTML(prof.website) + '</a>' : 'Not provided';
       const own = loggedIn && String(currentUserId) === String(id);
       holder.innerHTML = '<div class="profile-hero">' +
-        '<div class="profile-cover" style="' + coverStyle + '"></div>' +
+        '<div class="profile-cover">' + coverImage + '</div>' +
         '<div class="profile-hero-inner">' +
           '<div class="profile-identity-row">' +
             '<div class="profile-avatar-large" style="' + avatarStyleValue + '">' + avatar + '</div>' +
@@ -2325,6 +2312,16 @@ body{background:var(--bg);letter-spacing:-.006em}
       toast('The chat has been cleared for everyone.');
     }
   });
+  attachBtn.addEventListener('click', e => {
+    e.stopPropagation();
+    if (activeUploadTask) {
+      toast('Another file is already uploading.', 'error');
+      return;
+    }
+    fileInput.removeAttribute('accept');
+    fileInput.click();
+  });
+
   fileInput.addEventListener('change', async (e) => {
     const file = e.target.files && e.target.files[0];
     e.target.value = '';
@@ -2695,7 +2692,27 @@ body{background:var(--bg);letter-spacing:-.006em}
   const adminOriginList=document.getElementById('admin-origin-list');
   let accountOriginCache={};
   function originGroupKey(meta){return String(meta?.ip||'')+'|'+String(meta?.deviceKey||'');}
-  function renderAdminOrigins(){if(!adminOriginList||!isFounder)return;const groups={};Object.entries(usersCache||{}).forEach(([id,u])=>{const meta=accountOriginCache[id]||{};const g=originGroupKey(meta);(groups[g] ||= {meta,accounts:[]}).accounts.push({id,...u})});const list=Object.values(groups).sort((a,b)=>Number(b.accounts[0]?.createdAt||0)-Number(a.accounts[0]?.createdAt||0));adminOriginList.innerHTML=list.length?list.map(g=>{const ip=g.meta.ip||'IP unavailable',device=g.meta.deviceKey?'Device '+g.meta.deviceKey.slice(0,10):'Device unavailable';return '<div class="origin-row"><div class="origin-head"><div class="origin-head-main"><div class="origin-head-name">'+escapeHTML(ip)+'</div><div class="origin-head-meta">'+escapeHTML(device)+' • '+g.accounts.length+' account'+(g.accounts.length===1?'':'s')+'</div></div><span class="origin-chevron">›</span></div><div class="origin-details">'+g.accounts.map(a=>'<div class="origin-account"><span>@'+escapeHTML(a.username)+'</span><span>ID '+escapeHTML(a.id)+'</span></div>').join('')+'</div></div>'}).join(''):'<div class="list-empty">No account origin data has been recorded yet.</div>';adminOriginList.querySelectorAll('.origin-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')))}
+  function renderAdminOrigins(){
+    if(!adminOriginList||!isFounder)return;
+    const accounts=Object.entries(usersCache||{}).map(([id,u])=>({id,...u,meta:accountOriginCache[id]||{}}));
+    const groups={};
+    accounts.forEach(a=>{
+      const key=originGroupKey(a.meta);
+      if(a.meta.ip||a.meta.deviceKey) (groups[key] ||= []).push(a);
+    });
+    accounts.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+    adminOriginList.innerHTML=accounts.length?accounts.map(a=>{
+      const key=originGroupKey(a.meta);
+      const related=(groups[key]||[]).filter(other=>String(other.id)!==String(a.id));
+      const hasOrigin=Boolean(a.meta.ip||a.meta.deviceKey);
+      const originLabel=a.meta.ip?'IP '+a.meta.ip:'IP unavailable';
+      const deviceLabel=a.meta.deviceKey?'Device '+a.meta.deviceKey.slice(0,10):'Device unavailable';
+      const relatedHtml=related.length?related.map(other=>'<a class="origin-account" href="'+profilePathFor(other.id)+'" data-route="'+profilePathFor(other.id)+'"><span>@'+escapeHTML(other.username||('User '+other.id))+'</span><span class="origin-account-id">ID '+escapeHTML(other.id)+'</span></a>').join(''):'<div class="list-empty">No other accounts share this recorded origin.</div>';
+      return '<div class="origin-row"><button type="button" class="origin-head"><div class="origin-head-avatar">'+escapeHTML(safeInitials(a.username||'U'))+'</div><div class="origin-head-main"><div class="origin-head-name">@'+escapeHTML(a.username||('User '+a.id))+' <span class="origin-id-inline">ID '+escapeHTML(a.id)+'</span></div><div class="origin-head-meta">'+escapeHTML(hasOrigin?originLabel+' • '+deviceLabel:'Origin data unavailable')+'</div></div><span class="origin-chevron">›</span></button><div class="origin-details"><div class="origin-related-title">Accounts from the same origin</div>'+relatedHtml+'</div></div>';
+    }).join(''):'<div class="list-empty">No accounts found.</div>';
+    adminOriginList.querySelectorAll('.origin-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
+  }
+
   function listenForAccountOrigins(){if(!isFounder||!adminOriginList)return;db.ref('accountOrigins').on('value',snap=>{accountOriginCache=snap.val()||{};renderAdminOrigins()})}
 
   function updateAdminStats(){
@@ -2703,30 +2720,6 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (adminStatMedia) adminStatMedia.textContent = totalMediaCount;
     if (adminStatCalls) adminStatCalls.textContent = Object.keys(liveCalls).length;
   }
-
-  function closeMediaPopovers(){
-    if (!mediaPicker) return;
-    mediaPicker.classList.remove('open');
-    mediaPicker.setAttribute('aria-hidden','true');
-  }
-  attachBtn.addEventListener('click', e => {
-    e.stopPropagation();
-    if (activeUploadTask) {
-      toast('A file is already uploading.', 'error');
-      return;
-    }
-    const open = mediaPicker.classList.toggle('open');
-    mediaPicker.setAttribute('aria-hidden', String(!open));
-  });
-  mediaPickerClose.addEventListener('click', closeMediaPopovers);
-  mediaPickerOptions.forEach(option => option.addEventListener('click', () => {
-    fileInput.removeAttribute('accept');
-    fileInput.click();
-    closeMediaPopovers();
-  }));
-  document.addEventListener('click', e => {
-    if (mediaPicker && !mediaPicker.contains(e.target) && e.target !== attachBtn) closeMediaPopovers();
-  });
 
   function listenForMessages(){
     chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
