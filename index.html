@@ -248,6 +248,31 @@
   .side-nav-item:hover{background:var(--surface-hover);color:var(--text-1);}
   .side-nav-item.active{background:var(--accent-soft);color:var(--text-1);}
 
+  .sloth-ai-wrap{flex:1;display:flex;flex-direction:column;min-height:0;background:var(--bg);}
+  .sloth-ai-hero{padding:26px 24px 20px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#11151d,#0b0c10);}
+  .sloth-ai-title-row{display:flex;align-items:center;gap:12px;}
+  .sloth-ai-icon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--accent-soft);border:1px solid rgba(76,111,255,.25);color:var(--accent);}
+  .sloth-ai-title{font-size:1.18rem;font-weight:850;letter-spacing:-.02em;}
+  .sloth-ai-subtitle{font-size:.78rem;color:var(--text-2);margin-top:3px;}
+  .sloth-ai-badge{margin-left:auto;font-size:.68rem;font-weight:800;color:var(--online);background:rgba(52,199,123,.09);border:1px solid rgba(52,199,123,.2);border-radius:999px;padding:5px 9px;}
+  #sloth-ai-chat{flex:1;overflow-y:auto;padding:24px 20px 8px;display:flex;flex-direction:column;gap:14px;}
+  #sloth-ai-chat::-webkit-scrollbar{width:6px;} #sloth-ai-chat::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
+  .sloth-ai-empty{margin:auto;max-width:520px;text-align:center;color:var(--text-3);font-size:.86rem;line-height:1.6;}
+  .sloth-ai-empty strong{display:block;color:var(--text-1);font-size:1rem;margin-bottom:5px;}
+  .sloth-msg{display:flex;gap:11px;max-width:78%;animation:riseIn .18s ease both;}
+  .sloth-msg.own{margin-left:auto;flex-direction:row-reverse;}
+  .sloth-msg-avatar{width:34px;height:34px;border-radius:50%;flex:0 0 34px;display:grid;place-items:center;background:#182038;border:1px solid #303a58;color:#dbe3ff;font-size:.65rem;font-weight:850;}
+  .sloth-msg.own .sloth-msg-avatar{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .sloth-msg-body{min-width:0;}
+  .sloth-msg-meta{font-size:.76rem;font-weight:750;color:var(--text-2);margin:0 2px 5px;}
+  .sloth-msg.own .sloth-msg-meta{text-align:right;}
+  .sloth-msg-bubble{padding:10px 14px;border-radius:5px 18px 18px 18px;background:var(--surface);border:1px solid var(--border);font-size:.9rem;line-height:1.5;overflow-wrap:anywhere;}
+  .sloth-msg.own .sloth-msg-bubble{border-radius:18px 5px 18px 18px;background:var(--accent-soft);border-color:transparent;}
+  .sloth-ai-composer{padding:14px 18px;border-top:1px solid var(--border);}
+  #sloth-ai-form{display:flex;gap:6px;align-items:flex-end;}
+  #sloth-ai-input{min-height:44px;max-height:120px;resize:none;border-radius:999px;}
+  @media(max-width:860px){.sloth-msg{max-width:90%;}}
+
   .sidebar-scroll{flex:1;overflow-y:auto;padding:16px 10px;}
   .sidebar-scroll::-webkit-scrollbar{width:5px;}
   .sidebar-scroll::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:6px;}
@@ -871,6 +896,10 @@ body{background:var(--bg);letter-spacing:-.006em}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Chat
         </a>
+        <a href="/sloth-ai" data-route="/sloth-ai" class="side-nav-item" data-view="sloth-ai">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M8.2 14.8A6 6 0 1 1 15.8 14.8c-.8.6-1.3 1.5-1.5 2.4h-4.6c-.2-.9-.7-1.8-1.5-2.4Z"/><path d="M12 4v2"/></svg>
+          SlothAI
+        </a>
         <a href="/friends" data-route="/friends" class="side-nav-item" data-view="friends">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Friends
@@ -1033,6 +1062,43 @@ body{background:var(--bg);letter-spacing:-.006em}
       </section>
 
       
+      <section id="panel-sloth-ai" class="panel">
+        <div class="sloth-ai-wrap">
+          <header class="panel-header">
+            <button id="sloth-ai-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </button>
+            <div class="header-title"><h1>SlothAI</h1></div>
+          </header>
+          <div class="sloth-ai-hero">
+            <div class="sloth-ai-title-row">
+              <div class="sloth-ai-icon" aria-hidden="true">
+                <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M8.2 14.8A6 6 0 1 1 15.8 14.8c-.8.6-1.3 1.5-1.5 2.4h-4.6c-.2-.9-.7-1.8-1.5-2.4Z"/><path d="M12 4v2"/></svg>
+              </div>
+              <div>
+                <div class="sloth-ai-title">Fatslothlovers_2</div>
+                <div class="sloth-ai-subtitle">SlothAI • a fake AI persona</div>
+              </div>
+              <span class="sloth-ai-badge">ONLINE</span>
+            </div>
+          </div>
+          <div id="sloth-ai-chat">
+            <div class="sloth-ai-empty" id="sloth-ai-empty">
+              <strong>Ask SlothAI anything.</strong>
+              Fatslothlovers_2 is the AI persona for this page. Messages here are separate from the normal Aurora chat.
+            </div>
+          </div>
+          <div class="sloth-ai-composer">
+            <form id="sloth-ai-form">
+              <textarea id="sloth-ai-input" class="field" rows="1" maxlength="2000" placeholder="Message Fatslothlovers_2..."></textarea>
+              <button id="sloth-ai-send" class="btn btn-primary btn-round" type="submit" title="Send message" disabled>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--on-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-9-4 20-7Z"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
       <section id="panel-settings" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -1276,6 +1342,11 @@ body{background:var(--bg);letter-spacing:-.006em}
   const viewProfile = document.getElementById('view-profile');
   const viewShell = document.getElementById('view-shell');
   const panelChat = document.getElementById('panel-chat');
+  const panelSlothAI = document.getElementById('panel-sloth-ai');
+  const slothAIForm = document.getElementById('sloth-ai-form');
+  const slothAIInput = document.getElementById('sloth-ai-input');
+  const slothAISend = document.getElementById('sloth-ai-send');
+  const slothAIChat = document.getElementById('sloth-ai-chat');
   const panelSettings = document.getElementById('panel-settings');
   const panelAdmin = document.getElementById('panel-admin');
   const panelRoadmap = document.getElementById('panel-roadmap');
@@ -1490,6 +1561,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   function parseRoute(pathname){
     const profileMatch = pathname.match(/^\/users\/(\d+)(?:\/profile)?\/?$/);
     if (profileMatch) return { view: 'profile', id: profileMatch[1] };
+    if (pathname === '/sloth-ai' || pathname === '/sloth-ai/') return { view: 'sloth-ai' };
     if (pathname === '/settings' || pathname === '/settings/') return { view: 'settings' };
     if (pathname === '/roadmap' || pathname === '/roadmap/') return { view: 'roadmap' };
     if (pathname === '/announcements' || pathname === '/announcements/') return { view: 'announcements' };
@@ -1514,6 +1586,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     viewProfile.classList.remove('active');
     viewShell.classList.add('active');
     panelChat.classList.toggle('active', panelName === 'chat');
+    panelSlothAI.classList.toggle('active', panelName === 'sloth-ai');
     panelSettings.classList.toggle('active', panelName === 'settings');
     panelRoadmap.classList.toggle('active', panelName === 'roadmap');
     panelAnnouncements.classList.toggle('active', panelName === 'announcements');
@@ -1526,6 +1599,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (panelName === 'roadmap') populateBoardPanel('roadmap');
     if (panelName === 'announcements') populateBoardPanel('announcements');
     if (panelName === 'friends') populateFriendsPanel();
+    if (panelName === 'sloth-ai') loadSlothAI();
     if (panelName === 'admin') populateAdminPanel();
     if (panelName === 'chat') { messageInput.focus(); chatBox.scrollTop = chatBox.scrollHeight; }
   }
@@ -2290,6 +2364,116 @@ body{background:var(--bg);letter-spacing:-.006em}
       recentIncoming = recentIncoming.filter(m => !(m.username === msg.username && m.text === msg.text));
     }
   }
+
+  // SlothAI is intentionally a local fake AI persona. It does not call an external
+  // AI service and does not pretend that Fatslothlovers_2 is sending these replies
+  // from his real account. Its conversation is stored separately in Firebase.
+  const SLOTH_AI_USERNAME = 'Fatslothlovers_2';
+  const SLOTH_AI_DB_PATH = 'slothAiMessages';
+
+  function slothAIReplyFor(text){
+    const t = String(text || '').trim().toLowerCase();
+    if (!t) return "Ask me something.";
+    if (/\b(hello|hi|hey|yo|sup)\b/.test(t)) return "yo. what do you need?";
+    if (t.includes('what color') && t.includes('sky')) return "Usually blue during the day.";
+    if (t.includes('sky') && /\b(color|colour)\b/.test(t)) return "Usually blue during the day.";
+    if (/\bwhat are you\b|\bwho are you\b/.test(t)) return "I'm SlothAI, the fake AI persona for Fatslothlovers_2.";
+    if (/\bwho made you\b|\bcreator\b/.test(t)) return "Fatslothlovers_2 is the real user behind this fake AI page.";
+    if (/\bhow are you\b/.test(t)) return "running at maximum sloth capacity.";
+    if (/\btime\b/.test(t)) return "I don't have a live clock here, but your device does.";
+    if (/\bthanks\b|\bthank you\b/.test(t)) return "no problem.";
+    if (/\bhelp\b/.test(t)) return "Ask me a simple question and I'll try to give you a fake-AI answer.";
+    if (/\b2\s*\+\s*2\b/.test(t)) return "4.";
+    if (/\bcapital of (the )?united states\b/.test(t)) return "Washington, D.C.";
+    if (/\bhow old\b/.test(t)) return "I'm a fake AI persona, so I don't have an age.";
+    if (/\bwhy\b/.test(t)) return "because SlothAI said so.";
+    const fallbacks = [
+      "hmm. I would need a bigger brain for that one.",
+      "that's a good question. my sloth circuits are thinking.",
+      "I don't have a real AI model behind me, but I'll pretend I do.",
+      "interesting. give me another one."
+    ];
+    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+  }
+
+  function renderSlothMessage(msg){
+    const empty = document.getElementById('sloth-ai-empty');
+    if (empty) empty.remove();
+    const isAI = String(msg.username || '').toLowerCase() === SLOTH_AI_USERNAME.toLowerCase();
+    const row = document.createElement('div');
+    row.className = 'sloth-msg' + (isAI ? '' : ' own');
+
+    const avatar = document.createElement('div');
+    avatar.className = 'sloth-msg-avatar';
+    avatar.textContent = isAI ? 'F2' : String(msg.username || 'You').slice(0,2).toUpperCase();
+
+    const body = document.createElement('div');
+    body.className = 'sloth-msg-body';
+
+    const meta = document.createElement('div');
+    meta.className = 'sloth-msg-meta';
+    meta.textContent = isAI ? 'Fatslothlovers_2 • SlothAI' : (msg.username || 'You');
+
+    const bubble = document.createElement('div');
+    bubble.className = 'sloth-msg-bubble';
+    bubble.textContent = msg.text || '';
+
+    body.appendChild(meta);
+    body.appendChild(bubble);
+    row.appendChild(avatar);
+    row.appendChild(body);
+    slothAIChat.appendChild(row);
+    slothAIChat.scrollTop = slothAIChat.scrollHeight;
+  }
+
+  function loadSlothAI(){
+    slothAIChat.innerHTML = '<div class="sloth-ai-empty" id="sloth-ai-empty"><strong>Ask SlothAI anything.</strong>Fatslothlovers_2 is the AI persona for this page. Messages here are separate from the normal Aurora chat.</div>';
+    db.ref(SLOTH_AI_DB_PATH).limitToLast(100).once('value').then(snap => {
+      const items = [];
+      snap.forEach(child => items.push(child.val()));
+      items.forEach(renderSlothMessage);
+      slothAIChat.scrollTop = slothAIChat.scrollHeight;
+    }).catch(() => toast('SlothAI could not load right now.', 'error'));
+  }
+
+  slothAIForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = slothAIInput.value.trim();
+    if (!text || !currentUsername) return;
+    if (text.length > MAX_MESSAGE_LENGTH) return;
+    const now = Date.now();
+    const userPayload = { username: currentUsername, text, timestamp: now };
+    db.ref(SLOTH_AI_DB_PATH).push(userPayload).then(() => {
+      slothAIInput.value = '';
+      slothAIInput.style.height = 'auto';
+      slothAISend.disabled = true;
+      return new Promise(resolve => setTimeout(resolve, 450));
+    }).then(() => {
+      return db.ref(SLOTH_AI_DB_PATH).push({
+        username: SLOTH_AI_USERNAME,
+        text: slothAIReplyFor(text),
+        timestamp: Date.now(),
+        isSlothAI: true,
+        replyToUsername: currentUsername
+      });
+    }).catch(() => toast('SlothAI could not send a reply.', 'error'));
+  });
+
+  slothAIInput.addEventListener('input', () => {
+    slothAISend.disabled = !slothAIInput.value.trim();
+    slothAIInput.style.height = 'auto';
+    slothAIInput.style.height = Math.min(slothAIInput.scrollHeight, 120) + 'px';
+  });
+  slothAIInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!slothAISend.disabled) slothAIForm.requestSubmit();
+    }
+  });
+  db.ref(SLOTH_AI_DB_PATH).on('child_added', snap => {
+    if (location.pathname === '/sloth-ai' || location.pathname === '/sloth-ai/') renderSlothMessage(snap.val());
+  });
+
   chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
     let text = messageInput.value.trim();
