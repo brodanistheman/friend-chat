@@ -2082,7 +2082,11 @@ body{background:var(--bg);letter-spacing:-.006em}
         }
       });
       usersCache = next;
-      if (isFounder) { renderAdminImageUsers(); renderAdminImagePreview(); }
+      if (isFounder) {
+        renderAdminImageUsers();
+        renderAdminImagePreview();
+        renderAdminOrigins();
+      }
         });
   }
   function onComposerChanged(){
