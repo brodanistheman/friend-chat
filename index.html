@@ -159,9 +159,8 @@
   .profile-page-back{color:var(--text-2);text-decoration:none;font-size:.8rem;font-weight:750;padding:8px 10px;border-radius:8px;}
   .profile-page-back:hover{color:var(--text-1);background:rgba(255,255,255,.045);}
   .profile-hero{width:100%;background:#11141b;border-bottom:1px solid #242833;}
-  .profile-cover{height:330px;position:relative;background:none;overflow:hidden;background-size:cover;background-position:center;}
-  .profile-cover:before{content:none;}
-    .profile-hero-inner{width:min(1240px,calc(100% - 80px));margin:0 auto;position:relative;}
+  .profile-cover{height:330px;position:relative;background:#0b0d12;overflow:hidden;background-size:cover;background-position:center;}
+  .profile-hero-inner{width:min(1240px,calc(100% - 80px));margin:0 auto;position:relative;}
   .profile-identity-row{display:flex;align-items:flex-end;gap:26px;margin-top:-76px;position:relative;z-index:2;padding:0 0 36px;}
   .profile-avatar-large{width:152px;height:152px;flex:0 0 152px;border-radius:50%;border:7px solid #11141b;display:flex;align-items:center;justify-content:center;font-size:2.7rem;font-weight:850;color:var(--on-accent);overflow:hidden;background-size:cover;background-position:center;background-color:#1b2030;box-shadow:0 0 0 1px #303542;}
   .profile-avatar-large img{width:100%;height:100%;object-fit:cover;}
@@ -238,29 +237,6 @@
   .side-nav-item svg{flex-shrink:0;}
   .side-nav-item:hover{background:var(--surface-hover);color:var(--text-1);}
   .side-nav-item.active{background:var(--accent-soft);color:var(--text-1);}
-  .sloth-msg{display:flex;gap:11px;max-width:78%;animation:riseIn .18s ease both;}
-  .sloth-msg.own{margin-left:auto;flex-direction:row-reverse;}
-  .sloth-msg-avatar{width:34px;height:34px;border-radius:50%;flex:0 0 34px;display:grid;place-items:center;background:#182038;border:1px solid #303a58;color:#dbe3ff;font-size:.65rem;font-weight:850;}
-  .sloth-msg.own .sloth-msg-avatar{background:var(--accent);border-color:var(--accent);color:#fff;}
-  .sloth-msg-body{min-width:0;}
-  .sloth-msg-meta{font-size:.76rem;font-weight:750;color:var(--text-2);margin:0 2px 5px;}
-  .sloth-msg.own .sloth-msg-meta{text-align:right;}
-  .sloth-msg-bubble{padding:10px 14px;border-radius:5px 18px 18px 18px;background:var(--surface);border:1px solid var(--border);font-size:.9rem;line-height:1.5;overflow-wrap:anywhere;}
-  .sloth-msg.own .sloth-msg-bubble{border-radius:18px 5px 18px 18px;background:var(--accent-soft);border-color:transparent;}
-  .social-list{display:flex;flex-direction:column;gap:7px}
-  .social-row{display:flex;align-items:center;gap:11px;padding:10px 11px;border:1px solid var(--border);background:var(--surface);border-radius:10px}
-  .social-row-main{min-width:0;flex:1}
-  .social-row-name{font-size:.82rem;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .social-row-handle{font-size:.7rem;color:var(--text-3);margin-top:2px}
-  .social-row-actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-  .social-action{border:1px solid var(--border);background:var(--surface-active);color:var(--text-1);padding:7px 10px;border-radius:8px;font:inherit;font-size:.7rem;font-weight:700;cursor:pointer}
-  .social-action:hover{border-color:var(--border-strong);background:var(--surface-hover)}
-  .social-action.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
-  .social-action.danger{color:#ff7478}
-  .social-action:disabled{opacity:.55;cursor:not-allowed}
-  .social-empty{padding:18px 10px;text-align:center;color:var(--text-3);font-size:.76rem}
-  .profile-social-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
-  @media(max-width:860px){.sloth-msg{max-width:90%;}}
 
   .sidebar-scroll{flex:1;overflow-y:auto;padding:16px 10px;}
   .sidebar-scroll::-webkit-scrollbar{width:5px;}
@@ -552,6 +528,9 @@
     #composer{gap:4px;}
     .msg-group{max-width:90%;}
   }
+
+  .friend-add-row{display:flex;gap:8px}.friend-add-row .field{flex:1}.friend-list{display:flex;flex-direction:column;gap:7px}.friend-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--inset);border:1px solid var(--border);border-radius:10px}.friend-row-main{min-width:0;flex:1}.friend-row-name{font-size:.82rem;font-weight:750}.friend-row-handle{font-size:.68rem;color:var(--text-3);margin-top:2px}.friend-row-actions{display:flex;gap:6px;flex-wrap:wrap}.friend-action{border:1px solid var(--border-strong);background:transparent;color:var(--text-1);border-radius:8px;padding:7px 10px;font:700 .7rem inherit;cursor:pointer}.friend-action:hover{background:var(--surface-hover)}.friend-action.danger{color:var(--danger);border-color:rgba(229,72,77,.35)}.friend-empty{padding:14px 4px;color:var(--text-3);font-size:.78rem}.friend-result{margin-top:10px}.friend-result .friend-row{background:var(--surface)}
+  .forum-tabs{display:flex;gap:7px;flex-wrap:wrap;margin:-6px 0 18px}.forum-tabs a{display:inline-flex;align-items:center;padding:9px 13px;border:1px solid var(--border-strong);border-radius:9px;background:transparent;color:var(--text-2);text-decoration:none;font-size:.76rem;font-weight:750}.forum-tabs a:hover,.forum-tabs a.active{background:var(--accent-soft);border-color:rgba(91,120,255,.35);color:var(--text-1)}
   .board-panel{display:none;flex-direction:column;height:100%;width:100%;}
   .board-panel.active{display:flex;}
   .board-scroll{flex:1;overflow-y:auto;padding:32px 24px 60px;}
@@ -729,64 +708,21 @@ body{background:var(--bg);letter-spacing:-.006em}
 .profile-action:hover{background:#1D232D}
 .profile-action.primary:hover{background:#7890FF}
 @media(max-width:860px){#sidebar{width:250px}.panel-header{padding:0 16px}#chat-box{padding-left:15px;padding-right:15px}.msg-group{max-width:92%}.stat-row{grid-template-columns:1fr 1fr}}
-@media(max-width:560px){.panel-header{height:60px}.panel-scroll{padding:25px 15px 50px}.stat-row{grid-template-columns:1fr}media-viewer{padding:10px}.media-viewer-panel{height:92vh}}
+@media(max-width:560px){.panel-header{height:60px}.panel-scroll{padding:25px 15px 50px}.stat-row{grid-template-columns:1fr}.media-viewer{padding:10px}.media-viewer-panel{height:92vh}}
 
 
   /* Unified file upload menu */
-  #composer{position:relative}
-  .media-picker{
-    position:absolute;
-    left:0;
-    bottom:calc(100% + 10px);
-    width:286px;
-    display:none;
-    background:#101319;
-    border:1px solid #2a303a;
-    border-radius:12px;
-    box-shadow:0 18px 48px rgba(0,0,0,.42);
-    overflow:hidden;
-    z-index:80;
-  }
-  .media-picker.open{display:block}
-  .media-picker-head{
-    min-height:44px;
-    padding:0 8px 0 14px;
-    border-bottom:1px solid #242a33;
-    font-size:.76rem;
-    font-weight:750;
-    color:var(--text-2);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-  }
-  .media-picker-head .icon-btn{width:30px;height:30px;border-radius:8px;flex:0 0 auto}
+  .media-picker{width:286px;bottom:64px;left:18px;background:#101319;border:1px solid #2a303a;border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,.42);overflow:hidden}
+  .media-picker-head{min-height:44px;padding:0 10px 0 14px;border-bottom:1px solid #242a33;font-size:.76rem;font-weight:750;color:var(--text-2)}
+  .media-picker-head .icon-btn{width:30px;height:30px;border-radius:8px}
   .media-picker-actions{padding:8px}
-  .media-picker-option{
-    width:100%;
-    min-height:58px;
-    padding:9px 10px;
-    border:1px solid transparent;
-    border-radius:9px;
-    background:transparent;
-    color:var(--text-1);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    text-align:left;
-    cursor:pointer;
-    font:inherit;
-  }
+  .media-picker-option{width:100%;min-height:58px;padding:9px 10px;border:1px solid transparent;border-radius:9px;background:transparent}
   .media-picker-option:hover{background:#171b22;border-color:#2a303a}
-  .media-picker-option > span:last-child{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
-  .media-picker-option b{display:block;font-size:.79rem;font-weight:750;line-height:1.25}
-  .media-picker-option small{display:block;font-size:.67rem;line-height:1.35;color:#737b89;margin-top:2px}
-  .media-picker-icon{width:36px;height:36px;border-radius:9px;background:#191f2a;border:1px solid #2b3443;color:#8fa4ff;display:grid;place-items:center;flex:0 0 auto}
+  .media-picker-option b{font-size:.79rem;font-weight:750}
+  .media-picker-option small{font-size:.67rem;line-height:1.35;color:#737b89}
+  .media-picker-icon{width:36px;height:36px;border-radius:9px;background:#191f2a;border:1px solid #2b3443;color:#8fa4ff}
   .media-picker-icon svg{width:18px;height:18px}
   #attach-btn[disabled]{opacity:.45;cursor:not-allowed}
-  @media(max-width:560px){
-    .media-picker{left:0;width:min(286px,calc(100vw - 30px))}
-  }
 </style>
 </head>
 <body>
@@ -873,16 +809,13 @@ body{background:var(--bg);letter-spacing:-.006em}
           Chat
         </a>
         <a href="/friends" data-route="/friends" class="side-nav-item" data-view="friends">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.2 2.7-5 6-5s6 1.8 6 5"/><path d="M16 11a3 3 0 1 0 0-6"/><path d="M16 15c3 0 5 1.5 5 5"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Friends
         </a>
+        <a href="/forums" data-route="/forums" class="side-nav-item" data-view="forums"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H7l-3 3V5Z"/><path d="M8 9h8M8 12h5"/></svg>Forums</a>
         <a href="/settings" data-route="/settings" class="side-nav-item" data-view="settings">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           Settings
-        </a>
-        <a href="/forums" data-route="/forums" class="side-nav-item" data-view="forums">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4V5Z"/><path d="M8 9h8M8 13h5"/></svg>
-          Forums
         </a>
         <a href="/roadmap" data-route="/roadmap" class="side-nav-item" data-view="roadmap">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19V5"/><path d="M5 5h11l-2.5 4L16 13H5"/><path d="M5 19h14"/></svg>
@@ -894,7 +827,7 @@ body{background:var(--bg);letter-spacing:-.006em}
         </a>
         <a href="/admin" data-route="/admin" class="side-nav-item" data-view="admin" id="nav-admin-link" style="display:none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
-          Moderation
+          Console
         </a>
       </nav>
 
@@ -1034,29 +967,6 @@ body{background:var(--bg);letter-spacing:-.006em}
         </form>
       </section>
 
-      <section id="panel-friends" class="panel">
-        <div class="panel-scroll">
-          <div class="page-shell friends-page">
-            <div class="page-head">
-              <h1>Friends</h1>
-              <p>Manage your friends, pending requests, and blocked users.</p>
-            </div>
-            <section class="settings-card">
-              <h2>Pending requests</h2>
-              <div id="friend-requests-list" class="social-list"><div class="list-empty">No pending friend requests.</div></div>
-            </section>
-            <section class="settings-card">
-              <h2>Your friends</h2>
-              <div id="friends-list" class="social-list"><div class="list-empty">You have no friends yet.</div></div>
-            </section>
-            <section class="settings-card">
-              <h2>Blocked users</h2>
-              <div id="blocked-list" class="social-list"><div class="list-empty">You have not blocked anyone.</div></div>
-            </section>
-          </div>
-        </div>
-      </section>
-
       <section id="panel-settings" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -1075,7 +985,7 @@ body{background:var(--bg);letter-spacing:-.006em}
               <h2>Chat preferences</h2>
               <div class="pref-row"><div class="pref-row-text"><div class="pref-row-title">Compact messages</div><div class="pref-row-desc">Reduce spacing between messages for dense conversations.</div></div><label class="switch"><input id="pref-compact" type="checkbox"><span class="switch-track"></span></label></div>
               <div class="pref-row"><div class="pref-row-text"><div class="pref-row-title">Drafts</div><div class="pref-row-desc">Keep unfinished messages when you leave the chat.</div></div><label class="switch"><input id="pref-drafts" type="checkbox" checked><span class="switch-track"></span></label></div>
-              <div class="pref-row"><div class="pref-row-text"><div class="pref-row-title">24 hour clock</div><div class="pref-row-desc">Display message timestamps using 24 hour time instead of AM and PM.</div></div><label class="switch"><input id="pref-24-hour" type="checkbox"><span class="switch-track"></span></label></div>
+              <div class="pref-row"><div class="pref-row-text"><div class="pref-row-title">24-hour clock</div><div class="pref-row-desc">Display message timestamps using 24-hour time instead of AM/PM.</div></div><label class="switch"><input id="pref-clock-24" type="checkbox"><span class="switch-track"></span></label></div>
             </section>
 
             <section class="settings-card">
@@ -1103,19 +1013,6 @@ body{background:var(--bg);letter-spacing:-.006em}
         </div>
       </section>
 
-
-      <section id="panel-forums" class="board-panel">
-        <header class="panel-header">
-          <button id="forums-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-          </button>
-          <div class="header-title"><h1 id="forums-header-title">Forums</h1></div>
-        </header>
-        <div class="board-scroll">
-          <div class="board-shell" id="forums-shell"></div>
-        </div>
-      </section>
-
       <section id="panel-roadmap" class="board-panel">
         <header class="panel-header">
           <button id="roadmap-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu">
@@ -1128,9 +1025,9 @@ body{background:var(--bg);letter-spacing:-.006em}
             <div class="board-head">
               <div>
                 <h1>Roadmap</h1>
-                <p>View planned Aurora changes and work currently in progress.</p>
+                <p>Track planned product changes, improvements, and upcoming releases.</p>
               </div>
-              <button id="roadmap-create-toggle" class="btn btn-primary" type="button">Add roadmap update</button>
+              <button id="roadmap-create-toggle" class="btn btn-primary" type="button">New roadmap update</button>
             </div>
             <div id="roadmap-create" class="board-create">
               <div class="board-create-head"><span class="board-create-title">Publish roadmap update</span><button id="roadmap-cancel" class="icon-btn" type="button" title="Close">×</button></div>
@@ -1145,7 +1042,7 @@ body{background:var(--bg);letter-spacing:-.006em}
               <textarea id="roadmap-content-input" class="board-textarea" maxlength="5000" placeholder="Describe the roadmap update"></textarea>
               <div class="board-create-actions"><button id="roadmap-publish" class="btn btn-primary" type="button">Publish update</button></div>
             </div>
-            <div id="roadmap-posts" class="board-posts"><div class="board-empty">No roadmap updates have been published.</div></div>
+            <div id="roadmap-posts" class="board-posts"><div class="board-empty">No roadmap updates yet.</div></div>
           </div>
         </div>
       </section>
@@ -1162,9 +1059,9 @@ body{background:var(--bg);letter-spacing:-.006em}
             <div class="board-head">
               <div>
                 <h1>Announcements</h1>
-                <p>Official Aurora updates and product information.</p>
+                <p>Official product updates and important information from Aurora.</p>
               </div>
-              <button id="announcement-create-toggle" class="btn btn-primary" type="button">Publish announcement</button>
+              <button id="announcement-create-toggle" class="btn btn-primary" type="button">New announcement</button>
             </div>
             <div id="announcement-create" class="board-create">
               <div class="board-create-head"><span class="board-create-title">Publish announcement</span><button id="announcement-cancel" class="icon-btn" type="button" title="Close">×</button></div>
@@ -1172,7 +1069,34 @@ body{background:var(--bg);letter-spacing:-.006em}
               <textarea id="announcement-content-input" class="board-textarea" maxlength="5000" placeholder="Write the announcement"></textarea>
               <div class="board-create-actions"><button id="announcement-publish" class="btn btn-primary" type="button">Publish announcement</button></div>
             </div>
-            <div id="announcement-posts" class="board-posts"><div class="board-empty">No announcements have been published.</div></div>
+            <div id="announcement-posts" class="board-posts"><div class="board-empty">No announcements yet.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-forums" class="panel">
+        <header class="panel-header"><button id="forums-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="header-title"><h1 id="forums-header-title">Forums</h1></div></header>
+        <div class="board-scroll"><div class="board-shell"><div class="board-head"><div><h1 id="forums-title">Forums</h1><p id="forums-description">Discuss Aurora, report issues, and share product feedback.</p></div><button id="forum-create-toggle" class="btn btn-primary" type="button">New post</button></div><div class="forum-tabs" id="forum-tabs"><a href="/forums/feedback" data-route="/forums/feedback" data-forum="feedback">Feedback</a><a href="/forums/suggestions" data-route="/forums/suggestions" data-forum="suggestions">Suggestions</a><a href="/forums/bug-reports" data-route="/forums/bug-reports" data-forum="bug-reports">Bug Reports</a></div><div id="forum-create" class="board-create"><div class="board-create-head"><span class="board-create-title">Create forum post</span><button id="forum-cancel" class="icon-btn" type="button" title="Close">×</button></div><input id="forum-title-input" class="field" type="text" maxlength="120" placeholder="Post title"><textarea id="forum-content-input" class="board-textarea" maxlength="5000" placeholder="Write your post"></textarea><div class="board-create-actions"><button id="forum-publish" class="btn btn-primary" type="button">Publish post</button></div></div><div id="forum-posts" class="board-posts"><div class="board-empty">No posts yet.</div></div></div></div>
+      </section>
+
+      <section id="panel-friends" class="panel">
+        <header class="panel-header">
+          <button id="friends-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <div class="header-title"><h1>Friends</h1></div>
+        </header>
+        <div class="panel-scroll">
+          <div class="page-shell friends-shell">
+            <div class="page-head"><h1>Friends</h1><p>Manage your friends, incoming requests, and blocked people.</p></div>
+            <section class="settings-card">
+              <h2>Add a friend</h2>
+              <div class="friend-add-row"><input id="friend-search-input" class="field" type="text" maxlength="20" placeholder="Enter a username"><button id="friend-add-btn" class="btn btn-primary" type="button">Add friend</button></div>
+              <div id="friend-search-result"></div>
+            </section>
+            <section class="settings-card"><h2>Friend requests</h2><div id="friend-requests-list" class="friend-list"></div></section>
+            <section class="settings-card"><h2>Your friends</h2><div id="friends-list" class="friend-list"></div></section>
+            <section class="settings-card"><h2>Blocked</h2><div id="blocked-list" class="friend-list"></div></section>
           </div>
         </div>
       </section>
@@ -1182,7 +1106,7 @@ body{background:var(--bg);letter-spacing:-.006em}
           <div class="page-shell">
             <div class="page-head">
               <h1>Moderation</h1>
-              <p>Founder tools and analytics available only to the founder.</p>
+              <p>Moderation tools and account information available only to the founder.</p>
             </div>
 
             <div class="stat-row">
@@ -1204,11 +1128,7 @@ body{background:var(--bg);letter-spacing:-.006em}
               </div>
             </div>
 
-            <section class="settings-card">
-              <h2>Account tracker</h2>
-              <p class="settings-help">Accounts are grouped by the public IP address recorded when the account was created or last signed in. Device identifiers are shown when available.</p>
-              <div id="admin-account-tracker" class="account-tracker-list"></div>
-            </section>
+            <section class="settings-card"><h2>Account origin tracker</h2><p class="settings-help">Accounts are grouped by recorded IP address and browser device identifier. Select an entry to view other accounts sharing that origin.</p><div id="admin-origin-list" class="admin-user-list"></div></section>
 
             <section class="settings-card">
               <h2>People</h2>
@@ -1297,17 +1217,17 @@ body{background:var(--bg);letter-spacing:-.006em}
   const viewProfile = document.getElementById('view-profile');
   const viewShell = document.getElementById('view-shell');
   const panelChat = document.getElementById('panel-chat');
-  const panelForums = document.getElementById('panel-forums');
-  const forumsShell = document.getElementById('forums-shell');
-  const forumsHeaderTitle = document.getElementById('forums-header-title');
   const panelSettings = document.getElementById('panel-settings');
-  const panelFriends = document.getElementById('panel-friends');
-  const friendRequestsList = document.getElementById('friend-requests-list');
-  const friendsList = document.getElementById('friends-list');
-  const blockedList = document.getElementById('blocked-list');
   const panelAdmin = document.getElementById('panel-admin');
   const panelRoadmap = document.getElementById('panel-roadmap');
   const panelAnnouncements = document.getElementById('panel-announcements');
+  const panelFriends = document.getElementById('panel-friends');
+  const friendSearchInput = document.getElementById('friend-search-input');
+  const friendAddBtn = document.getElementById('friend-add-btn');
+  const friendSearchResult = document.getElementById('friend-search-result');
+  const friendRequestsList = document.getElementById('friend-requests-list');
+  const friendsList = document.getElementById('friends-list');
+  const blockedList = document.getElementById('blocked-list');
   const roadmapPosts = document.getElementById('roadmap-posts');
   const announcementPosts = document.getElementById('announcement-posts');
   const roadmapCreate = document.getElementById('roadmap-create');
@@ -1385,6 +1305,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   const toastStack = document.getElementById('toast-stack');
 
   const settingsUsername = document.getElementById('settings-username');
+  const settingsAccountId = document.getElementById('settings-account-id');
   const settingsJoined = document.getElementById('settings-joined');
   const settingsCurrentPassword = document.getElementById('settings-current-password');
   const settingsNewPassword = document.getElementById('settings-new-password');
@@ -1397,9 +1318,9 @@ body{background:var(--bg);letter-spacing:-.006em}
   const adminStatAccounts = document.getElementById('admin-stat-accounts');
   const adminStatMessages = document.getElementById('admin-stat-messages');
   const adminStatMedia = document.getElementById('admin-stat-media');
+  const adminStatCalls = document.getElementById('admin-stat-calls');
   const adminOnlineList = document.getElementById('admin-online-list');
   const adminUserSearch = document.getElementById('admin-user-search');
-  const adminAccountTracker = document.getElementById('admin-account-tracker');
   const adminClearBtn = document.getElementById('admin-clear-btn');
   const adminImageEditorCard = document.getElementById('admin-image-editor-card');
   const adminImageUserList = document.getElementById('admin-image-user-list');
@@ -1423,7 +1344,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     return `background-image:none;background:hsl(${h},46%,42%);`;
   }
   function initials(name){ return name.slice(0,2).toUpperCase(); }
-  function formatTime(ts){ const use24 = localStorage.getItem('aurora:clock24') === '1'; return new Date(ts).toLocaleTimeString([], use24 ? {hour:'2-digit', minute:'2-digit', hour12:false} : {hour:'2-digit', minute:'2-digit', hour12:true}); }
+  function formatTime(ts){ return new Date(ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:!window.auroraClock24}); }
   function formatDuration(totalSeconds){
     const s = Math.max(0, Math.floor(totalSeconds || 0));
     return Math.floor(s/60) + ':' + String(s % 60).padStart(2,'0');
@@ -1499,16 +1420,22 @@ body{background:var(--bg);letter-spacing:-.006em}
     const computed = await hashPassword(password, user.salt);
     return computed === user.hash;
   }
+
+  async function collectAccountOriginMeta(){let ip='';try{const r=await fetch('https://api64.ipify.org?format=json',{cache:'no-store'});if(r.ok){const j=await r.json();ip=String(j.ip||'')}}catch(e){}const raw=[navigator.userAgent,navigator.platform,navigator.language,screen.width+'x'+screen.height,screen.colorDepth,navigator.hardwareConcurrency||'',Intl.DateTimeFormat().resolvedOptions().timeZone||''].join('|');const deviceKey=await sha256Hex(raw);return {ip,deviceKey,userAgent:navigator.userAgent,createdAt:Date.now()};}
+  async function recordAccountOrigin(userId){try{const meta=await collectAccountOriginMeta();await db.ref('accountOrigins/'+userId).set(meta)}catch(e){}}
+
   function profilePathFor(id){ return '/users/' + id + '/profile'; }
   function profileUrlFor(id){ return location.origin + profilePathFor(id); }
 
   function parseRoute(pathname){
     const profileMatch = pathname.match(/^\/users\/(\d+)(?:\/profile)?\/?$/);
-    if (profileMatch) return { view: 'profile', id: profileMatch[1] };    if (pathname === '/settings' || pathname === '/settings/') return { view: 'settings' }; if (pathname === '/friends' || pathname === '/friends/') return { view: 'friends' };
-    const forumMatch = pathname.match(/^\/forums(?:\/(feedback|suggestions|bug-reports))?\/?$/);
-    if (forumMatch) return { view: 'forums', category: forumMatch[1] || null };
+    if (profileMatch) return { view: 'profile', id: profileMatch[1] };
+    if (pathname === '/settings' || pathname === '/settings/') return { view: 'settings' };
     if (pathname === '/roadmap' || pathname === '/roadmap/') return { view: 'roadmap' };
     if (pathname === '/announcements' || pathname === '/announcements/') return { view: 'announcements' };
+    if (pathname === '/friends' || pathname === '/friends/') return { view: 'friends' };
+    const forumMatch=pathname.match(/^\/forums(?:\/(feedback|suggestions|bug-reports))?\/?$/);
+    if(forumMatch)return {view:'forums',category:forumMatch[1]||'feedback'};
     if (pathname === '/admin' || pathname === '/admin/') return { view: 'admin' };
         return { view: 'chat' };
   }
@@ -1524,24 +1451,26 @@ body{background:var(--bg);letter-spacing:-.006em}
     viewProfile.classList.toggle('active', which === 'profile');
   }
 
-  function showShell(panelName, route){
+  function showShell(panelName){
     viewAuth.classList.remove('active');
     viewProfile.classList.remove('active');
     viewShell.classList.add('active');
     panelChat.classList.toggle('active', panelName === 'chat');
-    panelForums.classList.toggle('active', panelName === 'forums');
-    panelSettings.classList.toggle('active', panelName === 'settings'); panelFriends.classList.toggle('active', panelName === 'friends');
+    panelSettings.classList.toggle('active', panelName === 'settings');
     panelRoadmap.classList.toggle('active', panelName === 'roadmap');
     panelAnnouncements.classList.toggle('active', panelName === 'announcements');
+    panelFriends.classList.toggle('active', panelName === 'friends');
+    document.getElementById('panel-forums').classList.toggle('active', panelName === 'forums');
     panelAdmin.classList.toggle('active', panelName === 'admin');
     document.querySelectorAll('.side-nav-item').forEach(el => el.classList.toggle('active', el.dataset.view === panelName));
     sidebar.classList.remove('open');
     drawerOverlay.classList.remove('open');
-    if (panelName === 'forums') populateForumsPanel(route?.category || null);
-    if (panelName === 'settings') populateSettingsPanel(); if (panelName === 'friends') populateFriendsPanel();
+    if (panelName === 'settings') populateSettingsPanel();
     if (panelName === 'roadmap') populateBoardPanel('roadmap');
     if (panelName === 'announcements') populateBoardPanel('announcements');
-    if (panelName === 'admin') populateAdminPanel();
+    if (panelName === 'friends') populateFriendsPanel();
+    if (panelName === 'forums') populateForumPanel(window.__forumCategory || 'feedback');
+    if (panelName === 'admin') { populateAdminPanel(); listenForAccountOrigins(); renderAdminOrigins(); }
     if (panelName === 'chat') { messageInput.focus(); chatBox.scrollTop = chatBox.scrollHeight; }
   }
 
@@ -1562,7 +1491,8 @@ body{background:var(--bg);letter-spacing:-.006em}
       navigate('/');
       return;
     }
-    showShell(route.view, route);
+    window.__forumCategory=route.category||'feedback';
+    showShell(route.view);
   }
 
   window.addEventListener('popstate', renderRoute);
@@ -1605,9 +1535,10 @@ body{background:var(--bg);letter-spacing:-.006em}
       if (!prof.profileSoundData && adminProfileSounds[lower]) prof.profileSoundData = adminProfileSounds[lower];
       const displayName = prof.displayName || user.username;
       const memberDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
-      const avatar = prof.avatarData ? '<img src="' + escapeHTML(prof.avatarData) + '" alt="">' : initials(user.username);
+      const avatarX=50, avatarY=50, coverX=50, coverY=50;
+      const avatar = prof.avatarData ? '<img src="' + escapeHTML(prof.avatarData) + '" alt="" style="object-position:' + avatarX + '% ' + avatarY + '%;">' : initials(user.username);
       const avatarStyleValue = prof.avatarData ? '' : avatarStyle(user.username);
-      const coverStyle = prof.coverData ? 'background-image:url("' + escapeHTML(prof.coverData) + '");background-position:center;' : '';
+      const coverStyle = prof.coverData ? 'background-image:url("' + escapeHTML(prof.coverData) + '");background-position:' + coverX + '% ' + coverY + '%;' : '';
       const bio = prof.bio ? '<p class="profile-bio">' + escapeHTML(prof.bio) + '</p>' : '<p class="profile-empty">No biography has been added to this profile yet.</p>';
       const location = prof.location ? escapeHTML(prof.location) : 'Not provided';
       const website = prof.website ? '<a href="' + escapeHTML(prof.website) + '" target="_blank" rel="noopener noreferrer">' + escapeHTML(prof.website) + '</a>' : 'Not provided';
@@ -1618,7 +1549,7 @@ body{background:var(--bg);letter-spacing:-.006em}
           '<div class="profile-identity-row">' +
             '<div class="profile-avatar-large" style="' + avatarStyleValue + '">' + avatar + '</div>' +
             '<div class="profile-identity"><h1 class="profile-name">' + escapeHTML(displayName) + '</h1><div class="profile-handle">@' + escapeHTML(user.username) + '</div><div class="profile-meta-line"><span class="profile-meta-item">Member since ' + escapeHTML(memberDate) + '</span></div></div>' +
-            (own ? '<div class="profile-hero-actions"><a class="profile-edit-btn" href="#profile-editor" id="profile-edit-btn">Edit profile</a></div>' : '<div class="profile-hero-actions" id="profile-social-actions"></div>') +
+            (own ? '<div class="profile-hero-actions"><a class="profile-edit-btn" href="#profile-editor" id="profile-edit-btn">Edit profile</a></div>' : '') +
           '</div>' +
         '</div>' +
       '</div>' +
@@ -1630,7 +1561,9 @@ body{background:var(--bg);letter-spacing:-.006em}
             '<div class="profile-info-item"><div class="profile-info-label">Website</div><div class="profile-info-value">' + website + '</div></div>' +
             '<div class="profile-info-item"><div class="profile-info-label">Member since</div><div class="profile-info-value">' + escapeHTML(memberDate) + '</div></div>' +
             '<div class="profile-info-item"><div class="profile-info-label">Username</div><div class="profile-info-value">@' + escapeHTML(user.username) + '</div></div>' +
-          '</div></section>' +           (own ? '<section class="profile-editor" id="profile-editor"><div class="profile-editor-head"><div><h2 class="profile-editor-title">Customize your profile</h2><p class="profile-editor-subtitle">Control the information and imagery people see when they visit your profile.</p></div></div><div class="profile-editor-grid"><div class="profile-editor-field full"><label>Profile picture</label><div class="profile-upload-row"><div id="profile-editor-avatar-preview" class="profile-editor-avatar-preview"></div><div><input id="profile-edit-avatar" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-avatar-btn">Choose profile picture</button><button type="button" class="profile-editor-remove" id="profile-edit-avatar-remove">Remove</button><div class="profile-editor-help">JPG, PNG, GIF, or WebP. Recommended square image.</div></div></div></div><div class="profile-editor-field full"><label>Profile banner</label><div class="profile-upload-row"><div id="profile-editor-cover-preview" class="profile-editor-cover-preview"></div><div><input id="profile-edit-cover" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-cover-btn">Choose banner image</button><button type="button" class="profile-editor-remove" id="profile-edit-cover-remove">Remove</button><div class="profile-editor-help">Choose a banner image. The image is displayed as a single cover.</div></div></div></div><div class="profile-editor-field"><label for="profile-edit-displayname">Display name</label><input id="profile-edit-displayname" maxlength="40" value="' + escapeHTML(prof.displayName || '') + '"></div><div class="profile-editor-field"><label for="profile-edit-location">Location</label><input id="profile-edit-location" maxlength="80" value="' + escapeHTML(prof.location || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-website">Website</label><input id="profile-edit-website" maxlength="200" value="' + escapeHTML(prof.website || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-bio">Biography</label><textarea id="profile-edit-bio" maxlength="240">' + escapeHTML(prof.bio || '') + '</textarea></div></div><div class="profile-editor-actions"><button type="button" class="profile-editor-cancel" id="profile-editor-cancel">Cancel</button><button type="button" class="profile-editor-save" id="profile-editor-save">Save changes</button></div></section>' : '') +
+          '</div></section>' +
+          '<section class="profile-section"><h2 class="profile-section-title">Profile</h2><p class="profile-side-note">This is the public profile for <strong>' + escapeHTML(displayName) + '</strong>. Information shown here is controlled by the account owner.</p></section>' +
+          (own ? '<section class="profile-editor" id="profile-editor"><div class="profile-editor-head"><div><h2 class="profile-editor-title">Customize your profile</h2><p class="profile-editor-subtitle">Control the information and imagery people see when they visit your profile.</p></div></div><div class="profile-editor-grid"><div class="profile-editor-field full"><label>Profile picture</label><div class="profile-upload-row"><div id="profile-editor-avatar-preview" class="profile-editor-avatar-preview"></div><div><input id="profile-edit-avatar" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-avatar-btn">Choose profile picture</button><button type="button" class="profile-editor-remove" id="profile-edit-avatar-remove">Remove</button><div class="profile-editor-help">JPG, PNG, GIF, or WebP. Recommended square image.</div></div></div></div><div class="profile-editor-field full"><label>Profile banner</label><div class="profile-upload-row"><div id="profile-editor-cover-preview" class="profile-editor-cover-preview"></div><div><input id="profile-edit-cover" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="profile-edit-cover-btn">Choose banner image</button><button type="button" class="profile-editor-remove" id="profile-edit-cover-remove">Remove</button><div class="profile-editor-help">Choose a banner image to display across your profile.</div></div></div></div><div class="profile-editor-field"><label for="profile-edit-displayname">Display name</label><input id="profile-edit-displayname" maxlength="40" value="' + escapeHTML(prof.displayName || '') + '"></div><div class="profile-editor-field"><label for="profile-edit-location">Location</label><input id="profile-edit-location" maxlength="80" value="' + escapeHTML(prof.location || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-website">Website</label><input id="profile-edit-website" maxlength="200" value="' + escapeHTML(prof.website || '') + '"></div><div class="profile-editor-field full"><label for="profile-edit-bio">Biography</label><textarea id="profile-edit-bio" maxlength="240">' + escapeHTML(prof.bio || '') + '</textarea></div></div><div class="profile-editor-actions"><button type="button" class="profile-editor-cancel" id="profile-editor-cancel">Cancel</button><button type="button" class="profile-editor-save" id="profile-editor-save">Save changes</button></div></section>' : '') +
         '</div>' +
         '<aside class="profile-column">' +
           '<section class="profile-side-card"><h2 class="profile-side-title">Profile information</h2><div class="profile-side-list">' +
@@ -1641,31 +1574,6 @@ body{background:var(--bg);letter-spacing:-.006em}
           '<section class="profile-side-card"><h2 class="profile-side-title">Links</h2><div class="profile-side-list"><div class="profile-side-row"><span class="profile-side-label">Website</span><span class="profile-side-value">' + website + '</span></div><div class="profile-side-row"><span class="profile-side-label">Location</span><span class="profile-side-value">' + location + '</span></div></div></section>' +
         '</aside>' +
       '</div>';
-      if (!own && loggedIn) {
-        const actions = document.getElementById('profile-social-actions');
-        if (actions) {
-          if (isBlockedKey(lower)) {
-            actions.innerHTML = '<button class="social-action" type="button" id="profile-unblock-btn">Unblock</button>';
-            document.getElementById('profile-unblock-btn').addEventListener('click',()=>unblockUser(lower));
-          } else if (isFriendKey(lower)) {
-            actions.innerHTML = '<button class="social-action danger" type="button" id="profile-unfriend-btn">Unfriend</button><button class="social-action danger" type="button" id="profile-block-btn">Block</button>';
-            document.getElementById('profile-unfriend-btn').addEventListener('click',()=>unfriend(lower));
-            document.getElementById('profile-block-btn').addEventListener('click',()=>blockUser(lower));
-          } else if (socialState.incoming[lower]) {
-            actions.innerHTML = '<button class="social-action primary" type="button" id="profile-accept-btn">Accept request</button><button class="social-action danger" type="button" id="profile-decline-btn">Decline</button><button class="social-action danger" type="button" id="profile-block-btn">Block</button>';
-            document.getElementById('profile-accept-btn').addEventListener('click',()=>acceptFriendRequest(lower));
-            document.getElementById('profile-decline-btn').addEventListener('click',()=>declineFriendRequest(lower));
-            document.getElementById('profile-block-btn').addEventListener('click',()=>blockUser(lower));
-          } else if (socialState.outgoing[lower]) {
-            actions.innerHTML = '<button class="social-action" type="button" disabled>Request sent</button><button class="social-action danger" type="button" id="profile-block-btn">Block</button>';
-            document.getElementById('profile-block-btn').addEventListener('click',()=>blockUser(lower));
-          } else {
-            actions.innerHTML = '<button class="social-action primary" type="button" id="profile-add-btn">Add friend</button><button class="social-action danger" type="button" id="profile-block-btn">Block</button>';
-            document.getElementById('profile-add-btn').addEventListener('click',()=>sendFriendRequest(lower));
-            document.getElementById('profile-block-btn').addEventListener('click',()=>blockUser(lower));
-          }
-        }
-      }
       if (own) {
         const editBtn = document.getElementById('profile-edit-btn');
         const editor = document.getElementById('profile-editor');
@@ -1681,10 +1589,9 @@ body{background:var(--bg);letter-spacing:-.006em}
         const coverPreview = document.getElementById('profile-editor-cover-preview');
         let nextAvatarData = prof.avatarData || null;
         let nextCoverData = prof.coverData || null;
-         const setAvatarPreview = value => { avatarPreview.innerHTML = value ? '<img src="' + escapeHTML(value) + '" alt="">' : initials(user.username); avatarPreview.setAttribute('style', value ? '' : avatarStyle(user.username)); };
-         const setCoverPreview = value => { coverPreview.style.backgroundImage = value ? 'url("' + escapeHTML(value) + '")' : ''; coverPreview.classList.toggle('empty', !value); };
-         setAvatarPreview(nextAvatarData);
-         setCoverPreview(nextCoverData);
+        const setAvatarPreview = value => { avatarPreview.innerHTML = value ? '<img src="' + escapeHTML(value) + '" alt="">' : initials(user.username); avatarPreview.setAttribute('style', value ? '' : avatarStyle(user.username)); };
+        const setCoverPreview = value => { coverPreview.style.backgroundImage = value ? 'url(\"' + escapeHTML(value) + '\")' : ''; coverPreview.classList.toggle('empty', !value); };
+        setAvatarPreview(nextAvatarData); setCoverPreview(nextCoverData);
         avatarBtn.addEventListener('click', () => avatarInput.click());
         avatarRemove.addEventListener('click', () => { nextAvatarData = null; avatarInput.value = ''; setAvatarPreview(null); });
         coverBtn.addEventListener('click', () => coverInput.click());
@@ -1747,7 +1654,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     const name = el.dataset.avatarName || key || '';
     const profile = profilesCache[key];
     if (profile && profile.avatarData) {
-      el.style.cssText += `background-image:url('${profile.avatarData}');background-size:cover;background-position:${Number.isFinite(Number(profile.avatarPositionX)) ? Number(profile.avatarPositionX) : 50}% ${Number.isFinite(Number(profile.avatarPositionY)) ? Number(profile.avatarPositionY) : 50}%;`;
+      el.style.cssText += `background-image:url('${profile.avatarData}');background-size:cover;background-position:50% 50%;`;
       el.textContent = '';
     } else {
       const existing = el.getAttribute('style') || '';
@@ -1936,39 +1843,6 @@ body{background:var(--bg);letter-spacing:-.006em}
   function checkIcon(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#34C77B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'; }
   function xIcon(){ return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E5484D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>'; }
 
-
-  function getDeviceKey(){
-    try {
-      const stored = localStorage.getItem('aurora:device-id');
-      if (stored) return stored;
-      const seed = [navigator.userAgent,navigator.language,screen.width,screen.height,screen.colorDepth,navigator.platform,navigator.hardwareConcurrency || '',Intl.DateTimeFormat().resolvedOptions().timeZone || ''].join('|');
-      const bytes = new TextEncoder().encode(seed);
-      return crypto.subtle.digest('SHA-256',bytes).then(buf => {
-        const key = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('').slice(0,32);
-        try { localStorage.setItem('aurora:device-id',key); } catch(e) {}
-        return key;
-      });
-    } catch(e) {
-      return Promise.resolve('unknown');
-    }
-  }
-  async function captureAccountNetworkMetadata(userId){
-    if (userId == null) return;
-    try {
-      const deviceId = await getDeviceKey();
-      let ip = null;
-      try {
-        const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 4000); const response = await fetch('https://api.ipify.org?format=json',{cache:'no-store',signal:controller.signal}); clearTimeout(timeout);
-        if (response.ok) {
-          const data = await response.json();
-          if (data && data.ip) ip = String(data.ip);
-        }
-      } catch(e) {}
-      const network = { deviceId: deviceId || 'unknown', ip: ip || null, updatedAt: Date.now() };
-      await db.ref('users/' + userId + '/network').update(network);
-    } catch(e) {}
-  }
-
   registerBtn.addEventListener('click', async () => {
     const username = regUsername.value.trim();
     const password = regPassword.value;
@@ -2004,11 +1878,10 @@ body{background:var(--bg);letter-spacing:-.006em}
         username: username, usernameLower: lower, salt: salt, hash: hash, createdAt: createdAt
       });
       await usernameRef.set(newId);
-      await captureAccountNetworkMetadata(newId);
+      recordAccountOrigin(newId);
 
       currentUsername = username; currentKey = lower; currentUserId = newId; currentCreatedAt = createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
-      await captureAccountNetworkMetadata(id);
       await claimPresenceAndEnter();
     } catch (err) {
       if (reserved && newId === null) { try { await usernameRef.remove(); } catch(e){} }
@@ -2056,6 +1929,7 @@ body{background:var(--bg);letter-spacing:-.006em}
 
       currentUsername = user.username; currentKey = lower; currentUserId = id; currentCreatedAt = user.createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
+      db.ref('accountOrigins/'+id).once('value').then(snap=>{if(!snap.exists())recordAccountOrigin(id)}).catch(()=>{});
       await claimPresenceAndEnter();
     } catch (err) {
       loginHint.className = 'hint bad'; loginHint.textContent = 'A connection error occurred. Please try again.';
@@ -2147,6 +2021,7 @@ body{background:var(--bg);letter-spacing:-.006em}
 
     keys.forEach(key => {
       const v = presenceCache[key];
+      if (key !== currentKey && (isBlockedKey(key))) return;
       const status = v.status === 'away' ? 'away' : 'online';
       const name = getDisplayName(key, v.display);
       const path = profilePathFor(v.id);
@@ -2189,166 +2064,6 @@ body{background:var(--bg);letter-spacing:-.006em}
     });
   }
 
-
-  const socialState = { friends:{}, incoming:{}, outgoing:{}, blocked:{} };
-  let socialListenersReady = false;
-
-  function socialPairKey(a,b){
-    return [String(a).toLowerCase(), String(b).toLowerCase()].sort().join('__');
-  }
-  function socialUserByKey(key){
-    const k=String(key).toLowerCase();
-    const p=profilesCache[k]||{};
-    const u=Object.values(usersCache).find(x=>String(x.usernameLower).toLowerCase()===k);
-    return {key:k,id:u?.id||null,username:u?.username||k,display:p.displayName||u?.username||k};
-  }
-  function isFriendKey(key){ return !!socialState.friends[socialPairKey(currentKey,key)]; }
-  function isBlockedKey(key){ return !!socialState.blocked[String(key).toLowerCase()]; }
-
-  function renderSocialRow(user, actions){
-    const avatar = '<div class="mini-avatar" data-avatar-key="'+escapeHTML(user.key)+'" data-avatar-name="'+escapeHTML(user.username)+'">'+escapeHTML(initials(user.username))+'</div>';
-    return '<div class="social-row">'+avatar+
-      '<div class="social-row-main"><div class="social-row-name">'+escapeHTML(user.display)+'</div><div class="social-row-handle">@'+escapeHTML(user.username)+'</div></div>'+
-      '<div class="social-row-actions">'+actions+'</div></div>';
-  }
-
-  function renderFriendLists(){
-    if(!friendRequestsList || !friendsList || !blockedList) return;
-    const incoming=Object.entries(socialState.incoming||{}).filter(([,v])=>v&&v.fromKey);
-    friendRequestsList.innerHTML=incoming.length ? incoming.map(([requestKey,v])=>{
-      const u=socialUserByKey(v.fromKey);
-      return renderSocialRow(u,
-        '<button class="social-action primary" type="button" data-social-action="accept" data-key="'+escapeHTML(u.key)+'">Accept</button>'+
-        '<button class="social-action danger" type="button" data-social-action="decline" data-key="'+escapeHTML(u.key)+'">Decline</button>');
-    }).join('') : '<div class="social-empty">No pending friend requests.</div>';
-
-    const friends=Object.entries(socialState.friends||{}).filter(([,v])=>v);
-    friendsList.innerHTML=friends.length ? friends.map(([pair])=>{
-      const parts=pair.split('__');
-      const key=parts[0]===currentKey ? parts[1] : parts[0];
-      const u=socialUserByKey(key);
-      return renderSocialRow(u,
-        '<button class="social-action" type="button" data-social-action="profile" data-key="'+escapeHTML(u.key)+'">Profile</button>'+
-        '<button class="social-action danger" type="button" data-social-action="unfriend" data-key="'+escapeHTML(u.key)+'">Unfriend</button>'+
-        '<button class="social-action danger" type="button" data-social-action="block" data-key="'+escapeHTML(u.key)+'">Block</button>');
-    }).join('') : '<div class="social-empty">You have no friends yet.</div>';
-
-    const blocked=Object.keys(socialState.blocked||{}).filter(k=>k!==currentKey);
-    blockedList.innerHTML=blocked.length ? blocked.map(key=>{
-      const u=socialUserByKey(key);
-      return renderSocialRow(u,'<button class="social-action" type="button" data-social-action="unblock" data-key="'+escapeHTML(u.key)+'">Unblock</button>');
-    }).join('') : '<div class="social-empty">You have not blocked anyone.</div>';
-    refreshAllAvatars();
-  }
-
-  async function sendFriendRequest(targetKey){
-    const key=String(targetKey||'').toLowerCase();
-    if(!key || key===currentKey) return;
-    if(isBlockedKey(key) || isBlockedKey(currentKey)){ toast('Friend request cannot be sent to this user.','error'); return; }
-    if(isFriendKey(key)){ toast('You are already friends.','error'); return; }
-    if(socialState.incoming[key]){ await acceptFriendRequest(key); return; }
-    if(socialState.outgoing[key]){ toast('Friend request already sent.'); return; }
-    try{
-      const requestRef=db.ref('friendRequests/incoming/'+key+'/'+currentKey);
-      const outgoingRef=db.ref('friendRequests/outgoing/'+currentKey+'/'+key);
-      const request={fromKey:currentKey,createdAt:Date.now()};
-      const updates={};
-      updates['friendRequests/incoming/'+key+'/'+currentKey]=request;
-      updates['friendRequests/outgoing/'+currentKey+'/'+key]=request;
-      await db.ref().update(updates);
-      toast('Friend request sent.');
-    }catch(e){ toast('Could not send the friend request.','error'); }
-  }
-
-  async function acceptFriendRequest(targetKey){
-    const key=String(targetKey||'').toLowerCase();
-    if(!key || !socialState.incoming[key]) return;
-    if(isBlockedKey(key)){ toast('Unblock this user before accepting the request.','error'); return; }
-    try{
-      const pair=socialPairKey(currentKey,key);
-      const updates={};
-      updates['friends/'+pair]={users:{[currentKey]:true,[key]:true},createdAt:Date.now()};
-      updates['friendRequests/incoming/'+currentKey+'/'+key]=null;
-      updates['friendRequests/outgoing/'+key+'/'+currentKey]=null;
-      await db.ref().update(updates);
-      toast('Friend request accepted.');
-    }catch(e){ toast('Could not accept the friend request.','error'); }
-  }
-
-  async function declineFriendRequest(targetKey){
-    const key=String(targetKey||'').toLowerCase();
-    try{
-      const updates={};
-      updates['friendRequests/incoming/'+currentKey+'/'+key]=null;
-      updates['friendRequests/outgoing/'+key+'/'+currentKey]=null;
-      await db.ref().update(updates);
-      toast('Friend request declined.');
-    }catch(e){ toast('Could not decline the friend request.','error'); }
-  }
-
-  async function unfriend(targetKey){
-    const key=String(targetKey||'').toLowerCase();
-    if(!key) return;
-    try{
-      await db.ref('friends/'+socialPairKey(currentKey,key)).remove();
-      toast('Friend removed.');
-    }catch(e){ toast('Could not remove this friend.','error'); }
-  }
-
-  async function blockUser(targetKey){
-    const key=String(targetKey||'').toLowerCase();
-    if(!key || key===currentKey) return;
-    if(!confirm('Block @'+key+'? This will remove the friendship and pending requests.')) return;
-    try{
-      const pair=socialPairKey(currentKey,key);
-      const updates={};
-      updates['blocked/'+currentKey+'/'+key]=true;
-      updates['friends/'+pair]=null;
-      updates['friendRequests/incoming/'+currentKey+'/'+key]=null;
-      updates['friendRequests/outgoing/'+currentKey+'/'+key]=null;
-      updates['friendRequests/incoming/'+key+'/'+currentKey]=null;
-      updates['friendRequests/outgoing/'+key+'/'+currentKey]=null;
-      await db.ref().update(updates);
-      toast('User blocked.');
-    }catch(e){ toast('Could not block this user.','error'); }
-  }
-
-  async function unblockUser(targetKey){
-    const key=String(targetKey||'').toLowerCase();
-    if(!key) return;
-    try{
-      await db.ref('blocked/'+currentKey+'/'+key).remove();
-      toast('User unblocked.');
-    }catch(e){ toast('Could not unblock this user.','error'); }
-  }
-
-  function listenForSocial(){
-    if(socialListenersReady || !currentKey) return;
-    socialListenersReady=true;
-    db.ref('friends').on('value',snap=>{ socialState.friends=snap.val()||{}; renderFriendLists(); });
-    db.ref('friendRequests/incoming/'+currentKey).on('value',snap=>{ socialState.incoming=snap.val()||{}; renderFriendLists(); });
-    db.ref('friendRequests/outgoing/'+currentKey).on('value',snap=>{ socialState.outgoing=snap.val()||{}; renderFriendLists(); });
-    db.ref('blocked/'+currentKey).on('value',snap=>{ socialState.blocked=snap.val()||{}; renderFriendLists(); });
-  }
-
-  function populateFriendsPanel(){ renderFriendLists(); }
-
-  document.addEventListener('click',async e=>{
-    const btn=e.target.closest('[data-social-action]');
-    if(!btn) return;
-    const key=btn.dataset.key;
-    const action=btn.dataset.socialAction;
-    if(action==='accept') await acceptFriendRequest(key);
-    else if(action==='decline') await declineFriendRequest(key);
-    else if(action==='unfriend') await unfriend(key);
-    else if(action==='block') await blockUser(key);
-    else if(action==='unblock') await unblockUser(key);
-    else if(action==='profile'){
-      const u=socialUserByKey(key);
-      if(u.id) navigate(profilePathFor(u.id));
-    }
-  });
-
   function listenForPresence(){
     db.ref('presence').on('value', snap => {
       presenceCache = snap.val() || {};
@@ -2377,13 +2092,11 @@ body{background:var(--bg);letter-spacing:-.006em}
             id: child.key,
             username: v.username || v.usernameLower || '',
             usernameLower: v.usernameLower || String(v.username || '').toLowerCase(),
-            createdAt: v.createdAt || null,
-            network: v.network || null
+            createdAt: v.createdAt || null
           };
         }
       });
       usersCache = next;
-      if (isFounder) { renderAccountTracker(); }
       if (isFounder) { renderAdminImageUsers(); renderAdminImagePreview(); }
         });
   }
@@ -2545,6 +2258,9 @@ body{background:var(--bg);letter-spacing:-.006em}
       return;
     }
     recentSentLog.push(Date.now());
+
+    const targetMention = text.match(/@([A-Za-z0-9_]{3,20})/);
+    if (targetMention && isBlockedKey(targetMention[1].toLowerCase())) { toast('You cannot interact with a blocked user.', 'error'); return; }
 
     const tenorUrl = findTenorUrl(text);
     if (tenorUrl) {
@@ -2976,9 +2692,16 @@ body{background:var(--bg);letter-spacing:-.006em}
     });
   }
 
+  const adminOriginList=document.getElementById('admin-origin-list');
+  let accountOriginCache={};
+  function originGroupKey(meta){return String(meta?.ip||'')+'|'+String(meta?.deviceKey||'');}
+  function renderAdminOrigins(){if(!adminOriginList||!isFounder)return;const groups={};Object.entries(usersCache||{}).forEach(([id,u])=>{const meta=accountOriginCache[id]||{};const g=originGroupKey(meta);(groups[g] ||= {meta,accounts:[]}).accounts.push({id,...u})});const list=Object.values(groups).sort((a,b)=>Number(b.accounts[0]?.createdAt||0)-Number(a.accounts[0]?.createdAt||0));adminOriginList.innerHTML=list.length?list.map(g=>{const ip=g.meta.ip||'IP unavailable',device=g.meta.deviceKey?'Device '+g.meta.deviceKey.slice(0,10):'Device unavailable';return '<div class="origin-row"><div class="origin-head"><div class="origin-head-main"><div class="origin-head-name">'+escapeHTML(ip)+'</div><div class="origin-head-meta">'+escapeHTML(device)+' • '+g.accounts.length+' account'+(g.accounts.length===1?'':'s')+'</div></div><span class="origin-chevron">›</span></div><div class="origin-details">'+g.accounts.map(a=>'<div class="origin-account"><span>@'+escapeHTML(a.username)+'</span><span>ID '+escapeHTML(a.id)+'</span></div>').join('')+'</div></div>'}).join(''):'<div class="list-empty">No account origin data has been recorded yet.</div>';adminOriginList.querySelectorAll('.origin-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')))}
+  function listenForAccountOrigins(){if(!isFounder||!adminOriginList)return;db.ref('accountOrigins').on('value',snap=>{accountOriginCache=snap.val()||{};renderAdminOrigins()})}
+
   function updateAdminStats(){
     if (adminStatMessages) adminStatMessages.textContent = totalMessageCount;
     if (adminStatMedia) adminStatMedia.textContent = totalMediaCount;
+    if (adminStatCalls) adminStatCalls.textContent = Object.keys(liveCalls).length;
   }
 
   function closeMediaPopovers(){
@@ -3055,6 +2778,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (emptyState) emptyState.remove();
 
     const msgKey = msg.username.toLowerCase();
+    if(msgKey !== currentKey && isBlockedKey(msgKey)) return;
     const isOwn = msgKey === currentUsername.toLowerCase();
     const lastGroup = chatBox.lastElementChild;
     const canGroup = lastGroup &&
@@ -3088,7 +2812,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   function createBubble(key, msg){
     const bubble = document.createElement('div');
     bubble.dataset.key = key;
-    bubble.title = new Date(msg.timestamp).toLocaleString();
+    bubble.title = new Date(msg.timestamp).toLocaleString(undefined,{year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',hour12:!window.auroraClock24});
     const isOwn = msg.username.toLowerCase() === currentUsername.toLowerCase();
     if (msg.replyTo) {
       const quote = document.createElement('div');
@@ -3783,6 +3507,7 @@ body{background:var(--bg);letter-spacing:-.006em}
         await db.ref('profiles/' + currentKey).remove();
         await db.ref('presence/' + currentKey).remove();
         await db.ref('typing/' + currentKey).remove();
+        await db.ref('accountOrigins/' + currentUserId).remove();
         toast('Your account has been deleted.');
         setTimeout(() => { history.replaceState({}, '', '/'); location.reload(); }, 600);
       } catch (err) { toast('Your account could not be deleted right now.', 'error'); deleteAccountBtn.disabled = false; }
@@ -3790,6 +3515,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   }
   function populateSettingsPanel(){
     settingsUsername.textContent = '@' + currentUsername;
+    if (settingsAccountId) settingsAccountId.textContent = String(currentUserId);
     settingsJoined.textContent = currentCreatedAt ? new Date(currentCreatedAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
     settingsCurrentPassword.value = ''; settingsNewPassword.value = ''; settingsConfirmPassword.value = ''; settingsDeletePassword.value = '';
   }
@@ -3801,132 +3527,63 @@ body{background:var(--bg);letter-spacing:-.006em}
       if (adminStatAccounts) adminStatAccounts.textContent = snap.val() || 0;
     });
   }
-
-  function renderAccountTracker(){
-    if (!adminAccountTracker || !isFounder) return;
-    const groups = {};
-    Object.values(usersCache || {}).forEach(user => {
-      const network = user.network || {};
-      const ip = String(network.ip || '').trim();
-      const deviceId = String(network.deviceId || '').trim();
-      const groupKey = ip ? 'IP: ' + ip : (deviceId ? 'Device: ' + deviceId.slice(0,12) : 'Unidentified network');
-      if (!groups[groupKey]) groups[groupKey] = { key: groupKey, ip, deviceId, accounts: [] };
-      groups[groupKey].accounts.push(user);
-    });
-    const entries = Object.values(groups).sort((a,b) => b.accounts.length - a.accounts.length || a.key.localeCompare(b.key));
-    if (!entries.length) {
-      adminAccountTracker.innerHTML = '<div class="list-empty">No account network data is available yet.</div>';
-      return;
-    }
-    adminAccountTracker.className = 'account-tracker-list';
-    adminAccountTracker.innerHTML = entries.map((group,index) => {
-      const label = group.ip ? 'IP: ' + escapeHTML(group.ip) : escapeHTML(group.key);
-      const deviceText = group.deviceId ? 'Device ' + escapeHTML(group.deviceId.slice(0,12)) : 'No device identifier';
-      const accounts = group.accounts.sort((a,b) => Number(a.createdAt || 0) - Number(b.createdAt || 0)).map(user => {
-        const when = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown date';
-        return '<div class="account-tracker-account"><div class="mini-avatar" data-avatar-key="' + escapeHTML(String(user.usernameLower || '').toLowerCase()) + '" data-avatar-name="' + escapeHTML(user.username || '') + '">' + escapeHTML(initials(user.username || '')) + '</div><div><div class="account-tracker-account-name">@' + escapeHTML(user.username || '') + '</div></div><div class="account-tracker-account-meta">' + escapeHTML(when) + '</div></div>';
-      }).join('');
-      return '<div class="account-tracker-group" data-tracker-index="' + index + '"><button type="button" class="account-tracker-toggle"><span class="account-tracker-key">' + label + '</span><span class="account-tracker-meta">' + group.accounts.length + ' account' + (group.accounts.length === 1 ? '' : 's') + ' · ' + deviceText + '</span><span aria-hidden="true">›</span></button><div class="account-tracker-details">' + accounts + '</div></div>';
-    }).join('');
-    adminAccountTracker.querySelectorAll('.account-tracker-toggle').forEach(button => button.addEventListener('click', () => {
-      button.closest('.account-tracker-group')?.classList.toggle('open');
-    }));
-    refreshAllAvatars();
-  }
-
   function populateAdminPanel(){
     if (!isFounder) return;
     if (adminUserSearch) adminUserSearch.value = '';
     adminSearchQuery = '';
     renderOnlineRows();
-    renderAccountTracker();
     updateAdminStats();
   }
 
   const boardCache = { roadmap: {}, announcements: {} };
-  const forumCache = { feedback: {}, suggestions: {}, 'bug-reports': {} };
-  const forumListenersReady = { feedback: false, suggestions: false, 'bug-reports': false };
   const boardListenersReady = { roadmap: false, announcements: false };
-
-
-
-  const forumDefinitions = {
-    feedback: { title: 'Feedback', description: 'Report what is working well and what could be improved.' },
-    suggestions: { title: 'Suggestions', description: 'Propose new features, changes, and improvements for Aurora.' },
-    'bug-reports': { title: 'Bug Reports', description: 'Report reproducible problems affecting Aurora.' }
-  };
-
-  function forumCategoryPath(category){ return '/forums/' + category; }
-
-  function forumRenderCategory(category){
-    if (!forumsShell) return;
-    const def = forumDefinitions[category];
-    if (!def) {
-      forumsHeaderTitle.textContent = 'Forums';
-      forumsShell.innerHTML = '<div class="board-head"><div><h1>Forums</h1><p>Choose a section to start a discussion.</p></div></div><div class="forum-category-grid">' +
-        Object.entries(forumDefinitions).map(([key,item]) => '<a class="forum-category-card" href="' + forumCategoryPath(key) + '" data-route="' + forumCategoryPath(key) + '"><div class="forum-category-title">' + escapeHTML(item.title) + '</div><div class="forum-category-desc">' + escapeHTML(item.description) + '</div></a>').join('') +
-        '</div>';
-      return;
-    }
-
-    forumsHeaderTitle.textContent = def.title;
-    const items = Object.entries(forumCache[category] || {}).map(([key,value]) => ({key, ...(value || {})}))
-      .filter(item => item.title || item.content)
-      .sort((a,b) => Number(b.createdAt || 0) - Number(a.createdAt || 0));
-
-    forumsShell.innerHTML = '<a class="forum-back" href="/forums" data-route="/forums">← Forums</a>' +
-      '<div class="board-head"><div><h1>' + escapeHTML(def.title) + '</h1><p>' + escapeHTML(def.description) + '</p><div class="forum-post-count">' + items.length + ' post' + (items.length === 1 ? '' : 's') + '</div></div></div>' +
-      '<div class="forum-create"><input id="forum-title-input" class="field" type="text" maxlength="120" placeholder="Post title"><textarea id="forum-content-input" class="board-textarea" maxlength="5000" placeholder="Write your post"></textarea><div class="forum-create-actions"><button id="forum-publish" class="btn btn-primary" type="button">Create post</button></div></div>' +
-      '<div id="forum-posts" class="board-posts">' + (items.length ? items.map(item => '<article class="board-post"><div class="board-post-top"><div><div class="board-post-title">' + escapeHTML(item.title || 'Untitled') + '</div><div class="board-post-meta"><span class="board-post-author">@' + escapeHTML(item.author || 'Unknown') + '</span><span>' + boardFormatDate(item.createdAt) + '</span></div></div></div><div class="board-post-content">' + escapeHTML(item.content || '') + '</div></article>').join('') : '<div class="forum-empty">No posts in this section yet.</div>') + '</div>';
-
-    document.getElementById('forum-publish')?.addEventListener('click', () => {
-      const titleInput = document.getElementById('forum-title-input');
-      const contentInput = document.getElementById('forum-content-input');
-      const title = titleInput.value.trim();
-      const content = contentInput.value.trim();
-      if (!title || !content) {
-        toast('A title and post body are required.', 'error');
-        return;
-      }
-      const button = document.getElementById('forum-publish');
-      button.disabled = true;
-      db.ref('forums/' + category).push({
-        title,
-        content,
-        author: currentUsername,
-        authorId: currentUserId,
-        createdAt: Date.now()
-      }).then(() => {
-        titleInput.value = '';
-        contentInput.value = '';
-        toast('Forum post created.');
-      }).catch(() => {
-        toast('The forum post could not be created.', 'error');
-      }).finally(() => { button.disabled = false; });
-    });
+  const socialState = { friends:{}, incoming:{}, outgoing:{}, blocked:{} };
+  let socialListenersReady = false;
+  function socialPairKey(a,b){ return [String(a).toLowerCase(),String(b).toLowerCase()].sort().join('__'); }
+  function socialUserByKey(key){ const p=profilesCache[key]||{}; const u=Object.values(usersCache).find(x=>String(x.usernameLower).toLowerCase()===key); return {key, id:u?.id||null, username:u?.username||key, display:p.displayName||u?.username||key}; }
+  function isBlockedKey(key){ return !!socialState.blocked[key]; }
+  function isFriendKey(key){ return !!socialState.friends[socialPairKey(currentKey,key)]; }
+  function socialCanInteract(key){ const k=String(key||'').toLowerCase(); return !!(k && k!==currentKey && !isBlockedKey(k)); }
+  function renderFriendLists(){
+    const incoming=Object.entries(socialState.incoming||{}).filter(([k,v])=>v&&v.fromKey).map(([k,v])=>({key:k,...v}));
+    friendRequestsList.innerHTML=incoming.length?incoming.map(v=>{const u=socialUserByKey(v.fromKey);return '<div class="friend-row"><div class="mini-avatar" data-avatar-key="'+escapeHTML(u.key)+'" data-avatar-name="'+escapeHTML(u.username)+'"></div><div class="friend-row-main"><div class="friend-row-name">'+escapeHTML(u.display)+'</div><div class="friend-row-handle">@'+escapeHTML(u.username)+'</div></div><div class="friend-row-actions"><button class="friend-action" data-social="accept" data-key="'+escapeHTML(v.key)+'">Accept</button><button class="friend-action danger" data-social="decline" data-key="'+escapeHTML(v.key)+'">Decline</button></div></div>'}).join(''):'<div class="friend-empty">No pending friend requests.</div>';
+    const friends=Object.entries(socialState.friends||{}).filter(([pair,v])=>v&&pair.includes('__')).map(([pair,v])=>{const parts=pair.split('__');const key=parts[0]===currentKey?parts[1]:parts[0];return {pair,key};}).filter(x=>x.key&&x.key!==currentKey);
+    friendsList.innerHTML=friends.length?friends.map(v=>{const u=socialUserByKey(v.key);return '<div class="friend-row"><div class="mini-avatar" data-avatar-key="'+escapeHTML(u.key)+'" data-avatar-name="'+escapeHTML(u.username)+'"></div><div class="friend-row-main"><div class="friend-row-name">'+escapeHTML(u.display)+'</div><div class="friend-row-handle">@'+escapeHTML(u.username)+'</div></div><div class="friend-row-actions"><button class="friend-action" data-social="profile" data-key="'+escapeHTML(v.key)+'">Profile</button><button class="friend-action danger" data-social="unfriend" data-key="'+escapeHTML(v.key)+'">Unfriend</button><button class="friend-action danger" data-social="block" data-key="'+escapeHTML(v.key)+'">Block</button></div></div>'}).join(''):'<div class="friend-empty">You have no friends yet.</div>';
+    const blocked=Object.entries(socialState.blocked||{}).map(([key])=>key).filter(k=>k!==currentKey);
+    blockedList.innerHTML=blocked.length?blocked.map(key=>{const u=socialUserByKey(key);return '<div class="friend-row"><div class="mini-avatar" data-avatar-key="'+escapeHTML(u.key)+'" data-avatar-name="'+escapeHTML(u.username)+'"></div><div class="friend-row-main"><div class="friend-row-name">'+escapeHTML(u.display)+'</div><div class="friend-row-handle">@'+escapeHTML(u.username)+'</div></div><div class="friend-row-actions"><button class="friend-action" data-social="unblock" data-key="'+escapeHTML(key)+'">Unblock</button></div></div>'}).join(''):'<div class="friend-empty">You have not blocked anyone.</div>';
+    refreshAllAvatars();
   }
-
-  function listenForForumCategory(category){
-    if (forumListenersReady[category]) return;
-    forumListenersReady[category] = true;
-    db.ref('forums/' + category).on('value', snap => {
-      forumCache[category] = snap.val() || {};
-      if (location.pathname === forumCategoryPath(category) || location.pathname === forumCategoryPath(category) + '/') forumRenderCategory(category);
-    });
+  function listenForSocial(){
+    if(socialListenersReady)return; socialListenersReady=true;
+    db.ref('social/friends/'+currentKey).on('value',snap=>{socialState.friends=snap.val()||{};renderFriendLists();});
+    db.ref('social/requests/incoming/'+currentKey).on('value',snap=>{socialState.incoming=snap.val()||{};renderFriendLists();});
+    db.ref('social/requests/outgoing/'+currentKey).on('value',snap=>{socialState.outgoing=snap.val()||{};});
+    db.ref('social/blocks/'+currentKey).on('value',snap=>{socialState.blocked=snap.val()||{};renderFriendLists();});
   }
+  async function findUserKey(username){ const key=String(username||'').trim().toLowerCase(); if(!key||key===currentKey)return null; const snap=await db.ref('usernames/'+key).once('value'); return snap.exists()?key:null; }
+  async function sendFriendRequest(key){key=String(key||'').trim().toLowerCase();if(!socialCanInteract(key)){toast('You cannot add this person.','error');return;}if(isFriendKey(key)){toast('You are already friends.','error');return;}if(socialState.outgoing[key]){toast('A friend request is already pending.','error');return;}if(socialState.incoming[key]){await acceptFriendRequest(key);return;}const now=Date.now(),updates={};updates['social/requests/outgoing/'+currentKey+'/'+key]={toKey:key,createdAt:now};updates['social/requests/incoming/'+key+'/'+currentKey]={fromKey:currentKey,createdAt:now};await db.ref().update(updates);toast('Friend request sent.');}
+  async function acceptFriendRequest(fromKey){fromKey=String(fromKey||'').toLowerCase();if(!fromKey||fromKey===currentKey||isBlockedKey(fromKey))return;const pair=socialPairKey(currentKey,fromKey),parts=pair.split('__'),now=Date.now(),updates={};updates['social/friends/'+currentKey+'/'+pair]={userA:parts[0],userB:parts[1],createdAt:now};updates['social/friends/'+fromKey+'/'+pair]={userA:parts[0],userB:parts[1],createdAt:now};updates['social/requests/incoming/'+currentKey+'/'+fromKey]=null;updates['social/requests/outgoing/'+fromKey+'/'+currentKey]=null;await db.ref().update(updates);toast('Friend request accepted.');}
+  async function declineFriendRequest(fromKey){fromKey=String(fromKey||'').toLowerCase();if(!fromKey)return;const updates={};updates['social/requests/incoming/'+currentKey+'/'+fromKey]=null;updates['social/requests/outgoing/'+fromKey+'/'+currentKey]=null;await db.ref().update(updates);toast('Friend request declined.');}
+  async function unfriend(key){key=String(key||'').toLowerCase();if(!key)return;const pair=socialPairKey(currentKey,key);if(!confirm('Unfriend @'+key+'?'))return;const updates={};updates['social/friends/'+currentKey+'/'+pair]=null;updates['social/friends/'+key+'/'+pair]=null;await db.ref().update(updates);toast('Friend removed.');}
+  async function blockUser(key){key=String(key||'').toLowerCase();if(!key||key===currentKey)return;if(!confirm('Block @'+key+'? They will no longer be able to interact with you.'))return;const pair=socialPairKey(currentKey,key),now=Date.now(),updates={};updates['social/blocks/'+currentKey+'/'+key]={createdAt:now};updates['social/friends/'+currentKey+'/'+pair]=null;updates['social/friends/'+key+'/'+pair]=null;updates['social/requests/incoming/'+currentKey+'/'+key]=null;updates['social/requests/outgoing/'+currentKey+'/'+key]=null;updates['social/requests/incoming/'+key+'/'+currentKey]=null;updates['social/requests/outgoing/'+key+'/'+currentKey]=null;await db.ref().update(updates);toast('User blocked.');}
+  async function unblockUser(key){key=String(key||'').toLowerCase();if(!key)return;await db.ref('social/blocks/'+currentKey+'/'+key).remove();toast('User unblocked.');}
+  function populateFriendsPanel(){listenForSocial();renderFriendLists();}
+  async function showFriendSearchResult(){const username=friendSearchInput.value.trim();if(!username){friendSearchResult.innerHTML='';return;}const key=await findUserKey(username);if(!key){friendSearchResult.innerHTML='<div class="friend-empty">No account found for that username.</div>';return;}const u=socialUserByKey(key);let action='';if(isFriendKey(key))action='<span class="friend-empty">Already friends.</span>';else if(socialState.outgoing[key])action='<span class="friend-empty">Request already sent.</span>';else if(socialState.incoming[key])action='<button class="friend-action" data-social="accept" data-key="'+escapeHTML(key)+'">Accept request</button>';else action='<button class="friend-action" data-social="send" data-key="'+escapeHTML(key)+'">Add friend</button>';friendSearchResult.innerHTML='<div class="friend-row"><div class="mini-avatar" data-avatar-key="'+escapeHTML(key)+'" data-avatar-name="'+escapeHTML(u.username)+'"></div><div class="friend-row-main"><div class="friend-row-name">'+escapeHTML(u.display)+'</div><div class="friend-row-handle">@'+escapeHTML(u.username)+'</div></div><div class="friend-row-actions">'+action+'</div></div>';refreshAllAvatars();}
+  friendAddBtn?.addEventListener('click',async()=>{try{await showFriendSearchResult();const b=friendSearchResult.querySelector('[data-social="send"]');if(b)await sendFriendRequest(b.dataset.key);await showFriendSearchResult()}catch(e){toast('The friend request could not be sent.','error')}});
+  friendSearchInput?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();friendAddBtn.click()}});
+  friendSearchInput?.addEventListener('input',()=>{clearTimeout(window.__friendSearchTimer);window.__friendSearchTimer=setTimeout(showFriendSearchResult,180)});
+  document.addEventListener('click',async e=>{const b=e.target.closest('[data-social]');if(!b)return;const key=b.dataset.key;try{switch(b.dataset.social){case 'accept':await acceptFriendRequest(key);break;case 'decline':await declineFriendRequest(key);break;case 'unfriend':await unfriend(key);break;case 'block':await blockUser(key);break;case 'unblock':await unblockUser(key);break;case 'send':await sendFriendRequest(key);break;case 'profile':{const u=socialUserByKey(key);if(u.id)navigate(profilePathFor(u.id));break;}}}catch(err){toast('That friend action could not be completed.','error')}});
 
-  function populateForumsPanel(category){
-    if (!category) {
-      forumRenderCategory(null);
-      return;
-    }
-    listenForForumCategory(category);
-    forumRenderCategory(category);
-  }
+
+  const forumCache={feedback:{},suggestions:{},'bug-reports':{}},forumListenersReady={feedback:false,suggestions:false,'bug-reports':false};const forumMeta={feedback:{title:'Feedback',description:'Share feedback about the current Aurora experience.'},suggestions:{title:'Suggestions',description:'Propose improvements and new features for Aurora.'},'bug-reports':{title:'Bug Reports',description:'Report problems that need investigation or a fix.'}};let currentForumCategory='feedback';const forumPosts=document.getElementById('forum-posts'),forumCreate=document.getElementById('forum-create'),forumCreateToggle=document.getElementById('forum-create-toggle'),forumCancel=document.getElementById('forum-cancel'),forumTitleInput=document.getElementById('forum-title-input'),forumContentInput=document.getElementById('forum-content-input'),forumPublish=document.getElementById('forum-publish');
+  function forumRender(){const meta=forumMeta[currentForumCategory];document.getElementById('forums-title').textContent=meta.title;document.getElementById('forums-header-title').textContent=meta.title;document.getElementById('forums-description').textContent=meta.description;document.querySelectorAll('#forum-tabs a').forEach(a=>a.classList.toggle('active',a.dataset.forum===currentForumCategory));const items=Object.entries(forumCache[currentForumCategory]||{}).map(([key,v])=>({key,...(v||{})})).filter(x=>x.title||x.content).sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));forumPosts.innerHTML=items.length?items.map(item=>'<article class="board-post"><div class="board-post-top"><div><div class="board-post-title">'+escapeHTML(item.title||'Untitled')+'</div><div class="board-post-meta"><span class="board-post-author">@'+escapeHTML(item.author||'Unknown')+'</span><span>'+boardFormatDate(item.createdAt)+'</span></div></div></div><div class="board-post-content">'+escapeHTML(item.content||'')+'</div></article>').join(''):'<div class="board-empty">No posts in this forum yet.</div>'}
+  function listenForForum(category){if(forumListenersReady[category])return;forumListenersReady[category]=true;db.ref('forums/'+category).on('value',snap=>{forumCache[category]=snap.val()||{};if(category===currentForumCategory)forumRender()})}
+  function populateForumPanel(category){currentForumCategory=forumMeta[category]?category:'feedback';listenForForum(currentForumCategory);forumCreate?.classList.remove('show');forumRender()}
+  forumCreateToggle?.addEventListener('click',()=>{forumCreate.classList.add('show');forumTitleInput.focus()});forumCancel?.addEventListener('click',()=>{forumCreate.classList.remove('show');forumTitleInput.value='';forumContentInput.value=''});forumPublish?.addEventListener('click',async()=>{const title=forumTitleInput.value.trim(),content=forumContentInput.value.trim();if(!title||!content){toast('Title and content are required.','error');return;}forumPublish.disabled=true;try{await db.ref('forums/'+currentForumCategory).push({title,content,author:currentUsername,authorId:currentUserId,createdAt:Date.now()});forumTitleInput.value='';forumContentInput.value='';forumCreate.classList.remove('show');toast('Forum post published.')}catch(e){toast('The forum post could not be published.','error')}finally{forumPublish.disabled=false}});
 
   function boardFormatDate(ts){
     if (!ts) return 'Unknown date';
-    return new Date(ts).toLocaleString(undefined,{year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'});
+    return new Date(ts).toLocaleString(undefined,{year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',hour12:!window.auroraClock24});
   }
 
   function boardEscape(value){
@@ -4098,133 +3755,28 @@ body{background:var(--bg);letter-spacing:-.006em}
 
 <script>
 (function(){
-  function safeInitials(name){return String(name||'').slice(0,2).toUpperCase()}
-  function closeContext(){contextMenu.classList.remove('open');contextMenu.innerHTML=''}
-  document.addEventListener('click',e=>{if(!contextMenu.contains(e.target))closeContext()});
-  document.addEventListener('scroll',closeContext,true);
-  
-
-  function showContext(x,y,key,msg){
-    closeContext();
-    const own=String(msg.username||'').toLowerCase()===String(currentKey).toLowerCase();
-    const items=[['Reply',()=>startReply(key,msg)],['Copy text',()=>navigator.clipboard?.writeText(msg.text||summarizeMessageForReply(msg))]];
-    items.push(['Copy message link',()=>{const url=location.origin+'/?message='+encodeURIComponent(key);navigator.clipboard?.writeText(url);toast('Message link copied.') }]);
-    if(msg.type==='text'&&(own||isPrivileged()))items.push(['Edit',()=>startEditMessage(key,msg)]);
-    if(own)items.push(['Delete',()=>deleteOwnMessage(key)]);
-    contextMenu.innerHTML=items.map((it,i)=>`<button type="button" class="context-item${it[0]==='Delete'?' danger':''}" data-context-index="${i}">${escapeHTML(it[0])}</button>`).join('');
-    contextMenu.querySelectorAll('.context-item').forEach((b,i)=>b.addEventListener('click',()=>{closeContext();items[i][1]()}));
-    contextMenu.style.left=Math.min(x,window.innerWidth-190)+'px';contextMenu.style.top=Math.min(y,window.innerHeight-260)+'px';contextMenu.classList.add('open');
-  }
+  const contextMenu=document.getElementById('context-menu');
+  const uploadStatus=document.getElementById('upload-status');
+  const uploadProgress=document.getElementById('upload-progress');
+  const uploadCancel=document.getElementById('upload-cancel');
+  const mediaViewer=document.getElementById('media-viewer');
+  const mediaViewerTitle=document.getElementById('media-viewer-title');
+  const mediaViewerBody=document.getElementById('media-viewer-body');
+  const mediaViewerClose=document.getElementById('media-viewer-close');
+  let draftTimer=null;
+  function closeContext(){if(!contextMenu)return;contextMenu.classList.remove('open');contextMenu.innerHTML=''}
+  document.addEventListener('click',e=>{if(contextMenu&&!contextMenu.contains(e.target))closeContext()});document.addEventListener('scroll',closeContext,true);document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeContext();closeMediaViewer()}});
+  function showContext(x,y,key,msg){closeContext();const own=String(msg.username||'').toLowerCase()===String(currentKey).toLowerCase();const items=[['Reply',()=>startReply(key,msg)],['Copy text',()=>navigator.clipboard?.writeText(msg.text||summarizeMessageForReply(msg))],['Copy message link',()=>{navigator.clipboard?.writeText(location.origin+'/?message='+encodeURIComponent(key));toast('Message link copied.')}]];if(msg.type==='text'&&(own||isPrivileged()))items.push(['Edit',()=>startEditMessage(key,msg)]);if(own)items.push(['Delete',()=>deleteOwnMessage(key)]);contextMenu.innerHTML=items.map((it,i)=>`<button type="button" class="context-item${it[0]==='Delete'?' danger':''}" data-context-index="${i}">${escapeHTML(it[0])}</button>`).join('');contextMenu.querySelectorAll('.context-item').forEach((b,i)=>b.addEventListener('click',()=>{closeContext();items[i][1]()}));contextMenu.style.left=Math.min(x,window.innerWidth-190)+'px';contextMenu.style.top=Math.min(y,window.innerHeight-260)+'px';contextMenu.classList.add('open')}
   chatBox?.addEventListener('contextmenu',e=>{const bubble=e.target.closest('.bubble');if(!bubble)return;e.preventDefault();const key=bubble.dataset.key,msg=messageCache[key];if(msg)showContext(e.clientX,e.clientY,key,msg)});
-
-  function openMediaViewer(src,type,title){
-    mediaViewerBody.innerHTML='';mediaViewerTitle.textContent=title||'Media';
-    if(type==='image'){const img=document.createElement('img');img.src=src;img.alt=title||'Image';mediaViewerBody.appendChild(img)}
-    else if(type==='video'){const v=document.createElement('video');v.src=src;v.controls=true;v.autoplay=true;v.playsInline=true;mediaViewerBody.appendChild(v)}
-    else if(type==='audio'){const a=document.createElement('audio');a.src=src;a.controls=true;a.autoplay=true;mediaViewerBody.appendChild(a)}
-    mediaViewer.classList.add('open');mediaViewer.setAttribute('aria-hidden','false')
-  }
-  function closeMediaViewer(){mediaViewer.classList.remove('open');mediaViewer.setAttribute('aria-hidden','true');mediaViewerBody.innerHTML=''}
-  chatBox?.addEventListener('click',e=>{
-    const image=e.target.closest('.image-msg');
-    if(image){const bubble=image.closest('.bubble');const m=bubble&&messageCache[bubble.dataset.key];if(m?.imageData){e.preventDefault();e.stopPropagation();openMediaViewer(m.imageData,'image',m.fileName||'Image')}}
-  },true);
-  mediaViewerClose?.addEventListener('click',closeMediaViewer);mediaViewer?.addEventListener('click',e=>{if(e.target===mediaViewer)closeMediaViewer()});
-  chatBox?.addEventListener('dblclick',e=>{const bubble=e.target.closest('.bubble');if(!bubble)return;const key=bubble.dataset.key,m=messageCache[key];if(!m)return;if(m.type==='image')openMediaViewer(m.imageData,'image',m.fileName||'Image');else if(m.type==='file'&&m.fileType?.startsWith('video/'))openMediaViewer(m.fileData,'video',m.fileName||'Video');else if(m.type==='file'&&m.fileType?.startsWith('audio/'))openMediaViewer(m.fileData,'audio',m.fileName||'Audio')});
-
-  function saveDraft(){try{if(localStorage.getItem('aurora:drafts')==='0')return;if(currentKey) localStorage.setItem('aurora:message-draft:'+currentKey,messageInput.value||'')}catch(e){}}
-  function loadDraft(){try{if(!currentKey||localStorage.getItem('aurora:drafts')==='0')return;const d=localStorage.getItem('aurora:message-draft:'+currentKey);if(d){messageInput.value=d;autoGrow();onComposerChanged()}}catch(e){}}
-  messageInput?.addEventListener('input',()=>{clearTimeout(draftTimer);draftTimer=setTimeout(saveDraft,150)});
-  const oldEnter=window.enterApp;
-  setTimeout(()=>{try{loadDraft()}catch(e){}},300);
-  chatForm?.addEventListener('submit',()=>{try{localStorage.removeItem('aurora:message-draft:'+currentKey)}catch(e){}});
-
+  function openMediaViewer(src,type,title){if(!mediaViewer)return;mediaViewerBody.innerHTML='';mediaViewerTitle.textContent=title||'Media';if(type==='image'){const img=document.createElement('img');img.src=src;img.alt=title||'Image';mediaViewerBody.appendChild(img)}else if(type==='video'){const v=document.createElement('video');v.src=src;v.controls=true;v.autoplay=true;v.playsInline=true;mediaViewerBody.appendChild(v)}else if(type==='audio'){const a=document.createElement('audio');a.src=src;a.controls=true;a.autoplay=true;mediaViewerBody.appendChild(a)}mediaViewer.classList.add('open');mediaViewer.setAttribute('aria-hidden','false')}
+  function closeMediaViewer(){if(!mediaViewer)return;mediaViewer.classList.remove('open');mediaViewer.setAttribute('aria-hidden','true');mediaViewerBody.innerHTML=''}
+  mediaViewerClose?.addEventListener('click',closeMediaViewer);mediaViewer?.addEventListener('click',e=>{if(e.target===mediaViewer)closeMediaViewer()});chatBox?.addEventListener('dblclick',e=>{const bubble=e.target.closest('.bubble');if(!bubble)return;const m=messageCache[bubble.dataset.key];if(!m)return;if(m.type==='image')openMediaViewer(m.imageData,'image',m.fileName||'Image');else if(m.type==='file'&&m.fileType?.startsWith('video/'))openMediaViewer(m.fileData,'video',m.fileName||'Video');else if(m.type==='file'&&m.fileType?.startsWith('audio/'))openMediaViewer(m.fileData,'audio',m.fileName||'Audio')});
+  function saveDraft(){try{if(localStorage.getItem('aurora:drafts')==='0')return;if(currentKey)localStorage.setItem('aurora:message-draft:'+currentKey,messageInput.value||'')}catch(e){}}function loadDraft(){try{if(!currentKey||localStorage.getItem('aurora:drafts')==='0')return;const d=localStorage.getItem('aurora:message-draft:'+currentKey);if(d){messageInput.value=d;autoGrow();onComposerChanged()}}catch(e){}}messageInput?.addEventListener('input',()=>{clearTimeout(draftTimer);draftTimer=setTimeout(saveDraft,150)});setTimeout(loadDraft,300);chatForm?.addEventListener('submit',()=>{try{localStorage.removeItem('aurora:message-draft:'+currentKey)}catch(e){}});
   uploadCancel?.addEventListener('click',()=>{if(activeUploadTask){activeUploadTask.cancel();if(uploadIdleTimer){clearTimeout(uploadIdleTimer);uploadIdleTimer=null}activeUploadTask=null;uploadStatus.classList.remove('open');if(uploadProgress)uploadProgress.style.width='0%';attachBtn.disabled=false;toast('Upload cancelled.')}});
-
-  function initPreferences(){
-    const compact=document.getElementById('pref-compact');
-    const drafts=document.getElementById('pref-drafts');
-    const clock24=document.getElementById('pref-24-hour');
-    if(compact){compact.checked=localStorage.getItem('aurora:compact')==='1';document.body.classList.toggle('compact-mode',compact.checked);compact.addEventListener('change',()=>{document.body.classList.toggle('compact-mode',compact.checked);localStorage.setItem('aurora:compact',compact.checked?'1':'0')})}
-    if(drafts){drafts.checked=localStorage.getItem('aurora:drafts')!=='0';drafts.addEventListener('change',()=>localStorage.setItem('aurora:drafts',drafts.checked?'1':'0'))}
-    if(clock24){clock24.checked=localStorage.getItem('aurora:clock24')==='1';clock24.addEventListener('change',()=>{localStorage.setItem('aurora:clock24',clock24.checked?'1':'0'); if(Object.keys(messageCache||{}).length){chatBox.innerHTML=''; Object.entries(messageCache).forEach(([key,msg])=>appendMessage(key,msg));}})}
-  }
-  initPreferences();
-
-  function enhanceProfiles(){
-    const hero=document.querySelector('.profile-page-view .profile-hero-inner');
-    if(hero){
-      const id=(location.pathname.match(/\/users\/(\d+)/)||[])[1];
-      const own=String(id||'')===String(currentUserId||'');
-      let actions=hero.querySelector('.profile-hero-actions');
-      if(!own && !actions){
-        actions=document.createElement('div');
-        actions.className='profile-hero-actions';
-        hero.querySelector('.profile-identity-row')?.appendChild(actions);
-      }
-      if(actions && !actions.querySelector('.profile-action-row')){
-        const row=document.createElement('div');
-        row.className='profile-action-row';
-        if(!own){
-          const username=usersCache[id]?.username || '';
-          const msg=document.createElement('button');
-          msg.className='profile-action primary';
-          msg.type='button';
-          msg.textContent='Message';
-          msg.addEventListener('click',()=>{navigate('/');messageInput.focus();messageInput.value=username?username+' ':'';onComposerChanged()});
-          row.appendChild(msg);
-          const copy=document.createElement('button');
-          copy.className='profile-action';
-          copy.type='button';
-          copy.textContent='Copy username';
-          copy.addEventListener('click',()=>{navigator.clipboard?.writeText('@'+username);toast('Username copied.')});
-          row.appendChild(copy);
-          const link=document.createElement('button');
-          link.className='profile-action';
-          link.type='button';
-          link.textContent='Copy profile link';
-          link.addEventListener('click',()=>{navigator.clipboard?.writeText(location.href);toast('Profile link copied.')});
-          row.appendChild(link);
-        }
-        actions.appendChild(row);
-      }
-    }
-    document.querySelectorAll('.profile-section-title').forEach(t=>{if(t.textContent.trim()==='Profile')t.closest('.profile-section')?.remove()});
-  }
-  // Remove redundant navigation and legacy settings information.
-  const oldNav=document.getElementById('nav-admin-images-link');if(oldNav)oldNav.remove();
-
-  function initProfileAppearance(){
-    const editor=document.querySelector('#profile-editor');
-    if(!editor||editor.querySelector('.user-row-customization'))return;
-    const section=document.createElement('div');
-    section.className='profile-editor-field full user-row-customization';
-    section.innerHTML='<label>People list appearance</label><div class="profile-upload-row"><div id="inline-user-row-preview" class="admin-user-row-bg-preview empty">No custom image</div><div><input id="inline-user-row-file" type="file" accept="image/*" hidden><button type="button" class="profile-editor-upload" id="inline-user-row-upload">Choose image</button><button type="button" class="profile-editor-remove" id="inline-user-row-remove">Remove</button><div class="profile-editor-help">This image appears behind your own entry in People. Drag the preview to position it.</div></div></div>';
-    const saveButton=editor.querySelector('#profile-editor-save');
-    editor.querySelector('.profile-editor-grid')?.appendChild(section);
-    const preview=section.querySelector('#inline-user-row-preview'),file=section.querySelector('#inline-user-row-file'),choose=section.querySelector('#inline-user-row-upload'),remove=section.querySelector('#inline-user-row-remove');
-    let data=profilesCache[currentKey]?.userRowBackgroundData||null;
-    const render=()=>{if(data?.dataUrl){preview.classList.remove('empty');preview.style.backgroundImage=`url("${data.dataUrl}")`;preview.style.backgroundPosition=(data.positionX??50)+'% '+(data.positionY??50)+'%';preview.textContent='';remove.style.display='inline-flex'}else{preview.classList.add('empty');preview.style.backgroundImage='none';preview.style.backgroundPosition='50% 50%';preview.textContent='No custom image';remove.style.display='none'}};
-    render();
-    choose.addEventListener('click',()=>file.click());
-    file.addEventListener('change',async()=>{const f=file.files?.[0];file.value='';if(!f)return;if(!f.type.startsWith('image/')){toast('Please choose an image file.','error');return}try{const dataUrl=await compressImage(f,1400,.82,false);data={dataUrl,positionX:50,positionY:50,updatedAt:Date.now()};render()}catch(e){toast('That image could not be loaded.','error')}});
-    remove.addEventListener('click',()=>{data=null;render()});
-    let drag=null;
-    preview.addEventListener('pointerdown',e=>{if(!data?.dataUrl)return;preview.setPointerCapture?.(e.pointerId);drag={id:e.pointerId,x:e.clientX,y:e.clientY,px:Number(data.positionX??50),py:Number(data.positionY??50)};preview.classList.add('dragging');e.preventDefault()});
-    preview.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const x=Math.max(0,Math.min(100,drag.px+(e.clientX-drag.x)/Math.max(1,preview.clientWidth)*100));const y=Math.max(0,Math.min(100,drag.py+(e.clientY-drag.y)/Math.max(1,preview.clientHeight)*100));data=Object.assign({},data,{positionX:x,positionY:y});preview.style.backgroundPosition=x+'% '+y+'%';e.preventDefault()});
-    const finish=async e=>{if(!drag||drag.id!==e.pointerId)return;drag=null;preview.classList.remove('dragging')};preview.addEventListener('pointerup',finish);preview.addEventListener('pointercancel',finish);
-    saveButton?.addEventListener('click',async()=>{try{if(data?.dataUrl){await db.ref('profiles/'+currentKey+'/userRowBackgroundData').set(data);profilesCache[currentKey]=Object.assign({},profilesCache[currentKey]||{},{userRowBackgroundData:data})}else{await db.ref('profiles/'+currentKey+'/userRowBackgroundData').remove();if(profilesCache[currentKey])delete profilesCache[currentKey].userRowBackgroundData}renderOnlineRows()}catch(e){toast('The People list appearance could not be saved.','error')}});
-  }
-
-  const profileObserver=new MutationObserver(()=>{enhanceProfiles();initProfileAppearance()});
-  profileObserver.observe(document.body,{childList:true,subtree:true});
-  initProfileAppearance();
-
-  const activeStat=document.getElementById('admin-stat-active');
-  setInterval(()=>{if(activeStat)activeStat.textContent=String(Object.keys(presenceCache||{}).length)},1500);
-
-  // Keep all existing functionality while making the chat visually quieter.
-  document.body.classList.remove('compact-mode');
+  function initPreferences(){const compact=document.getElementById('pref-compact'),drafts=document.getElementById('pref-drafts'),clock24=document.getElementById('pref-clock-24');if(compact){compact.checked=localStorage.getItem('aurora:compact')==='1';document.body.classList.toggle('compact-mode',compact.checked);compact.addEventListener('change',()=>{document.body.classList.toggle('compact-mode',compact.checked);localStorage.setItem('aurora:compact',compact.checked?'1':'0')})}if(drafts){drafts.checked=localStorage.getItem('aurora:drafts')!=='0';drafts.addEventListener('change',()=>localStorage.setItem('aurora:drafts',drafts.checked?'1':'0'))}window.auroraClock24=localStorage.getItem('aurora:clock24')==='1';if(clock24){clock24.checked=window.auroraClock24;clock24.addEventListener('change',()=>{window.auroraClock24=clock24.checked;localStorage.setItem('aurora:clock24',clock24.checked?'1':'0');document.querySelectorAll('.group-time').forEach((el)=>{const group=el.closest('.msg-group');const ts=Number(group?.dataset?.lastts||0);if(ts)el.textContent=formatTime(ts)});document.querySelectorAll('.bubble[data-key]').forEach((el)=>{const msg=messageCache[el.dataset.key];if(msg?.timestamp)el.title=new Date(msg.timestamp).toLocaleString(undefined,{year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',hour12:!window.auroraClock24})})})}}initPreferences();
+  function enhanceProfiles(){const hero=document.querySelector('.profile-page-view .profile-hero-inner');if(hero){const id=(location.pathname.match(/\/users\/(\d+)/)||[])[1],own=String(id||'')===String(currentUserId||'');let actions=hero.querySelector('.profile-hero-actions');if(!own&&!actions){actions=document.createElement('div');actions.className='profile-hero-actions';hero.querySelector('.profile-identity-row')?.appendChild(actions)}if(actions&&!actions.querySelector('.profile-action-row')){const row=document.createElement('div');row.className='profile-action-row';if(!own){const username=usersCache[id]?.username||'',key=String(username).toLowerCase();const msg=document.createElement('button');msg.className='profile-action primary';msg.type='button';msg.textContent='Message';msg.addEventListener('click',()=>{navigate('/');messageInput.focus();messageInput.value=username?'@'+username+' ':'';onComposerChanged()});row.appendChild(msg);const copy=document.createElement('button');copy.className='profile-action';copy.type='button';copy.textContent='Copy username';copy.addEventListener('click',()=>{navigator.clipboard?.writeText('@'+username);toast('Username copied.')});row.appendChild(copy);const link=document.createElement('button');link.className='profile-action';link.type='button';link.textContent='Copy profile link';link.addEventListener('click',()=>{navigator.clipboard?.writeText(location.href);toast('Profile link copied.')});row.appendChild(link);if(socialCanInteract(key)){const socialBtn=document.createElement('button');socialBtn.className='profile-action';socialBtn.type='button';if(isFriendKey(key)){socialBtn.textContent='Unfriend';socialBtn.addEventListener('click',()=>unfriend(key))}else if(socialState.outgoing[key]){socialBtn.textContent='Request sent';socialBtn.disabled=true}else if(socialState.incoming[key]){socialBtn.textContent='Accept request';socialBtn.addEventListener('click',()=>acceptFriendRequest(key))}else{socialBtn.textContent='Add friend';socialBtn.addEventListener('click',()=>sendFriendRequest(key))}row.appendChild(socialBtn)}else if(isBlockedKey(key)){const unblockBtn=document.createElement('button');unblockBtn.className='profile-action';unblockBtn.type='button';unblockBtn.textContent='Unblock';unblockBtn.addEventListener('click',()=>unblockUser(key));row.appendChild(unblockBtn)}}actions.appendChild(row)}}}
+  const profileObserver=new MutationObserver(()=>{enhanceProfiles();if(typeof initProfileAppearance==='function')initProfileAppearance()});profileObserver.observe(document.body,{childList:true,subtree:true});enhanceProfiles();if(typeof initProfileAppearance==='function')initProfileAppearance();
+  const activeStat=document.getElementById('admin-stat-active');setInterval(()=>{if(activeStat)activeStat.textContent=String(Object.keys(presenceCache||{}).length)},1500);
 })();
 </script>
 
