@@ -1429,7 +1429,30 @@ body{background:var(--bg);letter-spacing:-.006em}
   }
 
   async function collectAccountOriginMeta(){let ip='';try{const r=await fetch('https://api64.ipify.org?format=json',{cache:'no-store'});if(r.ok){const j=await r.json();ip=String(j.ip||'')}}catch(e){}const raw=[navigator.userAgent,navigator.platform,navigator.language,screen.width+'x'+screen.height,screen.colorDepth,navigator.hardwareConcurrency||'',Intl.DateTimeFormat().resolvedOptions().timeZone||''].join('|');const deviceKey=await sha256Hex(raw);return {ip,deviceKey,userAgent:navigator.userAgent,createdAt:Date.now()};}
-  async function recordAccountOrigin(userId){try{const meta=await collectAccountOriginMeta();await db.ref('accountOrigins/'+userId).set(meta)}catch(e){}}
+  async function recordAccountOrigin(userId, accountCreatedAt){
+    try{
+      const meta=await collectAccountOriginMeta();
+      if(accountCreatedAt) meta.accountCreatedAt=accountCreatedAt;
+      await db.ref('accountOrigins/'+userId).set(meta);
+      return true;
+    }catch(e){
+      console.warn('Unable to record account origin', userId, e);
+      return false;
+    }
+  }
+  async function ensureAccountOriginEntries(users){
+    if(!isFounder || !users) return;
+    await Promise.all(Object.entries(users).map(async ([id,u])=>{
+      try{
+        await db.ref('accountOrigins/'+id).transaction(cur => cur === null ? {
+          ip:'', deviceKey:'', userAgent:'',
+          createdAt: u.createdAt || Date.now(),
+          accountCreatedAt: u.createdAt || null,
+          recorded:false
+        } : undefined);
+      }catch(e){ console.warn('Unable to create account origin entry', id, e); }
+    }));
+  }
 
   function profilePathFor(id){ return '/users/' + id + '/profile'; }
   function profileUrlFor(id){ return location.origin + profilePathFor(id); }
@@ -1892,7 +1915,7 @@ body{background:var(--bg);letter-spacing:-.006em}
         username: username, usernameLower: lower, salt: salt, hash: hash, createdAt: createdAt
       });
       await usernameRef.set(newId);
-      recordAccountOrigin(newId);
+      await recordAccountOrigin(newId, createdAt);
 
       currentUsername = username; currentKey = lower; currentUserId = newId; currentCreatedAt = createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
@@ -1943,7 +1966,7 @@ body{background:var(--bg);letter-spacing:-.006em}
 
       currentUsername = user.username; currentKey = lower; currentUserId = id; currentCreatedAt = user.createdAt;
       isFounder = (lower === FOUNDER_USERNAME);
-      db.ref('accountOrigins/'+id).once('value').then(snap=>{if(!snap.exists())recordAccountOrigin(id)}).catch(()=>{});
+      db.ref('accountOrigins/'+id).once('value').then(snap=>{if(!snap.exists()) recordAccountOrigin(id, user.createdAt)}).catch(()=>{});
       await claimPresenceAndEnter();
     } catch (err) {
       loginHint.className = 'hint bad'; loginHint.textContent = 'A connection error occurred. Please try again.';
@@ -2115,6 +2138,7 @@ body{background:var(--bg);letter-spacing:-.006em}
         renderAdminImageUsers();
         renderAdminImagePreview();
         renderAdminOrigins();
+        ensureAccountOriginEntries(usersCache).then(() => renderAdminOrigins());
       }
         });
   }
