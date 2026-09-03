@@ -2752,14 +2752,17 @@ body{background:var(--bg);letter-spacing:-.006em}
     const accounts=Object.entries(usersCache||{}).map(([id,u])=>({id,...u,meta:accountOriginCache[id]||{}}));
     const groups={};
     accounts.forEach(a=>{
-      const key=originGroupKey(a.meta);
-      if(a.meta.ip||a.meta.deviceKey) (groups[key] ||= []).push(a);
+      const hasOrigin=Boolean(a.meta && (a.meta.ip||a.meta.deviceKey) && a.meta.recorded !== false);
+      if(hasOrigin) {
+        const key=originGroupKey(a.meta);
+        (groups[key] ||= []).push(a);
+      }
     });
     accounts.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
     adminOriginList.innerHTML=accounts.length?accounts.map(a=>{
+      const hasOrigin=Boolean(a.meta && (a.meta.ip||a.meta.deviceKey) && a.meta.recorded !== false);
       const key=originGroupKey(a.meta);
-      const related=(groups[key]||[]).filter(other=>String(other.id)!==String(a.id));
-      const hasOrigin=Boolean(a.meta.ip||a.meta.deviceKey);
+      const related=hasOrigin ? (groups[key]||[]).filter(other=>String(other.id)!==String(a.id)) : [];
       const originLabel=a.meta.ip?'IP '+a.meta.ip:'IP unavailable';
       const deviceLabel=a.meta.deviceKey?'Device '+a.meta.deviceKey.slice(0,10):'Device unavailable';
       const relatedHtml=related.length?related.map(other=>'<a class="origin-account" href="'+profilePathFor(other.id)+'" data-route="'+profilePathFor(other.id)+'"><span>@'+escapeHTML(other.username||('User '+other.id))+'</span><span class="origin-account-id">ID '+escapeHTML(other.id)+'</span></a>').join(''):'<div class="list-empty">No other accounts share this recorded origin.</div>';
@@ -2768,7 +2771,32 @@ body{background:var(--bg);letter-spacing:-.006em}
     adminOriginList.querySelectorAll('.origin-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
   }
 
-  function listenForAccountOrigins(){if(!isFounder||!adminOriginList)return;db.ref('accountOrigins').on('value',snap=>{accountOriginCache=snap.val()||{};renderAdminOrigins()})}
+  function listenForAccountOrigins(){
+    if(!isFounder||!adminOriginList)return;
+    db.ref('accountOrigins').on('value',snap=>{
+      accountOriginCache=snap.val()||{};
+      renderAdminOrigins();
+    });
+    // Keep the tracker driven directly from the users collection so every
+    // account is shown even when its origin metadata has not been recorded yet.
+    db.ref('users').on('value', async snap=>{
+      const users={};
+      snap.forEach(child=>{
+        const u=child.val()||{};
+        if(u.username||u.usernameLower){
+          users[String(child.key)]={
+            id:String(child.key),
+            username:String(u.username||u.usernameLower||('User '+child.key)),
+            usernameLower:String(u.usernameLower||u.username||'').toLowerCase(),
+            createdAt:u.createdAt||null
+          };
+        }
+      });
+      usersCache=Object.assign({},usersCache,users);
+      renderAdminOrigins();
+      await ensureAccountOriginEntries(users);
+    });
+  }
 
   function updateAdminStats(){
     if (adminStatMessages) adminStatMessages.textContent = totalMessageCount;
