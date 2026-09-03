@@ -2027,6 +2027,7 @@ body{background:var(--bg);letter-spacing:-.006em}
       callChannel.listenLive();
       initSettingsHandlers();
       initAdminHandlers();
+      listenForAccountOrigins();
     }
 
     const target = pendingRoute || '/';
@@ -2771,30 +2772,56 @@ body{background:var(--bg);letter-spacing:-.006em}
     adminOriginList.querySelectorAll('.origin-head').forEach(h=>h.addEventListener('click',()=>h.parentElement.classList.toggle('open')));
   }
 
+  let accountOriginUsersListenerReady = false;
   function listenForAccountOrigins(){
-    if(!isFounder||!adminOriginList)return;
-    db.ref('accountOrigins').on('value',snap=>{
-      accountOriginCache=snap.val()||{};
+    if (!adminOriginList || accountOriginUsersListenerReady) return;
+    accountOriginUsersListenerReady = true;
+
+    // The tracker is driven by the users collection itself. Every account in
+    // the platform therefore gets an entry, even if origin metadata is absent.
+    db.ref('users').on('value', snap => {
+      const next = {};
+      snap.forEach(child => {
+        const u = child.val() || {};
+        const username = String(u.username || u.usernameLower || '').trim();
+        if (!username) return;
+        next[String(child.key)] = {
+          id: String(child.key),
+          username,
+          usernameLower: String(u.usernameLower || username).toLowerCase(),
+          createdAt: u.createdAt || null
+        };
+      });
+      usersCache = next;
       renderAdminOrigins();
-    });
-    // Keep the tracker driven directly from the users collection so every
-    // account is shown even when its origin metadata has not been recorded yet.
-    db.ref('users').on('value', async snap=>{
-      const users={};
-      snap.forEach(child=>{
-        const u=child.val()||{};
-        if(u.username||u.usernameLower){
-          users[String(child.key)]={
-            id:String(child.key),
-            username:String(u.username||u.usernameLower||('User '+child.key)),
-            usernameLower:String(u.usernameLower||u.username||'').toLowerCase(),
-            createdAt:u.createdAt||null
+
+      // Create a durable tracker record for every account that does not have
+      // one yet. Failure to write metadata must never prevent the account from
+      // appearing in the tracker UI.
+      const missing = {};
+      Object.entries(next).forEach(([id, u]) => {
+        if (!accountOriginCache[id]) {
+          missing[id] = {
+            ip: '',
+            deviceKey: '',
+            userAgent: '',
+            createdAt: u.createdAt || Date.now(),
+            accountCreatedAt: u.createdAt || null,
+            recorded: false
           };
         }
       });
-      usersCache=Object.assign({},usersCache,users);
-      renderAdminOrigins();
-      await ensureAccountOriginEntries(users);
+      if (Object.keys(missing).length) {
+        db.ref('accountOrigins').update(missing).then(() => {
+          // Re-read so the UI reflects the newly created entries immediately.
+          return db.ref('accountOrigins').once('value');
+        }).then(originSnap => {
+          accountOriginCache = originSnap.val() || {};
+          renderAdminOrigins();
+        }).catch(err => {
+          console.warn('Unable to create account origin records:', err);
+        });
+      }
     });
   }
 
