@@ -841,9 +841,9 @@ body{background:var(--bg);letter-spacing:-.006em}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a2 2 0 0 0 2 2h2l7 4V5l-7 4H5a2 2 0 0 0-2 2Z"/><path d="M17 9a5 5 0 0 1 0 6"/><path d="M19 6.5a9 9 0 0 1 0 11"/></svg>
           Announcements
         </a>
-        <a href="/admin" data-route="/admin" class="side-nav-item" data-view="admin" id="nav-admin-link" style="display:none;">
+        <a href="/moderation" data-route="/moderation" class="side-nav-item" data-view="admin" id="nav-admin-link">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
-          Console
+          Moderation
         </a>
       </nav>
 
@@ -1532,7 +1532,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (pathname === '/friends' || pathname === '/friends/') return { view: 'friends' };
     const forumMatch=pathname.match(/^\/forums(?:\/(feedback|suggestions|bug-reports))?\/?$/);
     if(forumMatch)return {view:'forums',category:forumMatch[1]||'feedback'};
-    if (pathname === '/admin' || pathname === '/admin/') return { view: 'admin' };
+    if (pathname === '/admin' || pathname === '/admin/' || pathname === '/moderation' || pathname === '/moderation/') return { view: 'admin' };
         return { view: 'chat' };
   }
 
@@ -1582,7 +1582,7 @@ body{background:var(--bg);letter-spacing:-.006em}
       showStandalone('auth');
       return;
     }
-    if (route.view === 'admin' && !isFounder) {
+    if (route.view === 'admin' && !(isFounder || String(currentUsername || '').trim().toLowerCase() === FOUNDER_USERNAME)) {
       toast('Administrator access is required for that page.', 'error');
       navigate('/');
       return;
@@ -2086,7 +2086,10 @@ body{background:var(--bg);letter-spacing:-.006em}
     selfName.textContent = '@' + currentUsername;
     selfPillLink.setAttribute('href', profilePathFor(currentUserId));
     selfPillLink.setAttribute('data-route', profilePathFor(currentUserId));
+    isFounder = isFounder || String(currentUsername || '').trim().toLowerCase() === FOUNDER_USERNAME;
     navAdminLink.style.display = isFounder ? 'flex' : 'none';
+    navAdminLink.setAttribute('href','/moderation');
+    navAdminLink.setAttribute('data-route','/moderation');
 
     if (!listenersStarted) {
       listenersStarted = true;
