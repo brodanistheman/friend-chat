@@ -336,7 +336,8 @@
 
   .empty-state{margin:auto;text-align:center;color:var(--text-3);font-size:0.86rem;font-weight:500;padding:40px 20px;}
 
-  .msg-group{display:flex;gap:11px;max-width:78%;animation:riseIn .18s ease both;}
+  .msg-group{
+    content-visibility:auto;contain-intrinsic-size:80px;display:flex;gap:11px;max-width:78%;animation:riseIn .18s ease both;}
   @keyframes riseIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
   .msg-group .avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.66rem;font-weight:700;color:var(--on-accent);flex-shrink:0;margin-top:2px;overflow:hidden;background-size:cover;background-position:center;}
   .group-body{display:flex;flex-direction:column;gap:5px;min-width:0;flex:1;}
@@ -767,6 +768,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   .dms-header-actions{display:flex;gap:4px;}
   .dms-messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:8px;}
   .dms-message{display:flex;gap:9px;max-width:76%;align-items:flex-end;}
+  .dms-message{content-visibility:auto;contain-intrinsic-size:72px;}
   .dms-message.own{align-self:flex-end;flex-direction:row-reverse;}
   .dms-message-avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--accent-soft);font-size:.62rem;font-weight:800;color:var(--text-1);overflow:hidden;background-size:cover;background-position:center;}
   .dms-message-stack{display:flex;flex-direction:column;gap:3px;min-width:0;}
@@ -1501,12 +1503,11 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (!window.twemoji || window.__auroraTwemojiReady) return;
     window.__auroraTwemojiReady = true;
     twemojiIn(document.body);
-    const observer = new MutationObserver(mutations => {
-      mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
-        if (node.nodeType === Node.ELEMENT_NODE) twemojiIn(node);
-      }));
-    });
-    observer.observe(document.body, { childList:true, subtree:true });
+    // Do not observe the entire document. Aurora creates message, DM, profile,
+    // moderation, and search DOM nodes frequently. A global subtree observer
+    // caused emoji parsing to run repeatedly during normal navigation and chat.
+    twemojiIn(chatBox);
+    twemojiIn(dmsMessages);
   }
   function setButtonLoading(labelEl, loading, idleText){
     labelEl.innerHTML = loading ? '<span class="spinner-lg"></span>' : idleText;
@@ -1863,7 +1864,10 @@ body{background:var(--bg);letter-spacing:-.006em}
       el.textContent = initials(name);
     }
   }
-  function refreshAllAvatars(){ document.querySelectorAll('[data-avatar-key]').forEach(applyAvatarVisual); }
+  function refreshAllAvatars(root){
+    const scope = root && root.querySelectorAll ? root : document;
+    scope.querySelectorAll('[data-avatar-key]').forEach(applyAvatarVisual);
+  }
   function blobToDataURL(blob){
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -2405,12 +2409,14 @@ body{background:var(--bg);letter-spacing:-.006em}
         );
       }
     });
-    onlineList.innerHTML = rows.join('') || '<div class="list-empty">Nobody else is here yet.</div>';
+    const onlineHtml = rows.join('') || '<div class="list-empty">Nobody else is here yet.</div>';
+    if (onlineList && onlineList.innerHTML !== onlineHtml) onlineList.innerHTML = onlineHtml;
     if (adminOnlineList) {
-      if (keys.length === 0) adminOnlineList.innerHTML = '<div class="list-empty">Nobody else is here yet.</div>';
-      else adminOnlineList.innerHTML = adminRows.join('') || '<div class="list-empty">No one matches that search.</div>';
+      const adminHtml = keys.length === 0 ? '<div class="list-empty">Nobody else is here yet.</div>' : (adminRows.join('') || '<div class="list-empty">No one matches that search.</div>');
+      if (adminOnlineList.innerHTML !== adminHtml) adminOnlineList.innerHTML = adminHtml;
     }
-    refreshAllAvatars();
+    refreshAllAvatars(onlineList);
+    refreshAllAvatars(adminOnlineList);
   }
 
   if (adminUserSearch) {
@@ -2440,8 +2446,10 @@ body{background:var(--bg);letter-spacing:-.006em}
   function listenForProfiles(){
     db.ref('profiles').on('value', snap => {
       profilesCache = snap.val() || {};
-      refreshAllAvatars();
       renderOnlineRows();
+      refreshAllAvatars(dmsConversations);
+      refreshAllAvatars(dmsHeader);
+      refreshAllAvatars(dmsNewResults);
     });
     db.ref('adminProfileSounds').on('value', snap => {
       adminProfileSounds = snap.val() || {};
@@ -2463,12 +2471,16 @@ body{background:var(--bg);letter-spacing:-.006em}
         }
       });
       usersCache = next;
-      if (isFounder) {
+      if (isFounder && panelAdmin && panelAdmin.classList.contains('active')) {
         renderAdminImageUsers();
         renderAdminImagePreview();
         renderAdminOrigins();
         renderModerationUsers();
         renderModerationSelected();
+      }
+      if (panelDms && panelDms.classList.contains('active')) {
+        renderDmsConversations();
+        renderDmsUserSearch();
       }
         });
   }
@@ -3216,7 +3228,9 @@ body{background:var(--bg);letter-spacing:-.006em}
 
   function listenForMessages(){
     chatBox.innerHTML = '<div class="empty-state">No messages yet. Say something to get the conversation started.</div>';
-    const messagesRef = db.ref('messages');
+    // Rendering an unbounded message history is the main source of client lag.
+    // Keep the live chat window bounded while preserving realtime updates.
+    const messagesRef = db.ref('messages').limitToLast(150);
     let initialLoadDone = false;
     messagesRef.once('value').then(() => { initialLoadDone = true; });
     messagesRef.on('child_added', snap => {
@@ -3288,11 +3302,12 @@ body{background:var(--bg);letter-spacing:-.006em}
       group.innerHTML = inner;
       group.querySelectorAll('.msg-profile-link').forEach(el => el.addEventListener('click', e => { e.stopPropagation(); openProfileForUsername(msg.username); }));
 
-      chatBox.appendChild(group);
+        chatBox.appendChild(group);
       group.querySelector('.bubble-stack').appendChild(createBubble(key, msg));
-      refreshAllAvatars();
+      refreshAllAvatars(group);
     }
-    chatBox.scrollTop = chatBox.scrollHeight;
+    const nearBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight < 180;
+    if (nearBottom) chatBox.scrollTop = chatBox.scrollHeight;
   }
 
   function createBubble(key, msg){
@@ -4074,11 +4089,30 @@ body{background:var(--bg);letter-spacing:-.006em}
   function dmsIsOnline(key){return !!presenceCache[String(key||'').toLowerCase()];}
   function dmsConversationData(pair){const raw=dmsCache[pair]||{};const messages=raw.messages||{};const items=Object.entries(messages).map(([id,v])=>({id,...(v||{})})).sort((a,b)=>Number(a.timestamp||0)-Number(b.timestamp||0));return {pair,members:raw.members||{},messages:items};}
   function dmsFormatListTime(ts){if(!ts)return '';const d=new Date(Number(ts));const now=new Date();if(d.toDateString()===now.toDateString())return d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',hour12:!window.auroraClock24});return d.toLocaleDateString([],{month:'short',day:'numeric'});}
-  function renderDmsConversations(){if(!dmsConversations)return;const entries=Object.keys(dmsCache||{}).map(pair=>dmsConversationData(pair)).filter(c=>c.members[currentKey]);entries.sort((a,b)=>Number(b.messages.at(-1)?.timestamp||0)-Number(a.messages.at(-1)?.timestamp||0));if(!entries.length){dmsConversations.innerHTML='<div class="dms-empty" style="min-height:220px"><div><strong>No conversations</strong><span>Search for a user above to start your first private conversation.</span></div></div>';return;}dmsConversations.innerHTML=entries.map(c=>{const other=Object.keys(c.members).find(k=>k!==currentKey)||'';const u=dmsUserByKey(other);const last=c.messages.at(-1);const unread=0;return '<button type="button" class="dms-conversation'+(c.pair===currentDmsKey?' active':'')+'" data-dms-open="'+escapeHTML(other)+'"><div class="mini-avatar" data-avatar-key="'+escapeHTML(other)+'" data-avatar-name="'+escapeHTML(u.username)+'"><span class="status-dot '+(dmsIsOnline(other)?'':'away')+'"></span></div><div class="dms-conversation-main"><div class="dms-conversation-top"><span class="dms-conversation-name">'+escapeHTML(u.display)+'</span><span class="dms-conversation-time">'+escapeHTML(dmsFormatListTime(last?.timestamp))+'</span></div><div class="dms-conversation-preview">'+escapeHTML(last?(last.senderKey===currentKey?'You: ':'')+(last.text||''):'No messages yet')+'</div></div>'+(unread?'<span class="dms-unread">'+unread+'</span>':'')+'</button>';}).join('');refreshAllAvatars();}
+  function renderDmsConversations(){if(!dmsConversations)return;const entries=Object.keys(dmsCache||{}).map(pair=>dmsConversationData(pair)).filter(c=>c.members[currentKey]);entries.sort((a,b)=>Number(b.messages.at(-1)?.timestamp||0)-Number(a.messages.at(-1)?.timestamp||0));if(!entries.length){dmsConversations.innerHTML='<div class="dms-empty" style="min-height:220px"><div><strong>No conversations</strong><span>Search for a user above to start your first private conversation.</span></div></div>';return;}dmsConversations.innerHTML=entries.map(c=>{const other=Object.keys(c.members).find(k=>k!==currentKey)||'';const u=dmsUserByKey(other);const last=c.messages.at(-1);const unread=0;return '<button type="button" class="dms-conversation'+(c.pair===currentDmsKey?' active':'')+'" data-dms-open="'+escapeHTML(other)+'"><div class="mini-avatar" data-avatar-key="'+escapeHTML(other)+'" data-avatar-name="'+escapeHTML(u.username)+'"><span class="status-dot '+(dmsIsOnline(other)?'':'away')+'"></span></div><div class="dms-conversation-main"><div class="dms-conversation-top"><span class="dms-conversation-name">'+escapeHTML(u.display)+'</span><span class="dms-conversation-time">'+escapeHTML(dmsFormatListTime(last?.timestamp))+'</span></div><div class="dms-conversation-preview">'+escapeHTML(last?(last.senderKey===currentKey?'You: ':'')+(last.text||''):'No messages yet')+'</div></div>'+(unread?'<span class="dms-unread">'+unread+'</span>':'')+'</button>';}).join('');refreshAllAvatars(dmsConversations);}
   function renderDmsUserSearch(){const q=String(dmsUserSearch?.value||'').trim().toLowerCase();if(!q){dmsNewResults.classList.remove('open');dmsNewResults.innerHTML='';return;}const users=Object.values(usersCache||{}).filter(u=>String(u.username||'').toLowerCase().includes(q)&&String(u.usernameLower||u.username).toLowerCase()!==currentKey).slice(0,12);dmsNewResults.classList.add('open');dmsNewResults.innerHTML=users.length?users.map(u=>'<button type="button" class="dms-user-result" data-dms-open="'+escapeHTML(String(u.usernameLower||u.username).toLowerCase())+'"><div class="mini-avatar" data-avatar-key="'+escapeHTML(String(u.usernameLower||u.username).toLowerCase())+'" data-avatar-name="'+escapeHTML(u.username||'')+'"></div><div><div style="font-size:.76rem;font-weight:750">'+escapeHTML(u.username||'')+'</div><div style="font-size:.64rem;color:var(--text-3)">Open direct message</div></div></button>').join(''):'<div class="list-empty">No users found.</div>';refreshAllAvatars();}
-  function renderDmsConversation(otherKey){const other=String(otherKey||'').toLowerCase();if(!other||other===currentKey){currentDmsKey=null;dmsHeader.style.display='none';dmsMessages.style.display='none';dmsForm.style.display='none';dmsEmpty.style.display='grid';dmsLayout.classList.remove('conversation-open');renderDmsConversations();return;}const u=dmsUserByKey(other);currentDmsKey=dmsPairKey(currentKey,other);dmsHeader.style.display='flex';dmsMessages.style.display='flex';dmsForm.style.display='flex';dmsEmpty.style.display='none';dmsLayout.classList.add('conversation-open');dmsHeaderName.textContent=u.display;dmsHeaderStatus.textContent=dmsIsOnline(other)?'Online':'Offline';dmsHeaderAvatar.dataset.avatarKey=other;dmsHeaderAvatar.dataset.avatarName=u.username;dmsProfile.onclick=()=>{if(u.id)navigate(profilePathFor(u.id));};const c=dmsConversationData(currentDmsKey);dmsMessages.innerHTML=c.messages.length?c.messages.map(m=>{const own=m.senderKey===currentKey;return '<div class="dms-message'+(own?' own':'')+'"><div class="dms-message-avatar" data-avatar-key="'+escapeHTML(m.senderKey)+'" data-avatar-name="'+escapeHTML(m.senderUsername||m.senderKey)+'"></div><div class="dms-message-stack"><div class="dms-message-meta">'+escapeHTML(own?'You':m.senderUsername||'User')+' · '+escapeHTML(boardFormatDate(m.timestamp))+'</div><div class="dms-message-bubble">'+escapeHTML(m.text||'')+'</div></div></div>';}).join(''):'<div class="dms-empty"><div><strong>Start the conversation</strong><span>Messages here are private to this direct message conversation.</span></div></div>';dmsMessages.scrollTop=dmsMessages.scrollHeight;dmsInput.focus();renderDmsConversations();refreshAllAvatars();}
+  function renderDmsConversation(otherKey){const other=String(otherKey||'').toLowerCase();if(!other||other===currentKey){currentDmsKey=null;dmsHeader.style.display='none';dmsMessages.style.display='none';dmsForm.style.display='none';dmsEmpty.style.display='grid';dmsLayout.classList.remove('conversation-open');renderDmsConversations();return;}const u=dmsUserByKey(other);currentDmsKey=dmsPairKey(currentKey,other);dmsHeader.style.display='flex';dmsMessages.style.display='flex';dmsForm.style.display='flex';dmsEmpty.style.display='none';dmsLayout.classList.add('conversation-open');dmsHeaderName.textContent=u.display;dmsHeaderStatus.textContent=dmsIsOnline(other)?'Online':'Offline';dmsHeaderAvatar.dataset.avatarKey=other;dmsHeaderAvatar.dataset.avatarName=u.username;dmsProfile.onclick=()=>{if(u.id)navigate(profilePathFor(u.id));};const c=dmsConversationData(currentDmsKey);dmsMessages.innerHTML=c.messages.length?c.messages.map(m=>{const own=m.senderKey===currentKey;return '<div class="dms-message'+(own?' own':'')+'"><div class="dms-message-avatar" data-avatar-key="'+escapeHTML(m.senderKey)+'" data-avatar-name="'+escapeHTML(m.senderUsername||m.senderKey)+'"></div><div class="dms-message-stack"><div class="dms-message-meta">'+escapeHTML(own?'You':m.senderUsername||'User')+' · '+escapeHTML(boardFormatDate(m.timestamp))+'</div><div class="dms-message-bubble">'+escapeHTML(m.text||'')+'</div></div></div>';}).join(''):'<div class="dms-empty"><div><strong>Start the conversation</strong><span>Messages here are private to this direct message conversation.</span></div></div>';dmsMessages.scrollTop=dmsMessages.scrollHeight;dmsInput.focus();renderDmsConversations();refreshAllAvatars(dmsMessages);refreshAllAvatars(dmsConversations);}
   async function openDmsWithUser(key){const other=String(key||'').toLowerCase();if(!other||other===currentKey)return;const u=dmsUserByKey(other);if(!u.username||u.username===other&&u.id===null){toast('That account could not be found.','error');return;}const pair=dmsPairKey(currentKey,other);try{if(!dmsCache[pair]){await db.ref('dms/'+pair+'/members').set({[currentKey]:true,[other]:true});}}catch(e){toast('The direct message conversation could not be created. Check your Firebase rules for /dms.','error');return;}dmsNewResults.classList.remove('open');dmsUserSearch.value='';navigate('/dms?user='+encodeURIComponent(other));}
-  function listenForDms(){if(dmsListenersReady)return;dmsListenersReady=true;db.ref('dms').on('value',snap=>{dmsCache=snap.val()||{};renderDmsConversations();if(currentDmsKey)renderDmsConversation(Object.keys(dmsCache[currentDmsKey]?.members||{}).find(k=>k!==currentKey)||'');},err=>{console.warn('DM listener failed:',err);toast('Direct messages could not be loaded. Check your Firebase rules for /dms.','error');});}
+  let dmsRenderTimer=null;
+  function scheduleDmsRender(){
+    clearTimeout(dmsRenderTimer);
+    dmsRenderTimer=setTimeout(()=>{
+      dmsRenderTimer=null;
+      renderDmsConversations();
+      if(currentDmsKey){
+        const other=Object.keys(dmsCache[currentDmsKey]?.members||{}).find(k=>k!==currentKey)||'';
+        if(other) renderDmsConversation(other);
+      }
+    },80);
+  }
+  function listenForDms(){
+    if(dmsListenersReady)return;
+    dmsListenersReady=true;
+    db.ref('dms').on('value',snap=>{
+      dmsCache=snap.val()||{};
+      scheduleDmsRender();
+    },err=>{console.warn('DM listener failed:',err);toast('Direct messages could not be loaded. Check your Firebase rules for /dms.','error');});
+  }
   function populateDmsPanel(other){listenForDms();renderDmsConversations();if(other)renderDmsConversation(other);else if(!currentDmsKey){dmsHeader.style.display='none';dmsMessages.style.display='none';dmsForm.style.display='none';dmsEmpty.style.display='grid';dmsLayout.classList.remove('conversation-open');}}
   dmsUserSearch?.addEventListener('input',renderDmsUserSearch);
   dmsUserSearch?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const first=dmsNewResults?.querySelector('[data-dms-open]');if(first)openDmsWithUser(first.dataset.dmsOpen);}});
