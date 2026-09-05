@@ -800,8 +800,36 @@ body{background:var(--bg);letter-spacing:-.006em}
 .call-tile-expand{right:5px;top:5px}.call-tile-leave{right:34px;top:5px}
 .call-controls-bar{gap:5px;padding:7px 8px;}
 .call-control{width:32px;height:32px;border-radius:8px;}
-.call-control.end{padding:0 10px;font-size:.67rem;}
-</style>
+  .call-control.end{padding:0 10px;font-size:.67rem;}
+  #call-grid{position:relative;}
+  .call-soundboard-popover{position:absolute;right:10px;bottom:51px;width:min(330px,calc(100% - 20px));max-height:300px;background:#10141B;border:1px solid #303746;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.48);z-index:25;overflow:hidden;}
+  .call-soundboard-popover[hidden]{display:none;}
+  .call-soundboard-head{height:42px;display:flex;align-items:center;gap:8px;padding:0 9px 0 12px;border-bottom:1px solid #252C37;}
+  .call-soundboard-head strong{font-size:.74rem;font-weight:800;flex:1;}
+  .call-soundboard-head .icon-btn{width:28px;height:28px;border-radius:7px;}
+  .call-soundboard-list{padding:7px;display:flex;flex-direction:column;gap:3px;max-height:252px;overflow-y:auto;}
+  .call-sound-item{display:flex;align-items:center;gap:8px;width:100%;padding:8px 9px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--text-1);cursor:pointer;text-align:left;font:600 .72rem inherit;}
+  .call-sound-item:hover{background:#191E27;border-color:#2E3541;}
+  .call-sound-item-icon{width:27px;height:27px;border-radius:7px;background:#1A2030;color:#8EA4FF;display:grid;place-items:center;flex:none;}
+  .call-sound-item-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+  .call-sound-item-meta{font-size:.61rem;color:var(--text-3);font-weight:600;}
+  .soundboard-shell{max-width:760px;}
+  .soundboard-upload-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;}
+  .soundboard-upload-status{min-height:17px;margin-top:8px;font-size:.7rem;color:var(--text-3);}
+  .soundboard-upload-status.error{color:var(--danger);}
+  .soundboard-section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+  .soundboard-section-head h2{margin-bottom:4px;}
+  .soundboard-section-head .settings-help{margin-bottom:0;}
+  .soundboard-list{display:flex;flex-direction:column;gap:6px;margin-top:15px;}
+  .soundboard-row{display:flex;align-items:center;gap:10px;padding:9px;background:var(--inset);border:1px solid var(--border);border-radius:10px;}
+  .soundboard-row-main{min-width:0;flex:1;}
+  .soundboard-row-name{font-size:.78rem;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .soundboard-row-meta{font-size:.65rem;color:var(--text-3);margin-top:3px;}
+  .soundboard-preview{width:170px;height:30px;}
+  .soundboard-delete{border:1px solid rgba(229,72,77,.3);background:transparent;color:#F18C91;border-radius:7px;padding:6px 8px;font:700 .66rem inherit;cursor:pointer;}
+  .soundboard-delete:hover{background:var(--danger-soft);}
+  @media(max-width:560px){.soundboard-upload-row{grid-template-columns:1fr}.soundboard-section-head{display:block}.soundboard-section-head .btn-outline{margin-top:10px}.soundboard-preview{display:none}.call-soundboard-popover{right:7px;bottom:46px;width:calc(100% - 14px);}}
+  </style>
 </head>
 <body>
 
@@ -894,6 +922,10 @@ body{background:var(--bg);letter-spacing:-.006em}
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-9 8.5 9.6 9.6 0 0 1-4-.9L3 21l1.9-4.6A8.4 8.4 0 0 1 3 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></svg>
           DMs
         </a>
+        <a href="/soundboard" data-route="/soundboard" class="side-nav-item" data-view="soundboard">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg>
+          Soundboard
+        </a>
         <a href="/forums" data-route="/forums" class="side-nav-item" data-view="forums"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H7l-3 3V5Z"/><path d="M8 9h8M8 12h5"/></svg>Forums</a>
         <a href="/settings" data-route="/settings" class="side-nav-item" data-view="settings">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -967,6 +999,7 @@ body{background:var(--bg);letter-spacing:-.006em}
           <div id="call-participants-line"></div>
           <div id="call-tiles-row"></div>
           <div class="call-controls-bar" id="call-controls-bar"></div>
+          <div id="call-soundboard-popover" class="call-soundboard-popover" hidden><div class="call-soundboard-head"><strong>Soundboard</strong><button id="call-soundboard-close" class="icon-btn" type="button" title="Close">×</button></div><div id="call-soundboard-list" class="call-soundboard-list"></div></div>
         </div>
 
         
@@ -1207,6 +1240,15 @@ body{background:var(--bg);letter-spacing:-.006em}
         </div>
       </section>
 
+      <section id="panel-soundboard" class="panel">
+        <header class="panel-header"><button id="soundboard-menu-btn" class="icon-btn" type="button" title="Menu" aria-label="Menu"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><div class="header-title"><h1>Soundboard</h1></div></header>
+        <div class="panel-scroll"><div class="page-shell soundboard-shell">
+          <div class="page-head"><h1>Soundboard</h1><p>Upload sounds and play them for everyone currently in your call.</p></div>
+          <section class="settings-card"><h2>Add a sound</h2><p class="settings-help">Upload a short audio file, name it, and it will appear in your call soundboard.</p><div class="soundboard-upload-row"><input id="soundboard-file" type="file" accept="audio/*" hidden><input id="soundboard-name" class="field" type="text" maxlength="48" placeholder="Sound name"><button id="soundboard-upload-btn" class="btn btn-primary" type="button">Upload sound</button></div><div id="soundboard-upload-status" class="soundboard-upload-status"></div></section>
+          <section class="settings-card"><div class="soundboard-section-head"><div><h2>Sounds</h2><p class="settings-help">Sounds uploaded by Aurora users are available in calls.</p></div><button id="soundboard-choose-btn" class="btn-outline" type="button">Choose file</button></div><div id="soundboard-list" class="soundboard-list"><div class="list-empty">No sounds uploaded yet.</div></div></section>
+        </div></div>
+      </section>
+
       <section id="panel-admin" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -1299,11 +1341,21 @@ body{background:var(--bg);letter-spacing:-.006em}
   const panelAnnouncements = document.getElementById('panel-announcements');
   const panelFriends = document.getElementById('panel-friends');
   const panelDms = document.getElementById('panel-dms');
+  const panelSoundboard = document.getElementById('panel-soundboard');
   const dmsLayout = document.getElementById('dms-layout');
   const dmsUserSearch = document.getElementById('dms-user-search');
   const dmsNewResults = document.getElementById('dms-new-results');
   const dmsConversations = document.getElementById('dms-conversations');
   const dmsHeader = document.getElementById('dms-header');
+  const soundboardFile = document.getElementById('soundboard-file');
+  const soundboardName = document.getElementById('soundboard-name');
+  const soundboardUploadBtn = document.getElementById('soundboard-upload-btn');
+  const soundboardUploadStatus = document.getElementById('soundboard-upload-status');
+  const soundboardChooseBtn = document.getElementById('soundboard-choose-btn');
+  const soundboardList = document.getElementById('soundboard-list');
+  const callSoundboardPopover = document.getElementById('call-soundboard-popover');
+  const callSoundboardList = document.getElementById('call-soundboard-list');
+  const callSoundboardClose = document.getElementById('call-soundboard-close');
   const dmsHeaderAvatar = document.getElementById('dms-header-avatar');
   const dmsHeaderName = document.getElementById('dms-header-name');
   const dmsHeaderStatus = document.getElementById('dms-header-status');
@@ -1600,6 +1652,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (pathname === '/announcements' || pathname === '/announcements/') return { view: 'announcements' };
     if (pathname === '/friends' || pathname === '/friends/') return { view: 'friends' };
     if (pathname === '/dms' || pathname === '/dms/') { const params = new URLSearchParams(location.search); return { view: 'dms', user: params.get('user') || '' }; }
+    if (pathname === '/soundboard' || pathname === '/soundboard/') return { view: 'soundboard' };
     const forumMatch=pathname.match(/^\/forums(?:\/(feedback|suggestions|bug-reports))?\/?$/);
     if(forumMatch)return {view:'forums',category:forumMatch[1]||'feedback'};
     if (pathname === '/admin' || pathname === '/admin/' || pathname === '/moderation' || pathname === '/moderation/') return { view: 'admin' };
@@ -1627,6 +1680,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     panelAnnouncements.classList.toggle('active', panelName === 'announcements');
     panelFriends.classList.toggle('active', panelName === 'friends');
     panelDms.classList.toggle('active', panelName === 'dms');
+    panelSoundboard.classList.toggle('active', panelName === 'soundboard');
     document.getElementById('panel-forums').classList.toggle('active', panelName === 'forums');
     panelAdmin.classList.toggle('active', panelName === 'admin');
     document.querySelectorAll('.side-nav-item').forEach(el => el.classList.toggle('active', el.dataset.view === panelName));
@@ -1637,6 +1691,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (panelName === 'announcements') populateBoardPanel('announcements');
     if (panelName === 'friends') populateFriendsPanel();
     if (panelName === 'dms') populateDmsPanel(window.__dmsUser || '');
+    if (panelName === 'soundboard') populateSoundboardPanel();
     if (panelName === 'forums') populateForumPanel(window.__forumCategory || 'feedback');
     if (panelName === 'admin') { populateAdminPanel(); listenForAccountOrigins(); renderAdminOrigins(); }
     if (panelName === 'chat') { messageInput.focus(); chatBox.scrollTop = chatBox.scrollHeight; }
@@ -2170,6 +2225,7 @@ body{background:var(--bg);letter-spacing:-.006em}
       listenForMessages();
       listenForTyping();
       callChannel.listenLive();
+      listenForSoundboard();
       initSettingsHandlers();
       initAdminHandlers();
       listenForAccountOrigins();
@@ -2248,12 +2304,6 @@ body{background:var(--bg);letter-spacing:-.006em}
       renderOnlineRows();
     });
   }
-      const row = e.target.closest('[data-mod-user-id]');
-      if (!row || !modUserList.contains(row)) return;
-      selectModerationUser(row.dataset.modUserId);
-    });
-  }
-
   function listenForPresence(){
     db.ref('presence').on('value', snap => {
       presenceCache = snap.val() || {};
@@ -2518,7 +2568,9 @@ body{background:var(--bg);letter-spacing:-.006em}
     db.ref('messages/' + key).remove().catch(() => toast('That message could not be deleted.', 'error'));
   }
 
-  adminClearBtn.addEventListener('click', () => {
+  // The admin clear button may not exist on newer builds. Do not let a missing
+  // optional admin control abort the entire application initialization.
+  adminClearBtn?.addEventListener('click', () => {
     if (!isFounder) return;
     if (confirm('Clear every message in the chat? This cannot be undone.')) {
       db.ref('messages').remove();
@@ -3368,18 +3420,18 @@ body{background:var(--bg);letter-spacing:-.006em}
     } catch (err) { toast('That voice message could not be sent. Please try again.', 'error'); }
   }
   function createCallChannel(config){
-    const state = { active: false, localStream: null, peers: {}, peerListenerRefs: {}, watching: {}, watchListenerRefs: {}, lastLiveItems: {} };
+    const state = { active: false, localStream: null, peers: {}, peerListenerRefs: {}, watching: {}, watchListenerRefs: {}, lastLiveItems: {}, sessionId: null };
 
     async function start(){
       if (state.active) return;
       let stream;
       try { stream = await config.getStream(); }
       catch (err) { if (!err || err.name !== 'NotAllowedError') toast(config.failMessage || 'The call could not be started.', 'error'); return; }
-      state.localStream = stream; state.active = true;
+      state.localStream = stream; state.active = true; state.sessionId = String(Date.now()) + '_' + Math.random().toString(36).slice(2,8);
       stream.getTracks().forEach(t => t.addEventListener('ended', stop));
       config.onStart && config.onStart(stream);
 
-      try { await db.ref(`${config.liveNode}/${currentKey}`).set({ display: currentUsername, startedAt: Date.now() }); }
+      try { await db.ref(`${config.liveNode}/${currentKey}`).set({ display: currentUsername, startedAt: Date.now(), sessionId: state.sessionId }); }
       catch (err) { toast('You could not join the call.', 'error'); state.active = false; state.localStream = null; stream.getTracks().forEach(t => t.stop()); config.onStop && config.onStop(); config.onStateChange && config.onStateChange(); return; }
       db.ref(`${config.liveNode}/${currentKey}`).onDisconnect().remove();
       db.ref(`${config.watchNode}/${currentKey}`).onDisconnect().remove();
@@ -3421,7 +3473,7 @@ body{background:var(--bg);letter-spacing:-.006em}
 
     function stop(){
       if (!state.active) return;
-      state.active = false;
+      state.active = false; state.sessionId = null;
       if (state.localStream) { state.localStream.getTracks().forEach(t => t.stop()); state.localStream = null; }
       config.onStop && config.onStop();
       Object.keys(state.peers).forEach(teardownPeer);
@@ -3708,12 +3760,16 @@ body{background:var(--bg);letter-spacing:-.006em}
       updateCallTileState(currentKey);
     });
 
+    const soundboard = document.createElement('button');
+    soundboard.type='button'; soundboard.className='call-control'; soundboard.title='Open soundboard'; soundboard.innerHTML=soundWaveIconSVG();
+    soundboard.addEventListener('click',()=>{if(callSoundboardPopover){callSoundboardPopover.hidden=!callSoundboardPopover.hidden;renderCallSoundboard();}});
+
     const end = document.createElement('button');
     end.type='button'; end.className='call-control end'; end.title='Leave call';
     end.innerHTML=closeIconSVG()+'<span>Leave call</span>';
     end.addEventListener('click',() => callChannel.stop());
 
-    callControlsBar.append(mic,cam,end);
+    callControlsBar.append(mic,cam,soundboard,end);
   }
 
   function updateCallStatusUI(items){
@@ -3742,6 +3798,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   }
 
   callStatusPill.addEventListener('click',() => { if (!callChannel.state.active) callChannel.start(); });
+  callSoundboardClose?.addEventListener('click',()=>{if(callSoundboardPopover)callSoundboardPopover.hidden=true;});
 
   const callChannel = createCallChannel({
     liveNode: 'calls', watchNode: 'watchCall', rtcNode: 'rtcCall',
@@ -3757,6 +3814,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     onStop: () => {
       removeCallTile(currentKey);
       callControlsBar.innerHTML = '';
+      if(callSoundboardPopover)callSoundboardPopover.hidden=true;
       activeSpeakers.clear();
       updateSpeakingUI();
     },
@@ -3829,6 +3887,22 @@ body{background:var(--bg);letter-spacing:-.006em}
     settingsJoined.textContent = currentCreatedAt ? new Date(currentCreatedAt).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}) : 'Unknown';
     settingsCurrentPassword.value = ''; settingsNewPassword.value = ''; settingsConfirmPassword.value = ''; settingsDeletePassword.value = '';
   }
+  const soundboardCache = {};
+  let soundboardListenerReady = false;
+  const recentCallSoundIds = new Set();
+  const MAX_SOUNDBOARD_BYTES = 3 * 1024 * 1024;
+  function formatSoundDuration(seconds){const n=Math.max(0,Math.round(Number(seconds)||0));return Math.floor(n/60)+':'+String(n%60).padStart(2,'0');}
+  function soundboardItems(){return Object.entries(soundboardCache).map(([id,v])=>({id,...(v||{})})).filter(x=>x.dataUrl&&x.name).sort((a,b)=>Number(a.createdAt||0)-Number(b.createdAt||0));}
+  function soundWaveIconSVG(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg>';}
+  function renderSoundboardList(){if(!soundboardList)return;const items=soundboardItems();if(!items.length){soundboardList.innerHTML='<div class="list-empty">No sounds uploaded yet.</div>';return;}soundboardList.innerHTML=items.map(x=>{const mine=String(x.ownerKey||'').toLowerCase()===String(currentKey||'').toLowerCase();return '<div class="soundboard-row"><div class="soundboard-row-main"><div class="soundboard-row-name">'+escapeHTML(x.name)+'</div><div class="soundboard-row-meta">@'+escapeHTML(x.owner||'unknown')+' · '+formatSoundDuration(x.duration)+'</div></div><audio class="soundboard-preview" controls preload="none" src="'+x.dataUrl+'"></audio>'+(mine?'<button type="button" class="soundboard-delete" data-sound-delete="'+x.id+'">Delete</button>':'')+'</div>';}).join('');soundboardList.querySelectorAll('[data-sound-delete]').forEach(btn=>btn.addEventListener('click',async()=>{const id=btn.dataset.soundDelete;if(!id||!soundboardCache[id])return;if(!confirm('Delete this sound?'))return;try{await db.ref('soundboard/'+id).remove();toast('Sound deleted.');}catch(e){toast('The sound could not be deleted.','error');}}));}
+  function renderCallSoundboard(){if(!callSoundboardList)return;const items=soundboardItems();if(!items.length){callSoundboardList.innerHTML='<div class="list-empty">No sounds available.</div>';return;}callSoundboardList.innerHTML=items.map(x=>'<button type="button" class="call-sound-item" data-call-sound="'+x.id+'"><span class="call-sound-item-icon">'+soundWaveIconSVG()+'</span><span class="call-sound-item-name">'+escapeHTML(x.name)+'</span><span class="call-sound-item-meta">'+formatSoundDuration(x.duration)+'</span></button>').join('');callSoundboardList.querySelectorAll('[data-call-sound]').forEach(btn=>btn.addEventListener('click',()=>playSoundboardInCall(btn.dataset.callSound)));}
+  function playSoundboardAudio(sound){if(!sound?.dataUrl)return;try{const audio=new Audio(sound.dataUrl);audio.volume=.9;audio.play().catch(()=>{});}catch(e){}}
+  async function playSoundboardInCall(id){if(!callChannel?.state?.active){toast('Join the call before playing a sound.','error');return;}const sound=soundboardCache[id];if(!sound?.dataUrl)return;playSoundboardAudio(sound);try{await db.ref('callSounds').push({soundId:id,playedBy:currentKey,playedAt:Date.now(),sessionId:callChannel.state.sessionId});}catch(e){toast('The sound could not be shared with the call.','error');}if(callSoundboardPopover)callSoundboardPopover.hidden=true;}
+  function listenForSoundboard(){if(soundboardListenerReady)return;soundboardListenerReady=true;db.ref('soundboard').on('value',snap=>{Object.keys(soundboardCache).forEach(k=>delete soundboardCache[k]);snap.forEach(c=>{soundboardCache[c.key]=c.val()||{};});renderSoundboardList();renderCallSoundboard();});db.ref('callSounds').limitToLast(30).on('child_added',snap=>{const e=snap.val()||{};if(String(e.playedBy||'').toLowerCase()===String(currentKey||'').toLowerCase())return;if(Date.now()-Number(e.playedAt||0)>15000)return;if(recentCallSoundIds.has(snap.key))return;recentCallSoundIds.add(snap.key);setTimeout(()=>recentCallSoundIds.delete(snap.key),30000);if(callChannel?.state?.active && e.sessionId && e.sessionId===callChannel.state.sessionId)playSoundboardAudio(soundboardCache[e.soundId]);});}
+  function populateSoundboardPanel(){listenForSoundboard();if(soundboardName)soundboardName.value='';if(soundboardFile)soundboardFile.value='';if(soundboardUploadStatus){soundboardUploadStatus.className='soundboard-upload-status';soundboardUploadStatus.textContent='';}}
+  soundboardChooseBtn?.addEventListener('click',()=>soundboardFile?.click());
+  soundboardUploadBtn?.addEventListener('click',async()=>{const file=soundboardFile?.files?.[0];const name=(soundboardName?.value||'').trim()||file?.name?.replace(/\.[^.]+$/,'')||'';if(!file){toast('Choose an audio file first.','error');return;}if(!file.type.startsWith('audio/')){toast('Only audio files can be uploaded.','error');return;}if(file.size>MAX_SOUNDBOARD_BYTES){toast('Sound files must be 3 MB or smaller.','error');return;}soundboardUploadBtn.disabled=true;if(soundboardUploadStatus)soundboardUploadStatus.textContent='Uploading '+file.name+'…';try{const dataUrl=await blobToDataURL(file);const ref=db.ref('soundboard').push();await ref.set({name:name.slice(0,48),fileName:file.name.slice(0,120),fileType:file.type,fileSize:file.size,dataUrl,owner:currentUsername,ownerKey:currentKey,createdAt:Date.now()});soundboardName.value='';soundboardFile.value='';if(soundboardUploadStatus)soundboardUploadStatus.textContent='Uploaded '+name.slice(0,48)+'.';toast('Sound uploaded.');}catch(e){if(soundboardUploadStatus){soundboardUploadStatus.className='soundboard-upload-status error';soundboardUploadStatus.textContent='Upload failed.';}toast('The sound could not be uploaded.','error');}soundboardUploadBtn.disabled=false;});
+
   let adminHandlersReady = false;
   function initAdminHandlers(){ updateAdminStats(); }
   function populateAdminPanel(){
