@@ -739,6 +739,49 @@ body{background:var(--bg);letter-spacing:-.006em}
 
 
   #attach-btn[disabled]{opacity:.45;cursor:not-allowed;}
+
+  .dms-layout{display:grid;grid-template-columns:300px minmax(0,1fr);height:100%;min-height:0;}
+  .dms-list-panel{border-right:1px solid var(--border);background:#0B0E13;display:flex;flex-direction:column;min-width:0;}
+  .dms-list-head{padding:18px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:12px;}
+  .dms-list-title{font-size:1.05rem;font-weight:800;}
+  .dms-list-subtitle{font-size:.72rem;color:var(--text-3);line-height:1.45;}
+  .dms-search{height:38px;border-radius:10px;}
+  .dms-conversations{flex:1;overflow-y:auto;padding:10px;}
+  .dms-conversation{width:100%;display:flex;align-items:center;gap:10px;padding:10px;border:1px solid transparent;background:transparent;color:var(--text-1);border-radius:10px;cursor:pointer;text-align:left;font:inherit;}
+  .dms-conversation:hover{background:var(--surface-hover);}
+  .dms-conversation.active{background:rgba(91,120,255,.11);border-color:rgba(91,120,255,.18);}
+  .dms-conversation-main{min-width:0;flex:1;}
+  .dms-conversation-top{display:flex;align-items:center;gap:7px;}
+  .dms-conversation-name{font-size:.8rem;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+  .dms-conversation-time{font-size:.62rem;color:var(--text-3);flex:none;}
+  .dms-conversation-preview{font-size:.68rem;color:var(--text-3);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .dms-unread{min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--accent);color:white;display:grid;place-items:center;font-size:.58rem;font-weight:800;}
+  .dms-main{min-width:0;display:flex;flex-direction:column;background:var(--bg);}
+  .dms-empty{flex:1;display:grid;place-items:center;text-align:center;padding:30px;color:var(--text-3);}
+  .dms-empty strong{display:block;color:var(--text-1);font-size:.95rem;margin-bottom:5px;}
+  .dms-empty span{display:block;font-size:.75rem;line-height:1.5;max-width:360px;}
+  .dms-header{height:68px;display:flex;align-items:center;gap:11px;padding:0 20px;border-bottom:1px solid var(--border);background:rgba(8,10,15,.94);flex-shrink:0;}
+  .dms-header-main{min-width:0;flex:1;}
+  .dms-header-name{font-size:.88rem;font-weight:800;}
+  .dms-header-status{font-size:.66rem;color:var(--text-3);margin-top:3px;}
+  .dms-header-actions{display:flex;gap:4px;}
+  .dms-messages{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:8px;}
+  .dms-message{display:flex;gap:9px;max-width:76%;align-items:flex-end;}
+  .dms-message.own{align-self:flex-end;flex-direction:row-reverse;}
+  .dms-message-avatar{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--accent-soft);font-size:.62rem;font-weight:800;color:var(--text-1);overflow:hidden;background-size:cover;background-position:center;}
+  .dms-message-stack{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .dms-message-meta{font-size:.64rem;color:var(--text-3);padding:0 4px;}
+  .dms-message.own .dms-message-meta{text-align:right;}
+  .dms-message-bubble{padding:9px 12px;border:1px solid var(--border);background:#13171E;border-radius:5px 14px 14px 14px;font-size:.84rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;}
+  .dms-message.own .dms-message-bubble{background:#18234A;border-color:rgba(91,120,255,.13);border-radius:14px 5px 14px 14px;}
+  .dms-composer{padding:12px 18px 16px;border-top:1px solid var(--border);background:#090B10;display:flex;gap:7px;align-items:flex-end;}
+  .dms-input{min-height:42px;max-height:120px;resize:none;border-radius:12px!important;}
+  .dms-new-results{border-top:1px solid var(--border);padding:10px;display:none;max-height:240px;overflow:auto;}
+  .dms-new-results.open{display:block;}
+  .dms-user-result{width:100%;display:flex;align-items:center;gap:9px;padding:9px;border:0;background:transparent;color:var(--text-1);border-radius:9px;cursor:pointer;text-align:left;font:inherit;}
+  .dms-user-result:hover{background:var(--surface-hover);}
+  .dms-mobile-back{display:none;}
+  @media(max-width:760px){.dms-layout{grid-template-columns:1fr}.dms-list-panel{display:flex}.dms-main{display:none}.dms-layout.conversation-open .dms-list-panel{display:none}.dms-layout.conversation-open .dms-main{display:flex}.dms-mobile-back{display:inline-flex}.dms-messages{padding:16px}.dms-message{max-width:88%;}}
 </style>
 </head>
 <body>
@@ -827,6 +870,10 @@ body{background:var(--bg);letter-spacing:-.006em}
         <a href="/friends" data-route="/friends" class="side-nav-item" data-view="friends">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           Friends
+        </a>
+        <a href="/dms" data-route="/dms" class="side-nav-item" data-view="dms">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-9 8.5 9.6 9.6 0 0 1-4-.9L3 21l1.9-4.6A8.4 8.4 0 0 1 3 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></svg>
+          DMs
         </a>
         <a href="/forums" data-route="/forums" class="side-nav-item" data-view="forums"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H7l-3 3V5Z"/><path d="M8 9h8M8 12h5"/></svg>Forums</a>
         <a href="/settings" data-route="/settings" class="side-nav-item" data-view="settings">
@@ -1106,6 +1153,41 @@ body{background:var(--bg);letter-spacing:-.006em}
         </div>
       </section>
 
+
+      <section id="panel-dms" class="panel">
+        <div class="dms-layout" id="dms-layout">
+          <aside class="dms-list-panel">
+            <div class="dms-list-head">
+              <div>
+                <div class="dms-list-title">Direct messages</div>
+                <div class="dms-list-subtitle">Private conversations between you and another Aurora user.</div>
+              </div>
+              <input id="dms-user-search" class="field dms-search" type="text" maxlength="20" placeholder="Find someone to message" autocomplete="off">
+            </div>
+            <div id="dms-new-results" class="dms-new-results"></div>
+            <div id="dms-conversations" class="dms-conversations"></div>
+          </aside>
+          <section class="dms-main">
+            <header class="dms-header" id="dms-header" style="display:none">
+              <button id="dms-back" class="icon-btn dms-mobile-back" type="button" title="Back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <div class="mini-avatar" id="dms-header-avatar"></div>
+              <div class="dms-header-main"><div class="dms-header-name" id="dms-header-name"></div><div class="dms-header-status" id="dms-header-status"></div></div>
+              <div class="dms-header-actions"><button id="dms-profile" class="btn-outline" type="button">Profile</button></div>
+            </header>
+            <div id="dms-empty" class="dms-empty"><div><strong>Select a conversation</strong><span>Choose an existing DM or search for a user above to start a private conversation.</span></div></div>
+            <div id="dms-messages" class="dms-messages" style="display:none"></div>
+            <form id="dms-form" class="dms-composer" style="display:none">
+              <textarea id="dms-input" class="field dms-input" rows="1" maxlength="2000" placeholder="Message privately"></textarea>
+              <button id="dms-send" class="btn btn-primary btn-round" type="submit" title="Send message">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--on-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg>
+              </button>
+            </form>
+          </section>
+        </div>
+      </section>
+
       <section id="panel-admin" class="panel">
         <div class="panel-scroll">
           <div class="page-shell">
@@ -1229,6 +1311,9 @@ body{background:var(--bg);letter-spacing:-.006em}
   let adminSearchQuery = '';
   let moderationCache = {};
   let selectedModerationUserId = null;
+  let dmsCache = {};
+  let dmsListenersReady = false;
+  let currentDmsKey = null;
   let moderationListenersReady = false;
   let currentModerationState = {};
   let messageCache = {}; // key -> raw message object, needed to redraw on edits
@@ -1244,6 +1329,22 @@ body{background:var(--bg);letter-spacing:-.006em}
   const panelRoadmap = document.getElementById('panel-roadmap');
   const panelAnnouncements = document.getElementById('panel-announcements');
   const panelFriends = document.getElementById('panel-friends');
+  const panelDms = document.getElementById('panel-dms');
+  const dmsLayout = document.getElementById('dms-layout');
+  const dmsUserSearch = document.getElementById('dms-user-search');
+  const dmsNewResults = document.getElementById('dms-new-results');
+  const dmsConversations = document.getElementById('dms-conversations');
+  const dmsHeader = document.getElementById('dms-header');
+  const dmsHeaderAvatar = document.getElementById('dms-header-avatar');
+  const dmsHeaderName = document.getElementById('dms-header-name');
+  const dmsHeaderStatus = document.getElementById('dms-header-status');
+  const dmsMessages = document.getElementById('dms-messages');
+  const dmsForm = document.getElementById('dms-form');
+  const dmsInput = document.getElementById('dms-input');
+  const dmsSend = document.getElementById('dms-send');
+  const dmsEmpty = document.getElementById('dms-empty');
+  const dmsBack = document.getElementById('dms-back');
+  const dmsProfile = document.getElementById('dms-profile');
   const friendSearchInput = document.getElementById('friend-search-input');
   const friendAddBtn = document.getElementById('friend-add-btn');
   const friendSearchResult = document.getElementById('friend-search-result');
@@ -1530,6 +1631,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (pathname === '/roadmap' || pathname === '/roadmap/') return { view: 'roadmap' };
     if (pathname === '/announcements' || pathname === '/announcements/') return { view: 'announcements' };
     if (pathname === '/friends' || pathname === '/friends/') return { view: 'friends' };
+    if (pathname === '/dms' || pathname === '/dms/') { const params = new URLSearchParams(location.search); return { view: 'dms', user: params.get('user') || '' }; }
     const forumMatch=pathname.match(/^\/forums(?:\/(feedback|suggestions|bug-reports))?\/?$/);
     if(forumMatch)return {view:'forums',category:forumMatch[1]||'feedback'};
     if (pathname === '/admin' || pathname === '/admin/' || pathname === '/moderation' || pathname === '/moderation/') return { view: 'admin' };
@@ -1556,6 +1658,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     panelRoadmap.classList.toggle('active', panelName === 'roadmap');
     panelAnnouncements.classList.toggle('active', panelName === 'announcements');
     panelFriends.classList.toggle('active', panelName === 'friends');
+    panelDms.classList.toggle('active', panelName === 'dms');
     document.getElementById('panel-forums').classList.toggle('active', panelName === 'forums');
     panelAdmin.classList.toggle('active', panelName === 'admin');
     document.querySelectorAll('.side-nav-item').forEach(el => el.classList.toggle('active', el.dataset.view === panelName));
@@ -1565,6 +1668,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (panelName === 'roadmap') populateBoardPanel('roadmap');
     if (panelName === 'announcements') populateBoardPanel('announcements');
     if (panelName === 'friends') populateFriendsPanel();
+    if (panelName === 'dms') populateDmsPanel(window.__dmsUser || '');
     if (panelName === 'forums') populateForumPanel(window.__forumCategory || 'feedback');
     if (panelName === 'admin') { populateAdminPanel(); listenForAccountOrigins(); renderAdminOrigins(); }
     if (panelName === 'chat') { messageInput.focus(); chatBox.scrollTop = chatBox.scrollHeight; }
@@ -1588,6 +1692,7 @@ body{background:var(--bg);letter-spacing:-.006em}
       return;
     }
     window.__forumCategory=route.category||'feedback';
+    window.__dmsUser=route.user||'';
     showShell(route.view);
   }
 
@@ -2184,42 +2289,48 @@ body{background:var(--bg);letter-spacing:-.006em}
     const canAct=String(user.usernameLower||user.username||'').toLowerCase()!==FOUNDER_USERNAME;
     modSelected.hidden=false;
     modSelected.innerHTML='<div class="mod-selected-head"><div class="mod-selected-avatar">'+escapeHTML(safeInitials(user.username||'U'))+'</div><div class="mod-selected-main"><div class="mod-selected-name">@'+escapeHTML(user.username||'Unknown')+'</div><div class="mod-selected-id">Account ID '+escapeHTML(id)+'</div></div></div><div class="mod-statuses">'+(status.join('')||'<span class="mod-status">No active restrictions</span>')+'</div><div class="mod-fields"><input class="field" id="mod-duration" type="number" min="1" max="43200" value="10" placeholder="Minutes"><input class="field" id="mod-reason" maxlength="200" placeholder="Reason"><div class="full" style="font-size:.65rem;color:var(--text-3)">Duration applies to timeout and suspension. Use 1–43200 minutes.</div></div><div class="mod-actions"><button class="mod-action warn" data-mod-action="timeout" '+(!canAct?'disabled':'')+'>Timeout</button><button class="mod-action warn" data-mod-action="mute" '+(!canAct?'disabled':'')+'>Mute</button><button class="mod-action danger" data-mod-action="suspend" '+(!canAct?'disabled':'')+'>Suspend</button><button class="mod-action danger" data-mod-action="ban" '+(!canAct?'disabled':'')+'>Ban permanently</button><button class="mod-action" data-mod-action="unmute" '+(!canAct?'disabled':'')+'>Unmute</button><button class="mod-action" data-mod-action="untimeout" '+(!canAct?'disabled':'')+'>Remove timeout</button><button class="mod-action" data-mod-action="unsuspend" '+(!canAct?'disabled':'')+'>Unsuspend</button><button class="mod-action" data-mod-action="unban" '+(!canAct?'disabled':'')+'>Unban</button><button class="mod-action warn" data-mod-action="warn" '+(!canAct?'disabled':'')+'>Issue warning</button><button class="mod-action" data-mod-action="clear-warnings" '+(!canAct?'disabled':'')+'>Clear warnings</button><button class="mod-action" data-mod-action="kick" '+(!canAct?'disabled':'')+'>Disconnect</button><button class="mod-action danger" data-mod-action="delete-messages" '+(!canAct?'disabled':'')+'>Delete messages</button></div><div style="margin-top:9px"><a class="btn-outline" href="'+profilePathFor(id)+'" data-route="'+profilePathFor(id)+'">View profile</a></div>';
-    modSelected.querySelectorAll('[data-mod-action]').forEach(btn=>btn.addEventListener('click',()=>runModerationAction(btn.dataset.modAction,id)));
   }
   async function writeModerationLog(targetId,action,reason,details){
-    try{await db.ref('moderationLogs').push({targetId:String(targetId),targetUsername:String(usersCache[String(targetId)]?.username||''),action,reason:reason||'',details:details||'',moderatorId:String(currentUserId),moderator:currentUsername,createdAt:Date.now()});}catch(e){console.warn('Moderation log write failed',e);}
+    try{await db.ref('moderationLogs').push({targetId:String(targetId),targetUsername:String(usersCache[String(targetId)]?.username||''),action,reason:reason||'',details:details||'',moderatorId:String(currentUserId),moderator:currentUsername,createdAt:Date.now()});return true;}catch(e){console.warn('Moderation log write failed',e);return false;}
   }
   async function runModerationAction(action,targetId){
     if(!isFounder||String(targetId)===String(currentUserId)){toast('That moderation action is not allowed.','error');return;}
     const user=usersCache[String(targetId)];
-    if(!user)return;
+    if(!user){toast('That account could not be found.','error');return;}
     const reason=(document.getElementById('mod-reason')?.value||'').trim();
-    const duration=Math.min(43200,Math.max(1,Number(document.getElementById('mod-duration')?.value||10)));
-    const ref=db.ref('moderation/'+targetId);
+    const rawDuration=Number(document.getElementById('mod-duration')?.value||10);
+    const duration=Math.min(43200,Math.max(1,Number.isFinite(rawDuration)?rawDuration:10));
+    const targetRef=db.ref('moderation/'+String(targetId));
     const current=moderationStateFor(targetId);
     const now=Date.now();
     let patch={updatedAt:now,updatedBy:currentUsername};
     let logAction=action;
     if(action==='timeout')patch.timeoutUntil=now+duration*60000;
     else if(action==='suspend')patch.suspendUntil=now+duration*60000;
-    else if(action==='ban')patch={...patch,banned:true,bannedAt:now,bannedBy:currentUsername,banReason:reason||''};
-    else if(action==='mute')patch={...patch,muted:true,mutedAt:now,mutedBy:currentUsername,muteReason:reason||''};
+    else if(action==='ban')patch={...patch,banned:true,bannedAt:now,bannedBy:currentUsername,banReason:reason};
+    else if(action==='mute')patch={...patch,muted:true,mutedAt:now,mutedBy:currentUsername,muteReason:reason};
     else if(action==='unmute')patch={...patch,muted:false,unmutedAt:now,unmutedBy:currentUsername};
     else if(action==='untimeout')patch={...patch,timeoutUntil:null};
     else if(action==='unsuspend')patch={...patch,suspendUntil:null};
     else if(action==='unban')patch={...patch,banned:false,unbannedAt:now,unbannedBy:currentUsername};
-    else if(action==='warn')patch={...patch,warnCount:Number(current.warnCount||0)+1,lastWarningAt:now,lastWarningReason:reason||''};
+    else if(action==='warn')patch={...patch,warnCount:Number(current.warnCount||0)+1,lastWarningAt:now,lastWarningReason:reason};
     else if(action==='clear-warnings')patch={...patch,warnCount:0,lastWarningAt:null,lastWarningReason:null};
-    else if(action==='kick'){await db.ref('presence/'+String(user.usernameLower||user.username).toLowerCase()).remove();await writeModerationLog(targetId,'disconnect',reason);toast('@'+user.username+' was disconnected.');return;}
-    else if(action==='delete-messages'){
-      const snap=await db.ref('messages').once('value');const updates={};snap.forEach(child=>{const v=child.val()||{};if(String(v.username||'').toLowerCase()===String(user.username||'').toLowerCase())updates['messages/'+child.key]=null;});if(Object.keys(updates).length)await db.ref().update(updates);await writeModerationLog(targetId,action,reason,String(Object.keys(updates).length)+' messages deleted');toast('Deleted '+Object.keys(updates).length+' messages from @'+user.username+'.');return;
-    }
+    else if(action==='kick'){try{await db.ref('presence/'+String(user.usernameLower||user.username).toLowerCase()).remove();await writeModerationLog(targetId,'disconnect',reason);toast('@'+user.username+' was disconnected.');}catch(e){toast('Disconnect failed. Check your Firebase rules for /presence.','error');}return;}
+    else if(action==='delete-messages'){try{const snap=await db.ref('messages').once('value');const updates={};snap.forEach(child=>{const v=child.val()||{};if(String(v.username||'').toLowerCase()===String(user.username||'').toLowerCase())updates['messages/'+child.key]=null;});if(Object.keys(updates).length)await db.ref().update(updates);await writeModerationLog(targetId,action,reason,String(Object.keys(updates).length)+' messages deleted');toast('Deleted '+Object.keys(updates).length+' messages from @'+user.username+'.');}catch(e){toast('Message deletion failed. Check your Firebase rules for /messages.','error');}return;}
+    else {toast('Unknown moderation action.','error');return;}
     try{
-      await ref.update(patch);
+      await targetRef.update(patch);
+      const verify=await targetRef.once('value');
+      const saved=verify.val()||{};
+      const expected=(action==='timeout'?'timeoutUntil':action==='suspend'?'suspendUntil':action==='ban'?'banned':action==='mute'?'muted':action==='unban'?'banned':action==='unmute'?'muted':action==='untimeout'?'timeoutUntil':action==='unsuspend'?'suspendUntil':action==='warn'?'warnCount':action==='clear-warnings'?'warnCount':null);
+      if(expected && action==='warn' && Number(saved.warnCount||0)!==Number(patch.warnCount||0))throw new Error('Moderation state verification failed');
+      if(expected && action==='clear-warnings' && Number(saved.warnCount||0)!==0)throw new Error('Moderation state verification failed');
+      if(expected && !['warn','clear-warnings'].includes(action) && saved[expected]!==patch[expected])throw new Error('Moderation state verification failed');
       await writeModerationLog(targetId,logAction,reason,action==='timeout'||action==='suspend'?duration+' minutes':'');
+      moderationCache[String(targetId)]={...current,...patch};
       toast('Moderation action applied to @'+user.username+'.');
       renderModerationSelected();renderModerationUsers();
-    }catch(e){toast('Moderation action failed. Check your Firebase rules for /moderation.','error');}
+    }catch(e){console.error('Moderation action failed:',e);toast('Moderation action failed. Firebase must allow the founder to write /moderation and /moderationLogs.','error');}
   }
   function listenForModeration(){
     if(!currentUserId)return;
@@ -2233,7 +2344,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     });
     if(isFounder&&!moderationListenersReady){
       moderationListenersReady=true;
-      db.ref('moderation').on('value',snap=>{moderationCache=snap.val()||{};renderModerationUsers();renderModerationSelected();});
+      db.ref('moderation').on('value',snap=>{moderationCache=snap.val()||{};renderModerationUsers();renderModerationSelected();},err=>{console.error('Moderation state listener failed:',err);toast('Moderation state cannot be read. Check Firebase rules for /moderation.','error');});
       db.ref('moderationLogs').limitToLast(50).on('value',snap=>{
         if(!modLog)return;
         const items=[];snap.forEach(c=>items.push({id:c.key,...(c.val()||{})}));
@@ -2317,6 +2428,7 @@ body{background:var(--bg);letter-spacing:-.006em}
     });
   }
   if (modClearSelection) modClearSelection.addEventListener('click', () => { selectedModerationUserId=null; renderModerationUsers(); renderModerationSelected(); });
+  if (modSelected) modSelected.addEventListener('click', e => { const btn=e.target.closest('[data-mod-action]'); if(btn) runModerationAction(btn.dataset.modAction, selectedModerationUserId); });
 
   function listenForPresence(){
     db.ref('presence').on('value', snap => {
@@ -3955,6 +4067,27 @@ body{background:var(--bg);letter-spacing:-.006em}
   document.addEventListener('click',async e=>{const b=e.target.closest('[data-social]');if(!b)return;const key=b.dataset.key;try{switch(b.dataset.social){case 'accept':await acceptFriendRequest(key);break;case 'decline':await declineFriendRequest(key);break;case 'unfriend':await unfriend(key);break;case 'block':await blockUser(key);break;case 'unblock':await unblockUser(key);break;case 'send':await sendFriendRequest(key);break;case 'profile':{const u=socialUserByKey(key);if(u.id)navigate(profilePathFor(u.id));break;}}}catch(err){toast('That friend action could not be completed.','error')}});
 
 
+
+  const dmsState={};
+  function dmsPairKey(a,b){return [String(a).toLowerCase(),String(b).toLowerCase()].sort().join('__');}
+  function dmsUserByKey(key){const k=String(key||'').toLowerCase();const u=Object.values(usersCache||{}).find(x=>String(x.usernameLower||x.username||'').toLowerCase()===k);const p=profilesCache[k]||{};return {key:k,id:u?.id||null,username:u?.username||k,display:p.displayName||u?.username||k};}
+  function dmsIsOnline(key){return !!presenceCache[String(key||'').toLowerCase()];}
+  function dmsConversationData(pair){const raw=dmsCache[pair]||{};const messages=raw.messages||{};const items=Object.entries(messages).map(([id,v])=>({id,...(v||{})})).sort((a,b)=>Number(a.timestamp||0)-Number(b.timestamp||0));return {pair,members:raw.members||{},messages:items};}
+  function dmsFormatListTime(ts){if(!ts)return '';const d=new Date(Number(ts));const now=new Date();if(d.toDateString()===now.toDateString())return d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit',hour12:!window.auroraClock24});return d.toLocaleDateString([],{month:'short',day:'numeric'});}
+  function renderDmsConversations(){if(!dmsConversations)return;const entries=Object.keys(dmsCache||{}).map(pair=>dmsConversationData(pair)).filter(c=>c.members[currentKey]);entries.sort((a,b)=>Number(b.messages.at(-1)?.timestamp||0)-Number(a.messages.at(-1)?.timestamp||0));if(!entries.length){dmsConversations.innerHTML='<div class="dms-empty" style="min-height:220px"><div><strong>No conversations</strong><span>Search for a user above to start your first private conversation.</span></div></div>';return;}dmsConversations.innerHTML=entries.map(c=>{const other=Object.keys(c.members).find(k=>k!==currentKey)||'';const u=dmsUserByKey(other);const last=c.messages.at(-1);const unread=0;return '<button type="button" class="dms-conversation'+(c.pair===currentDmsKey?' active':'')+'" data-dms-open="'+escapeHTML(other)+'"><div class="mini-avatar" data-avatar-key="'+escapeHTML(other)+'" data-avatar-name="'+escapeHTML(u.username)+'"><span class="status-dot '+(dmsIsOnline(other)?'':'away')+'"></span></div><div class="dms-conversation-main"><div class="dms-conversation-top"><span class="dms-conversation-name">'+escapeHTML(u.display)+'</span><span class="dms-conversation-time">'+escapeHTML(dmsFormatListTime(last?.timestamp))+'</span></div><div class="dms-conversation-preview">'+escapeHTML(last?(last.senderKey===currentKey?'You: ':'')+(last.text||''):'No messages yet')+'</div></div>'+(unread?'<span class="dms-unread">'+unread+'</span>':'')+'</button>';}).join('');refreshAllAvatars();}
+  function renderDmsUserSearch(){const q=String(dmsUserSearch?.value||'').trim().toLowerCase();if(!q){dmsNewResults.classList.remove('open');dmsNewResults.innerHTML='';return;}const users=Object.values(usersCache||{}).filter(u=>String(u.username||'').toLowerCase().includes(q)&&String(u.usernameLower||u.username).toLowerCase()!==currentKey).slice(0,12);dmsNewResults.classList.add('open');dmsNewResults.innerHTML=users.length?users.map(u=>'<button type="button" class="dms-user-result" data-dms-open="'+escapeHTML(String(u.usernameLower||u.username).toLowerCase())+'"><div class="mini-avatar" data-avatar-key="'+escapeHTML(String(u.usernameLower||u.username).toLowerCase())+'" data-avatar-name="'+escapeHTML(u.username||'')+'"></div><div><div style="font-size:.76rem;font-weight:750">'+escapeHTML(u.username||'')+'</div><div style="font-size:.64rem;color:var(--text-3)">Open direct message</div></div></button>').join(''):'<div class="list-empty">No users found.</div>';refreshAllAvatars();}
+  function renderDmsConversation(otherKey){const other=String(otherKey||'').toLowerCase();if(!other||other===currentKey){currentDmsKey=null;dmsHeader.style.display='none';dmsMessages.style.display='none';dmsForm.style.display='none';dmsEmpty.style.display='grid';dmsLayout.classList.remove('conversation-open');renderDmsConversations();return;}const u=dmsUserByKey(other);currentDmsKey=dmsPairKey(currentKey,other);dmsHeader.style.display='flex';dmsMessages.style.display='flex';dmsForm.style.display='flex';dmsEmpty.style.display='none';dmsLayout.classList.add('conversation-open');dmsHeaderName.textContent=u.display;dmsHeaderStatus.textContent=dmsIsOnline(other)?'Online':'Offline';dmsHeaderAvatar.dataset.avatarKey=other;dmsHeaderAvatar.dataset.avatarName=u.username;dmsProfile.onclick=()=>{if(u.id)navigate(profilePathFor(u.id));};const c=dmsConversationData(currentDmsKey);dmsMessages.innerHTML=c.messages.length?c.messages.map(m=>{const own=m.senderKey===currentKey;return '<div class="dms-message'+(own?' own':'')+'"><div class="dms-message-avatar" data-avatar-key="'+escapeHTML(m.senderKey)+'" data-avatar-name="'+escapeHTML(m.senderUsername||m.senderKey)+'"></div><div class="dms-message-stack"><div class="dms-message-meta">'+escapeHTML(own?'You':m.senderUsername||'User')+' · '+escapeHTML(boardFormatDate(m.timestamp))+'</div><div class="dms-message-bubble">'+escapeHTML(m.text||'')+'</div></div></div>';}).join(''):'<div class="dms-empty"><div><strong>Start the conversation</strong><span>Messages here are private to this direct message conversation.</span></div></div>';dmsMessages.scrollTop=dmsMessages.scrollHeight;dmsInput.focus();renderDmsConversations();refreshAllAvatars();}
+  async function openDmsWithUser(key){const other=String(key||'').toLowerCase();if(!other||other===currentKey)return;const u=dmsUserByKey(other);if(!u.username||u.username===other&&u.id===null){toast('That account could not be found.','error');return;}const pair=dmsPairKey(currentKey,other);try{if(!dmsCache[pair]){await db.ref('dms/'+pair+'/members').set({[currentKey]:true,[other]:true});}}catch(e){toast('The direct message conversation could not be created. Check your Firebase rules for /dms.','error');return;}dmsNewResults.classList.remove('open');dmsUserSearch.value='';navigate('/dms?user='+encodeURIComponent(other));}
+  function listenForDms(){if(dmsListenersReady)return;dmsListenersReady=true;db.ref('dms').on('value',snap=>{dmsCache=snap.val()||{};renderDmsConversations();if(currentDmsKey)renderDmsConversation(Object.keys(dmsCache[currentDmsKey]?.members||{}).find(k=>k!==currentKey)||'');},err=>{console.warn('DM listener failed:',err);toast('Direct messages could not be loaded. Check your Firebase rules for /dms.','error');});}
+  function populateDmsPanel(other){listenForDms();renderDmsConversations();if(other)renderDmsConversation(other);else if(!currentDmsKey){dmsHeader.style.display='none';dmsMessages.style.display='none';dmsForm.style.display='none';dmsEmpty.style.display='grid';dmsLayout.classList.remove('conversation-open');}}
+  dmsUserSearch?.addEventListener('input',renderDmsUserSearch);
+  dmsUserSearch?.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const first=dmsNewResults?.querySelector('[data-dms-open]');if(first)openDmsWithUser(first.dataset.dmsOpen);}});
+  dmsConversations?.addEventListener('click',e=>{const b=e.target.closest('[data-dms-open]');if(b)openDmsWithUser(b.dataset.dmsOpen);});
+  dmsNewResults?.addEventListener('click',e=>{const b=e.target.closest('[data-dms-open]');if(b)openDmsWithUser(b.dataset.dmsOpen);});
+  dmsBack?.addEventListener('click',()=>{navigate('/dms');});
+  dmsInput?.addEventListener('input',()=>{dmsInput.style.height='auto';dmsInput.style.height=Math.min(dmsInput.scrollHeight,120)+'px';dmsSend.disabled=!dmsInput.value.trim();});
+  dmsForm?.addEventListener('submit',async e=>{e.preventDefault();const text=dmsInput.value.trim();if(!text||!currentDmsKey)return;if(text.length>MAX_MESSAGE_LENGTH){toast('Your message is too long.','error');return;}const other=Object.keys(dmsCache[currentDmsKey]?.members||{}).find(k=>k!==currentKey);if(!other)return;dmsSend.disabled=true;try{await db.ref('dms/'+currentDmsKey+'/messages').push({senderKey:currentKey,senderId:String(currentUserId),senderUsername:currentUsername,text,timestamp:Date.now()});dmsInput.value='';dmsInput.style.height='auto';}catch(err){toast('That direct message could not be sent. Check your Firebase rules for /dms.','error');}finally{dmsSend.disabled=false;}});
+
   const forumCache={feedback:{},suggestions:{},'bug-reports':{}},forumListenersReady={feedback:false,suggestions:false,'bug-reports':false};const forumMeta={feedback:{title:'Feedback',description:'Share feedback about the current Aurora experience.'},suggestions:{title:'Suggestions',description:'Propose improvements and new features for Aurora.'},'bug-reports':{title:'Bug Reports',description:'Report problems that need investigation or a fix.'}};let currentForumCategory='feedback';const forumPosts=document.getElementById('forum-posts'),forumCreate=document.getElementById('forum-create'),forumCreateToggle=document.getElementById('forum-create-toggle'),forumCancel=document.getElementById('forum-cancel'),forumTitleInput=document.getElementById('forum-title-input'),forumContentInput=document.getElementById('forum-content-input'),forumPublish=document.getElementById('forum-publish');
   function forumRender(){const meta=forumMeta[currentForumCategory];document.getElementById('forums-title').textContent=meta.title;document.getElementById('forums-header-title').textContent=meta.title;document.getElementById('forums-description').textContent=meta.description;document.querySelectorAll('#forum-tabs a').forEach(a=>a.classList.toggle('active',a.dataset.forum===currentForumCategory));const items=Object.entries(forumCache[currentForumCategory]||{}).map(([key,v])=>({key,...(v||{})})).filter(x=>x.title||x.content).sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));forumPosts.innerHTML=items.length?items.map(item=>'<article class="board-post"><div class="board-post-top"><div><div class="board-post-title">'+escapeHTML(item.title||'Untitled')+'</div><div class="board-post-meta"><span class="board-post-author">@'+escapeHTML(item.author||'Unknown')+'</span><span>'+boardFormatDate(item.createdAt)+'</span></div></div></div><div class="board-post-content">'+escapeHTML(item.content||'')+'</div></article>').join(''):'<div class="board-empty">No posts in this forum yet.</div>'}
   function listenForForum(category){if(forumListenersReady[category])return;forumListenersReady[category]=true;db.ref('forums/'+category).on('value',snap=>{forumCache[category]=snap.val()||{};if(category===currentForumCategory)forumRender()})}
@@ -4154,7 +4287,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   function saveDraft(){try{if(localStorage.getItem('aurora:drafts')==='0')return;if(currentKey)localStorage.setItem('aurora:message-draft:'+currentKey,messageInput.value||'')}catch(e){}}function loadDraft(){try{if(!currentKey||localStorage.getItem('aurora:drafts')==='0')return;const d=localStorage.getItem('aurora:message-draft:'+currentKey);if(d){messageInput.value=d;autoGrow();onComposerChanged()}}catch(e){}}messageInput?.addEventListener('input',()=>{clearTimeout(draftTimer);draftTimer=setTimeout(saveDraft,150)});setTimeout(loadDraft,300);chatForm?.addEventListener('submit',()=>{try{localStorage.removeItem('aurora:message-draft:'+currentKey)}catch(e){}});
   uploadCancel?.addEventListener('click',()=>{if(activeUploadTask){activeUploadTask.cancel();if(uploadIdleTimer){clearTimeout(uploadIdleTimer);uploadIdleTimer=null}activeUploadTask=null;uploadStatus.classList.remove('open');if(uploadProgress)uploadProgress.style.width='0%';attachBtn.disabled=false;toast('Upload cancelled.')}});
   function initPreferences(){const compact=document.getElementById('pref-compact'),drafts=document.getElementById('pref-drafts'),clock24=document.getElementById('pref-clock-24');if(compact){compact.checked=localStorage.getItem('aurora:compact')==='1';document.body.classList.toggle('compact-mode',compact.checked);compact.addEventListener('change',()=>{document.body.classList.toggle('compact-mode',compact.checked);localStorage.setItem('aurora:compact',compact.checked?'1':'0')})}if(drafts){drafts.checked=localStorage.getItem('aurora:drafts')!=='0';drafts.addEventListener('change',()=>localStorage.setItem('aurora:drafts',drafts.checked?'1':'0'))}window.auroraClock24=localStorage.getItem('aurora:clock24')==='1';if(clock24){clock24.checked=window.auroraClock24;clock24.addEventListener('change',()=>{window.auroraClock24=clock24.checked;localStorage.setItem('aurora:clock24',clock24.checked?'1':'0');document.querySelectorAll('.group-time').forEach((el)=>{const group=el.closest('.msg-group');const ts=Number(group?.dataset?.lastts||0);if(ts)el.textContent=formatTime(ts)});document.querySelectorAll('.bubble[data-key]').forEach((el)=>{const msg=messageCache[el.dataset.key];if(msg?.timestamp)el.title=new Date(msg.timestamp).toLocaleString(undefined,{year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit',hour12:!window.auroraClock24})})})}}initPreferences();
-  function enhanceProfiles(){const hero=document.querySelector('.profile-page-view .profile-hero-inner');if(hero){const id=(location.pathname.match(/\/users\/(\d+)/)||[])[1],own=String(id||'')===String(currentUserId||'');let actions=hero.querySelector('.profile-hero-actions');if(!own&&!actions){actions=document.createElement('div');actions.className='profile-hero-actions';hero.querySelector('.profile-identity-row')?.appendChild(actions)}if(actions&&!actions.querySelector('.profile-action-row')){const row=document.createElement('div');row.className='profile-action-row';if(!own){const username=usersCache[id]?.username||'',key=String(username).toLowerCase();const msg=document.createElement('button');msg.className='profile-action primary';msg.type='button';msg.textContent='Message';msg.addEventListener('click',()=>{navigate('/');messageInput.focus();messageInput.value=username?'@'+username+' ':'';onComposerChanged()});row.appendChild(msg);const copy=document.createElement('button');copy.className='profile-action';copy.type='button';copy.textContent='Copy username';copy.addEventListener('click',()=>{navigator.clipboard?.writeText('@'+username);toast('Username copied.')});row.appendChild(copy);const link=document.createElement('button');link.className='profile-action';link.type='button';link.textContent='Copy profile link';link.addEventListener('click',()=>{navigator.clipboard?.writeText(location.href);toast('Profile link copied.')});row.appendChild(link);if(socialCanInteract(key)){const socialBtn=document.createElement('button');socialBtn.className='profile-action';socialBtn.type='button';if(isFriendKey(key)){socialBtn.textContent='Unfriend';socialBtn.addEventListener('click',()=>unfriend(key))}else if(socialState.outgoing[key]){socialBtn.textContent='Request sent';socialBtn.disabled=true}else if(socialState.incoming[key]){socialBtn.textContent='Accept request';socialBtn.addEventListener('click',()=>acceptFriendRequest(key))}else{socialBtn.textContent='Add friend';socialBtn.addEventListener('click',()=>sendFriendRequest(key))}row.appendChild(socialBtn)}else if(isBlockedKey(key)){const unblockBtn=document.createElement('button');unblockBtn.className='profile-action';unblockBtn.type='button';unblockBtn.textContent='Unblock';unblockBtn.addEventListener('click',()=>unblockUser(key));row.appendChild(unblockBtn)}}actions.appendChild(row)}}}
+  function enhanceProfiles(){const hero=document.querySelector('.profile-page-view .profile-hero-inner');if(hero){const id=(location.pathname.match(/\/users\/(\d+)/)||[])[1],own=String(id||'')===String(currentUserId||'');let actions=hero.querySelector('.profile-hero-actions');if(!own&&!actions){actions=document.createElement('div');actions.className='profile-hero-actions';hero.querySelector('.profile-identity-row')?.appendChild(actions)}if(actions&&!actions.querySelector('.profile-action-row')){const row=document.createElement('div');row.className='profile-action-row';if(!own){const username=usersCache[id]?.username||'',key=String(username).toLowerCase();const msg=document.createElement('button');msg.className='profile-action primary';msg.type='button';msg.textContent='Message';msg.addEventListener('click',()=>{if(key)openDmsWithUser(key)});row.appendChild(msg);const copy=document.createElement('button');copy.className='profile-action';copy.type='button';copy.textContent='Copy username';copy.addEventListener('click',()=>{navigator.clipboard?.writeText('@'+username);toast('Username copied.')});row.appendChild(copy);const link=document.createElement('button');link.className='profile-action';link.type='button';link.textContent='Copy profile link';link.addEventListener('click',()=>{navigator.clipboard?.writeText(location.href);toast('Profile link copied.')});row.appendChild(link);if(socialCanInteract(key)){const socialBtn=document.createElement('button');socialBtn.className='profile-action';socialBtn.type='button';if(isFriendKey(key)){socialBtn.textContent='Unfriend';socialBtn.addEventListener('click',()=>unfriend(key))}else if(socialState.outgoing[key]){socialBtn.textContent='Request sent';socialBtn.disabled=true}else if(socialState.incoming[key]){socialBtn.textContent='Accept request';socialBtn.addEventListener('click',()=>acceptFriendRequest(key))}else{socialBtn.textContent='Add friend';socialBtn.addEventListener('click',()=>sendFriendRequest(key))}row.appendChild(socialBtn)}else if(isBlockedKey(key)){const unblockBtn=document.createElement('button');unblockBtn.className='profile-action';unblockBtn.type='button';unblockBtn.textContent='Unblock';unblockBtn.addEventListener('click',()=>unblockUser(key));row.appendChild(unblockBtn)}}actions.appendChild(row)}}}
   const profileObserver=new MutationObserver(()=>{enhanceProfiles();if(typeof initProfileAppearance==='function')initProfileAppearance()});profileObserver.observe(document.body,{childList:true,subtree:true});enhanceProfiles();if(typeof initProfileAppearance==='function')initProfileAppearance();
   const activeStat=document.getElementById('admin-stat-active');setInterval(()=>{if(activeStat)activeStat.textContent=String(Object.keys(presenceCache||{}).length)},1500);
 })();
