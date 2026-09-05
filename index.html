@@ -2568,8 +2568,6 @@ body{background:var(--bg);letter-spacing:-.006em}
     db.ref('messages/' + key).remove().catch(() => toast('That message could not be deleted.', 'error'));
   }
 
-  // The admin clear button may not exist on newer builds. Do not let a missing
-  // optional admin control abort the entire application initialization.
   adminClearBtn?.addEventListener('click', () => {
     if (!isFounder) return;
     if (confirm('Clear every message in the chat? This cannot be undone.')) {
@@ -3419,15 +3417,62 @@ body{background:var(--bg);letter-spacing:-.006em}
       cancelReply();
     } catch (err) { toast('That voice message could not be sent. Please try again.', 'error'); }
   }
+  let callAudioContext = null;
+  let callAudioDestination = null;
+  let callMicSource = null;
+  const callSoundboardAudioNodes = new Set();
+
+  function buildMixedCallStream(sourceStream){
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx || !sourceStream) return sourceStream;
+      callAudioContext = callAudioContext || new AudioCtx();
+      callAudioDestination = callAudioDestination || callAudioContext.createMediaStreamDestination();
+      const micTrack = sourceStream.getAudioTracks()[0];
+      if (micTrack) {
+        callMicSource?.disconnect();
+        callMicSource = callAudioContext.createMediaStreamSource(new MediaStream([micTrack]));
+        callMicSource.connect(callAudioDestination);
+      }
+      const mixed = new MediaStream();
+      sourceStream.getVideoTracks().forEach(t => mixed.addTrack(t));
+      const mixedAudio = callAudioDestination.stream.getAudioTracks()[0];
+      if (mixedAudio) mixed.addTrack(mixedAudio);
+      return mixed;
+    } catch (e) { return sourceStream; }
+  }
+
+  async function playSoundboardThroughCall(sound){
+    if (!sound?.dataUrl) return;
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      callAudioContext = callAudioContext || new AudioCtx();
+      callAudioDestination = callAudioDestination || callAudioContext.createMediaStreamDestination();
+      await callAudioContext.resume();
+      const audio = new Audio(sound.dataUrl);
+      audio.preload = 'auto';
+      audio.volume = 0.9;
+      const source = callAudioContext.createMediaElementSource(audio);
+      source.connect(callAudioDestination);
+      const node = {audio, source};
+      callSoundboardAudioNodes.add(node);
+      const cleanup = () => { try { source.disconnect(); } catch(e) {} callSoundboardAudioNodes.delete(node); };
+      audio.addEventListener('ended', cleanup, {once:true});
+      audio.addEventListener('error', cleanup, {once:true});
+      await audio.play();
+    } catch (e) {}
+  }
+
   function createCallChannel(config){
-    const state = { active: false, localStream: null, peers: {}, peerListenerRefs: {}, watching: {}, watchListenerRefs: {}, lastLiveItems: {}, sessionId: null };
+    const state = { active: false, localStream: null, sourceStream: null, peers: {}, peerListenerRefs: {}, watching: {}, watchListenerRefs: {}, lastLiveItems: {}, sessionId: null };
 
     async function start(){
       if (state.active) return;
       let stream;
       try { stream = await config.getStream(); }
       catch (err) { if (!err || err.name !== 'NotAllowedError') toast(config.failMessage || 'The call could not be started.', 'error'); return; }
-      state.localStream = stream; state.active = true; state.sessionId = String(Date.now()) + '_' + Math.random().toString(36).slice(2,8);
+      state.sourceStream = stream; state.localStream = buildMixedCallStream(stream); state.active = true; state.sessionId = String(Date.now()) + '_' + Math.random().toString(36).slice(2,8);
       stream.getTracks().forEach(t => t.addEventListener('ended', stop));
       config.onStart && config.onStart(stream);
 
@@ -3475,6 +3520,7 @@ body{background:var(--bg);letter-spacing:-.006em}
       if (!state.active) return;
       state.active = false; state.sessionId = null;
       if (state.localStream) { state.localStream.getTracks().forEach(t => t.stop()); state.localStream = null; }
+      if (state.sourceStream) { state.sourceStream.getTracks().forEach(t => t.stop()); state.sourceStream = null; }
       config.onStop && config.onStop();
       Object.keys(state.peers).forEach(teardownPeer);
       Object.keys(state.watching).forEach(stopWatchingPeer);
@@ -3896,7 +3942,7 @@ body{background:var(--bg);letter-spacing:-.006em}
   function soundWaveIconSVG(){return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 10v4M8 7v10M12 4v16M16 7v10M20 10v4"/></svg>';}
   function renderSoundboardList(){if(!soundboardList)return;const items=soundboardItems();if(!items.length){soundboardList.innerHTML='<div class="list-empty">No sounds uploaded yet.</div>';return;}soundboardList.innerHTML=items.map(x=>{const mine=String(x.ownerKey||'').toLowerCase()===String(currentKey||'').toLowerCase();return '<div class="soundboard-row"><div class="soundboard-row-main"><div class="soundboard-row-name">'+escapeHTML(x.name)+'</div><div class="soundboard-row-meta">@'+escapeHTML(x.owner||'unknown')+' · '+formatSoundDuration(x.duration)+'</div></div><audio class="soundboard-preview" controls preload="none" src="'+x.dataUrl+'"></audio>'+(mine?'<button type="button" class="soundboard-delete" data-sound-delete="'+x.id+'">Delete</button>':'')+'</div>';}).join('');soundboardList.querySelectorAll('[data-sound-delete]').forEach(btn=>btn.addEventListener('click',async()=>{const id=btn.dataset.soundDelete;if(!id||!soundboardCache[id])return;if(!confirm('Delete this sound?'))return;try{await db.ref('soundboard/'+id).remove();toast('Sound deleted.');}catch(e){toast('The sound could not be deleted.','error');}}));}
   function renderCallSoundboard(){if(!callSoundboardList)return;const items=soundboardItems();if(!items.length){callSoundboardList.innerHTML='<div class="list-empty">No sounds available.</div>';return;}callSoundboardList.innerHTML=items.map(x=>'<button type="button" class="call-sound-item" data-call-sound="'+x.id+'"><span class="call-sound-item-icon">'+soundWaveIconSVG()+'</span><span class="call-sound-item-name">'+escapeHTML(x.name)+'</span><span class="call-sound-item-meta">'+formatSoundDuration(x.duration)+'</span></button>').join('');callSoundboardList.querySelectorAll('[data-call-sound]').forEach(btn=>btn.addEventListener('click',()=>playSoundboardInCall(btn.dataset.callSound)));}
-  function playSoundboardAudio(sound){if(!sound?.dataUrl)return;try{const audio=new Audio(sound.dataUrl);audio.volume=.9;audio.play().catch(()=>{});}catch(e){}}
+  function playSoundboardAudio(sound){if(!sound?.dataUrl)return;playSoundboardThroughCall(sound);}
   async function playSoundboardInCall(id){if(!callChannel?.state?.active){toast('Join the call before playing a sound.','error');return;}const sound=soundboardCache[id];if(!sound?.dataUrl)return;playSoundboardAudio(sound);try{await db.ref('callSounds').push({soundId:id,playedBy:currentKey,playedAt:Date.now(),sessionId:callChannel.state.sessionId});}catch(e){toast('The sound could not be shared with the call.','error');}if(callSoundboardPopover)callSoundboardPopover.hidden=true;}
   function listenForSoundboard(){if(soundboardListenerReady)return;soundboardListenerReady=true;db.ref('soundboard').on('value',snap=>{Object.keys(soundboardCache).forEach(k=>delete soundboardCache[k]);snap.forEach(c=>{soundboardCache[c.key]=c.val()||{};});renderSoundboardList();renderCallSoundboard();});db.ref('callSounds').limitToLast(30).on('child_added',snap=>{const e=snap.val()||{};if(String(e.playedBy||'').toLowerCase()===String(currentKey||'').toLowerCase())return;if(Date.now()-Number(e.playedAt||0)>15000)return;if(recentCallSoundIds.has(snap.key))return;recentCallSoundIds.add(snap.key);setTimeout(()=>recentCallSoundIds.delete(snap.key),30000);if(callChannel?.state?.active && e.sessionId && e.sessionId===callChannel.state.sessionId)playSoundboardAudio(soundboardCache[e.soundId]);});}
   function populateSoundboardPanel(){listenForSoundboard();if(soundboardName)soundboardName.value='';if(soundboardFile)soundboardFile.value='';if(soundboardUploadStatus){soundboardUploadStatus.className='soundboard-upload-status';soundboardUploadStatus.textContent='';}}
