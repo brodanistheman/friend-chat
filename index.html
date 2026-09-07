@@ -2609,9 +2609,9 @@ body{background:var(--bg);letter-spacing:-.006em}
     // Realtime Database has request and record size limits. Data URLs also add
     // roughly one third overhead, so keep the free no billing upload limit
     // conservative enough to avoid creating oversized database writes.
-    const MAX_FILE_SIZE = 6 * 1024 * 1024;
+    const MAX_FILE_SIZE = 100 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
-      toast('Files must be 6 MB or smaller on the free upload system.', 'error');
+      toast('Files must be 100 MB or smaller on the free upload system.', 'error');
       return;
     }
 
