@@ -17,6 +17,7 @@
       --paragraph-color: rgba(0, 0, 0, 0.59);
       --icon-bg: #f0f0f0ff;
       --icon-stroke: rgba(0, 0, 0, 0.8);
+      --link-color: #0066cc;
     }
 
     * {
@@ -84,6 +85,11 @@
       color: var(--paragraph-color);
     }
 
+    p a {
+      color: var(--link-color);
+      text-decoration: underline;
+    }
+
     @media (max-width: 480px) {
       body {
         padding: 16px;
@@ -109,7 +115,7 @@
     </div>
 
     <h1>Page Unavailable</h1>
-    <p>We're making a few quick updates and will be back shortly.</p>
+    <p>Things are a bit broken over here right now. Please <a href="https://brodanistheman.github.io/aurora/onboarding/" target="_blank" rel="noopener noreferrer">visit our newly launched site</a>.</p>
   </main>
 
 </body>
