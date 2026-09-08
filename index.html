@@ -1275,7 +1275,6 @@ body{background:var(--bg);letter-spacing:-.006em}
 
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyANBev0K1e06T5aHBC5EKXaswbMwELSkkQ",
@@ -1517,19 +1516,6 @@ body{background:var(--bg);letter-spacing:-.006em}
     toastStack.appendChild(el);
     requestAnimationFrame(() => el.classList.add('show'));
     setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 250); }, 4200);
-  }
-  function twemojiIn(el){
-    if (window.twemoji) { try { window.twemoji.parse(el, { folder: 'svg', ext: '.svg' }); } catch(e){} }
-  }
-  function initTwemoji(){
-    if (!window.twemoji || window.__auroraTwemojiReady) return;
-    window.__auroraTwemojiReady = true;
-    twemojiIn(document.body);
-    // Do not observe the entire document. Aurora creates message, DM, profile,
-    // moderation, and search DOM nodes frequently. A global subtree observer
-    // caused emoji parsing to run repeatedly during normal navigation and chat.
-    twemojiIn(chatBox);
-    twemojiIn(dmsMessages);
   }
   function setButtonLoading(labelEl, loading, idleText){
     labelEl.innerHTML = loading ? '<span class="spinner-lg"></span>' : idleText;
@@ -1948,7 +1934,6 @@ body{background:var(--bg);letter-spacing:-.006em}
     const q=String(filter||'').trim().toLowerCase();
     const items=q ? EMOJI_PICKER_ITEMS.filter(([code,char])=>code.toLowerCase().includes(q)) : EMOJI_PICKER_ITEMS;
     emojiPickerGrid.innerHTML=items.map(([code,char])=>`<button type="button" class="emoji-picker-item" data-emoji="${char}" title=":${code}:" aria-label=":${code}:">${char}</button>`).join('');
-    twemojiIn(emojiPickerGrid);
   }
   function toggleEmojiPicker(force){
     const open=typeof force==='boolean'?force:!emojiPicker.classList.contains('open');
@@ -1979,7 +1964,6 @@ body{background:var(--bg);letter-spacing:-.006em}
       '</div>'
     ).join('');
     emojiAutocomplete.style.display = 'block';
-    twemojiIn(emojiAutocomplete);
   }
   emojiAutocomplete.addEventListener('click', (e) => {
     const row = e.target.closest('.ac-row');
@@ -3254,7 +3238,6 @@ body{background:var(--bg);letter-spacing:-.006em}
         editedTag.textContent = '(edited)';
         bubble.appendChild(editedTag);
       }
-      twemojiIn(textSpan);
       extractEmbeds(msg.text || '').forEach(embed => bubble.appendChild(buildEmbed(embed)));
     }
 
@@ -3296,7 +3279,6 @@ body{background:var(--bg);letter-spacing:-.006em}
     if (!textSpan) return;
     textSpan.innerHTML = '';
     renderRichMessageText(textSpan, msg.text || '');
-    twemojiIn(textSpan);
     const isOwn = String(msg.username || '').toLowerCase() === currentUsername.toLowerCase();
     let editedTag = bubble.querySelector('.edited-tag');
 
@@ -4223,7 +4205,6 @@ body{background:var(--bg);letter-spacing:-.006em}
   announcementPublish?.addEventListener('click', () => publishBoardPost('announcements'));
   updateBoardComposerVisibility();
 
-  initTwemoji();
   renderRoute();
 </script>
 
