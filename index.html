@@ -669,12 +669,9 @@
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
   <script>
     let db = null;
-    let auth = null;
-    let firebaseReady = false;
 
     function initFirebase() {
       if (typeof firebase === 'undefined') {
@@ -697,25 +694,7 @@
           firebase.initializeApp(firebaseConfig);
         }
         db = firebase.database();
-        auth = firebase.auth();
-
-        // Firebase Realtime Database rules should require authentication.
-        // Sign in anonymously before any /users or /messages request is made.
-        auth.signInAnonymously()
-          .then(() => {
-            firebaseReady = true;
-            elements.loginBtn.disabled = false;
-            elements.signupBtn.disabled = false;
-            initializeApp();
-          })
-          .catch((e) => {
-            console.error('Firebase authentication error:', e);
-            const hint = document.getElementById('loginHint');
-            if (hint) {
-              hint.textContent = 'Firebase authentication failed: ' + e.message;
-              hint.className = 'hint error';
-            }
-          });
+        initializeApp();
       } catch(e) {
         console.error('Firebase init error:', e);
       }
