@@ -673,8 +673,10 @@
   <script>
     let db = null;
 
+    let appInitialized = false;
+
     function initFirebase() {
-      if (typeof firebase === 'undefined') {
+      if (typeof firebase === 'undefined' || !firebase.database) {
         setTimeout(initFirebase, 100);
         return;
       }
@@ -693,10 +695,26 @@
         if (!firebase.apps.length) {
           firebase.initializeApp(firebaseConfig);
         }
+
         db = firebase.database();
-        initializeApp();
-      } catch(e) {
-        console.error('Firebase init error:', e);
+
+        if (!appInitialized) {
+          initializeApp();
+          appInitialized = true;
+        }
+      } catch (e) {
+        console.error('Firebase initialization error:', e);
+        const loginHint = document.getElementById('loginHint');
+        const signupHint = document.getElementById('signupHint');
+        const message = 'Firebase failed to initialize. Check your Firebase configuration and Realtime Database URL.';
+        if (loginHint) {
+          loginHint.textContent = message;
+          loginHint.className = 'hint error';
+        }
+        if (signupHint) {
+          signupHint.textContent = message;
+          signupHint.className = 'hint error';
+        }
       }
     }
 
